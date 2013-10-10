@@ -25,12 +25,42 @@ Also, I have been looking through these other tools to see if they do solve the 
 
 ### Pantry Server
 
+The Pantry Server is the brains of the whole operation. It stores Chef material (cookbooks, roles, etc), knows what clients are connected and how to talk to them, and triggers off jobs at clients while receiving data from clients appropriately.
+
 #### Data Structures
+
+Chef stuff
+
+* Cookbooks
+* Applications
+* Environments
+* Roles
+* Data Bags
+
+Server Stuff
+
+* Nodes(?)
+* Clients(?)
+
+Management Stuff
+
+* Users
 
 #### Communication
 
+Pantry Server will have three 0MQ endpoints: PUB, REQ, REP. The PUB socket is a fan-out to all clients, telling them to do something. The REP socket receives responses from clients once they've finished their work, or are asking for information. The REQ socket sends requests to individual nodes.
+
 ### Pantry Client
+
+The Pantry Client is a functionality wrapper around chef-solo (chef-client? what does client do over solo outside of server communication?). The client can send and receive information and requests from the server and can converge the chef cookbooks according to role / environment / application.
 
 #### Wrapping Chef
 
 #### Communication
+
+Pantry Clients keep three 0MQ endpoints open to match the Server: SUB, REP, REQ. The SUB socket listens for published events meant for all nodes. REP receives individual requests from a server and REQ sends the server information it has requested, or to tell the server that this node is checked in, etc.
+
+
+## Security
+
+There's nothing more important for this project than a secure communications protocol. Highly sensitive information, like passwords, will be transmitted across the network between server and clients. Building this yourself is a recipe for disaster, as the Salt team is quickly learning, but there's some fantastic developments lately that will make this a plug-in-play setup: ZeroMQ's CurveZMQ security architecture: http://curvezmq.org/ which comes with 0MQ 4. Current plan is to run this security system with full Server/Client public/private key identification verification.
