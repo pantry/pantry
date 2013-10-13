@@ -1,7 +1,7 @@
 before_install:
-  - sudo apt-add-repository ppa:chris-lea/zeromq
-  - sudo aptitude update -qq
-  - sudo aptitude install -qq zeromq3
+  - sudo apt-add-repository ppa:chris-lea/zeromq -y
+  - sudo aptitude update
+  - sudo aptitude install zeromq3 -y
 language: ruby
 rvm:
   - 2.0.0
