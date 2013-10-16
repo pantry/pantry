@@ -5,7 +5,7 @@ module Pantry
   # The Pantry Server
   class Server
 
-    def start
+    def run
       @publish_socket = Communication::PublishSocket.new(
         Pantry.config.server_host,
         Pantry.config.pub_sub_port
@@ -17,7 +17,7 @@ module Pantry
       @publish_socket.send_message(message)
     end
 
-    def close
+    def shutdown
       @publish_socket.close
     end
 

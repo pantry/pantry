@@ -12,13 +12,13 @@ describe "Basic Server Client Communication" do
       Pantry.config.pub_sub_port = 10101
 
       server = Pantry::Server.new
-      server.start
+      server.run
 
       client1 = Pantry::Client.new
-      client1.connect_to_server
+      client1.run
 
       client2 = Pantry::Client.new
-      client2.connect_to_server
+      client2.run
 
       client1_test_message = false
       client1.on(:test_message) do
@@ -40,6 +40,10 @@ describe "Basic Server Client Communication" do
 
       assert client1_test_message, "Client 1 did not get the message"
       assert client2_test_message, "Client 2 did not get the message"
+
+      client1.shutdown
+      client2.shutdown
+      server.shutdown
     end
 
     it "can give a message to a subset of all connected clients"

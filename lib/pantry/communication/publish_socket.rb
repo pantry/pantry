@@ -22,7 +22,7 @@ module Pantry
         @socket.send(message.to_s)
       end
 
-      def shutdown
+      def close
         @socket.close
       end
     end

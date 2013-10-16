@@ -9,7 +9,7 @@ module Pantry
       @message_subscriptions = {}
     end
 
-    def connect_to_server
+    def run
       @subscribe_socket = Communication::SubscribeSocket.new(
         Pantry.config.server_host,
         Pantry.config.pub_sub_port
