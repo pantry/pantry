@@ -1,17 +1,21 @@
+require 'pantry/config'
 require 'pantry/communication/subscribe_socket'
 
 module Pantry
   # The pantry Client
   class Client
 
-    attr_reader :server_host, :subscribe_port
-
-    def initialize(server_host: '127.0.0.1', subscribe_port: 10101)
-      @server_host    = server_host
-      @subscribe_port = subscribe_port
-
-      @subscribe_socket = Communication::SubscribeSocket.new(self, server_host, subscribe_port)
+    def initialize
       @message_subscriptions = {}
+    end
+
+    def connect_to_server
+      @subscribe_socket = Communication::SubscribeSocket.new(
+        Pantry.config.server_host,
+        Pantry.config.pub_sub_port
+      )
+      @subscribe_socket.add_listener(self)
+      @subscribe_socket.open
     end
 
     def on(message, &block)
@@ -26,7 +30,7 @@ module Pantry
     end
 
     def shutdown
-      @subscribe_socket.shutdown
+      @subscribe_socket.close
     end
   end
 end

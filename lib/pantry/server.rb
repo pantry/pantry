@@ -1,22 +1,24 @@
+require 'pantry/config'
 require 'pantry/communication/publish_socket'
 
 module Pantry
   # The Pantry Server
   class Server
 
-    attr_reader :publish_port
-
-    def initialize(host: "127.0.0.1", publish_port: 10101)
-      @publish_port   = publish_port
-      @publish_socket = Communication::PublishSocket.new(host, publish_port)
+    def start
+      @publish_socket = Communication::PublishSocket.new(
+        Pantry.config.server_host,
+        Pantry.config.pub_sub_port
+      )
+      @publish_socket.open
     end
 
     def publish_to_clients(message)
       @publish_socket.send_message(message)
     end
 
-    def shutdown
-      @publish_socket.shutdown
+    def close
+      @publish_socket.close
     end
 
   end

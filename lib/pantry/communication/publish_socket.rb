@@ -10,11 +10,12 @@ module Pantry
       def initialize(host, port)
         @host = host
         @port = port
+      end
 
+      def open
         @socket = PubSocket.new
         @socket.linger = 0
-
-        @socket.bind("tcp://#{host}:#{port}")
+        @socket.bind("tcp://#{@host}:#{@port}")
       end
 
       def send_message(message)

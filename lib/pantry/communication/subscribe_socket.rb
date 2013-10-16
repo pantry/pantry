@@ -5,25 +5,28 @@ module Pantry
     class SubscribeSocket
       include Celluloid::ZMQ
 
-      attr_reader :host, :port
+      def initialize(server_host, subscribe_port)
+        @server_host    = server_host
+        @subscribe_port = subscribe_port
+        @listener = nil
+      end
 
-      def initialize(client, server_host, server_port)
-        @client = client
-        @port = server_port
-        @host = server_host
+      def add_listener(listener)
+        @listener = listener
+      end
 
+      def open
         @socket = SubSocket.new
         @socket.linger = 0
 
-        @socket.connect("tcp://#{@host}:#{@port}")
+        @socket.connect("tcp://#{@server_host}:#{@subscribe_port}")
         @socket.subscribe("")
 
         @running = true
-
         self.async.run
       end
 
-      def shutdown
+      def close
         @running = false
       end
 
@@ -34,7 +37,7 @@ module Pantry
       end
 
       def handle_message(message)
-        @client.handle_message(message)
+        @listener.handle_message(message) if @listener
       end
     end
   end

@@ -8,10 +8,17 @@ describe "Basic Server Client Communication" do
 
   describe "Server" do
     it "can give a message to all connected clients" do
+      Pantry.config.server_host = "127.0.0.1"
+      Pantry.config.pub_sub_port = 10101
+
       server = Pantry::Server.new
+      server.start
 
       client1 = Pantry::Client.new
+      client1.connect_to_server
+
       client2 = Pantry::Client.new
+      client2.connect_to_server
 
       client1_test_message = false
       client1.on(:test_message) do
