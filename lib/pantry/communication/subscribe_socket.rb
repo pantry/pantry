@@ -1,34 +1,40 @@
-require 'ffi-rzmq'
 require 'pantry/communication'
 
 module Pantry
   module Communication
     class SubscribeSocket
+      include Celluloid::ZMQ
 
       attr_reader :host, :port
 
-      def initialize(server_host, server_port)
+      def initialize(client, server_host, server_port)
+        @client = client
         @port = server_port
         @host = server_host
 
-        @socket = Communication.build_socket(ZMQ::SUB)
+        @socket = SubSocket.new
+        @socket.linger = 0
+
         @socket.connect("tcp://#{@host}:#{@port}")
-        @socket.setsockopt(ZMQ::SUBSCRIBE, '')
+        @socket.subscribe("")
+
+        @running = true
+
+        self.async.run
       end
 
-      def messages
-        [get_one_message]
+      def shutdown
+        @running = false
       end
 
-      def get_one_message
-        message_body = ''
-        error_or_bytes = @socket.recv_string(message_body)
-
-        if error_or_bytes < 0
-          ZMQ::LibZMQ.zmq_strerror(error_or_bytes).read_string
+      def run
+        while @running
+          async.handle_message(@socket.read)
         end
+      end
 
-        message_body
+      def handle_message(message)
+        @client.handle_message(message)
       end
     end
   end

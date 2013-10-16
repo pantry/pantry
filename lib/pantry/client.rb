@@ -10,12 +10,23 @@ module Pantry
       @server_host    = server_host
       @subscribe_port = subscribe_port
 
-      @subscribe_socket = Communication::SubscribeSocket.new(server_host, subscribe_port)
+      @subscribe_socket = Communication::SubscribeSocket.new(self, server_host, subscribe_port)
+      @message_subscriptions = {}
     end
 
-    def messages
-      @subscribe_socket.messages
+    def on(message, &block)
+      @message_subscriptions[message.to_s] = block
     end
 
+    # Callback from SubscribeSocket when a message is received
+    def handle_message(message)
+      if callback = @message_subscriptions[message]
+        callback.call
+      end
+    end
+
+    def shutdown
+      @subscribe_socket.shutdown
+    end
   end
 end

@@ -1,9 +1,9 @@
-require 'ffi-rzmq'
 require 'pantry/communication'
 
 module Pantry
   module Communication
     class PublishSocket
+      include Celluloid::ZMQ
 
       attr_reader :port, :host
 
@@ -11,12 +11,18 @@ module Pantry
         @host = host
         @port = port
 
-        @socket = Communication.build_socket(ZMQ::PUB)
-        err = @socket.bind("tcp://#{host}:#{port}")
+        @socket = PubSocket.new
+        @socket.linger = 0
+
+        @socket.bind("tcp://#{host}:#{port}")
       end
 
       def send_message(message)
-        @socket.send_string(message.to_s)
+        @socket.send(message.to_s)
+      end
+
+      def shutdown
+        @socket.close
       end
     end
   end

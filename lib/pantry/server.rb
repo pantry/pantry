@@ -15,5 +15,9 @@ module Pantry
       @publish_socket.send_message(message)
     end
 
+    def shutdown
+      @publish_socket.shutdown
+    end
+
   end
 end
