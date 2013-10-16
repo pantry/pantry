@@ -16,7 +16,7 @@ module Pantry
       end
 
       def open
-        @socket = SubSocket.new
+        @socket = Celluloid::ZMQ::SubSocket.new
         @socket.linger = 0
 
         @socket.connect("tcp://#{@server_host}:#{@subscribe_port}")

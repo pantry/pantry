@@ -13,7 +13,7 @@ module Pantry
       end
 
       def open
-        @socket = PubSocket.new
+        @socket = Celluloid::ZMQ::PubSocket.new
         @socket.linger = 0
         @socket.bind("tcp://#{@host}:#{@port}")
       end
