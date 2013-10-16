@@ -32,5 +32,6 @@ module Pantry
     def shutdown
       @subscribe_socket.close
     end
+
   end
 end
