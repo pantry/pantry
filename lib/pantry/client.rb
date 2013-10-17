@@ -18,14 +18,14 @@ module Pantry
       @subscribe_socket.open
     end
 
-    def on(message, &block)
-      @message_subscriptions[message.to_s] = block
+    def on(message_type, &block)
+      @message_subscriptions[message_type.to_s] = block
     end
 
     # Callback from SubscribeSocket when a message is received
     def handle_message(message)
-      if callback = @message_subscriptions[message]
-        callback.call
+      if callback = @message_subscriptions[message.type]
+        callback.call(message)
       end
     end
 

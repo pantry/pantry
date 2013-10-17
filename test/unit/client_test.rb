@@ -1,5 +1,6 @@
 require 'unit/test_helper'
 require 'pantry/client'
+require 'pantry/communication/message'
 
 describe Pantry::Client do
 
@@ -26,7 +27,7 @@ describe Pantry::Client do
       test_message_called = true
     end
 
-    client.handle_message("test_message")
+    client.handle_message(Pantry::Communication::Message.new("test_message"))
 
     assert test_message_called, "Test message didn't trigger the callback"
   end
