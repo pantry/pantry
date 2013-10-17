@@ -61,34 +61,38 @@ describe "Basic Server Client Communication" do
       assert client2_test_message, "Client 2 did not get the message"
     end
 
-    it "can give a message to a subset of all connected clients"
+    it "can give a message to a subset of all connected clients" do
+      client3 = Pantry::Client.new(roles: %w(database))
+      client3.run
+
+      client4 = Pantry::Client.new(roles: %w(database task))
+      client4.run
+
+      client3_test_messages = []
+      client3.on(:test_message) do |message|
+        client3_test_messages << message
+      end
+
+      client4_test_messages = []
+      client4.on(:test_message) do |message|
+        client4_test_messages << message
+      end
+
+      @server.publish_to_clients(Pantry::Communication::Message.new("test_message"),
+                                 Pantry::Communication::MessageFilter.new(roles: %w(database)))
+      @server.publish_to_clients(Pantry::Communication::Message.new("test_message"),
+                                 Pantry::Communication::MessageFilter.new(roles: %w(task)))
+
+      # Give communication time to happen
+      sleep 1
+
+      assert_equal "test_message", client3_test_messages.first.type
+      assert_equal ["test_message", "test_message"], client4_test_messages.map(&:type)
+    end
 
     it "can request information from a specific client"
 
     it "can request information from specific clients"
-
-#      server = Pantry::Server.new
-#
-#      client1 = Pantry::Client.new
-#      client2 = Pantry::Client.new
-#
-#      sleep 1
-#
-#      server.publish_to_clients("this_is_a_test")
-#
-#      sleep 2
-#
-#      assert_equal ["this_is_a_test"], client1.messages
-#      assert_equal ["this_is_a_test"], client2.messages
-#
-#      server.shutdown
-#      client1.shutdown
-#      client2.shutdown
-#    end
-
-    # PUB/SUB can also be used with a matcher so that only some clients
-    # pick up the published event, will noodle on this. Will need to support
-    # sending commands to and receiving responses from multiple clients at once
   end
 
   describe "Client" do

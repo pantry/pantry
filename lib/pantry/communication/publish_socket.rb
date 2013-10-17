@@ -1,4 +1,5 @@
 require 'pantry/communication'
+require 'pantry/communication/message_filter'
 
 module Pantry
   module Communication
@@ -18,8 +19,8 @@ module Pantry
         @socket.bind("tcp://#{@host}:#{@port}")
       end
 
-      def send_message(message)
-        @socket.write(serialize(message))
+      def send_message(message, filter = nil)
+        @socket.write(serialize(message, filter || MessageFilter.new))
       end
 
       def close
@@ -28,8 +29,9 @@ module Pantry
 
       private
 
-      def serialize(message)
+      def serialize(message, filter)
         [
+          filter.stream,
           message.type,
           message.body
         ].flatten.compact

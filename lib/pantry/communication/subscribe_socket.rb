@@ -1,5 +1,6 @@
 require 'pantry/communication'
 require 'pantry/communication/message'
+require 'pantry/communication/message_filter'
 
 module Pantry
   module Communication
@@ -10,10 +11,19 @@ module Pantry
         @server_host    = server_host
         @subscribe_port = subscribe_port
         @listener = nil
+        @filters = {}
       end
 
       def add_listener(listener)
         @listener = listener
+      end
+
+      def filter_on(application: nil, environment: nil, roles: [])
+        @filters = {
+          application: application,
+          environment: environment,
+          roles:       roles
+        }
       end
 
       def open
@@ -21,7 +31,11 @@ module Pantry
         @socket.linger = 0
 
         @socket.connect("tcp://#{@server_host}:#{@subscribe_port}")
-        @socket.subscribe("")
+
+        filter = MessageFilter.new(@filters)
+        filter.streams.each do |stream|
+          @socket.subscribe(stream)
+        end
 
         @running = true
         self.async.process_messages
@@ -40,7 +54,10 @@ module Pantry
       end
 
       def process_next_message
-        message = Message.new(@socket.read)
+        message = Message.new
+
+        message.stream = @socket.read
+        message.type = @socket.read
 
         while @socket.more_parts?
           message << @socket.read

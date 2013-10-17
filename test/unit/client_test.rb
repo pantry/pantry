@@ -8,12 +8,43 @@ describe Pantry::Client do
     Celluloid.init
   end
 
+  it "can take a list of roles this Client manages" do
+    client = Pantry::Client.new roles: %w(app db)
+    assert_equal %w(app db), client.roles
+  end
+
+  it "can take an application to manage" do
+    client = Pantry::Client.new application: "pantry"
+    assert_equal "pantry", client.application
+  end
+
+  it "can take an environment to manage" do
+    client = Pantry::Client.new environment: "production"
+    assert_equal "production", client.environment
+  end
+
   it "sets up a subscribe socket for communication, closes it on shutdown" do
     client = Pantry::Client.new
 
     Pantry::Communication::SubscribeSocket.any_instance.expects(:add_listener).with(client)
     Pantry::Communication::SubscribeSocket.any_instance.expects(:open)
     Pantry::Communication::SubscribeSocket.any_instance.expects(:close)
+
+    client.run
+    client.shutdown
+  end
+
+  it "configures filtering if the client has been given a scope" do
+    client = Pantry::Client.new application: "pantry", environment: "test",
+      roles: %w(application database)
+
+    Pantry::Communication::SubscribeSocket.any_instance.stubs(:add_listener)
+    Pantry::Communication::SubscribeSocket.any_instance.stubs(:open)
+    Pantry::Communication::SubscribeSocket.any_instance.stubs(:close)
+
+    Pantry::Communication::SubscribeSocket.any_instance.expects(:filter_on).with(
+      application: "pantry", environment: "test", roles: %w(application database)
+    )
 
     client.run
     client.shutdown

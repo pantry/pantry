@@ -20,10 +20,43 @@ describe Pantry::Communication::SubscribeSocket do
     socket.open
   end
 
+  describe "subscription filtering" do
+    it "subscribes to the stream according to filter options given" do
+      socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
+      socket.filter_on(application: "pantry")
+
+      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")
+
+      socket.open
+    end
+
+    it "subscribes to multiple streams to support nested scoping" do
+      socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
+      socket.filter_on(application: "pantry", environment: "test")
+
+      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")
+      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test")
+
+      socket.open
+    end
+
+    it "subscribes to multiple streams for multiple roles" do
+      socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
+      socket.filter_on(application: "pantry", environment: "test", roles: %w(web app))
+
+      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")
+      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test")
+      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test.web")
+      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test.app")
+
+      socket.open
+    end
+  end
+
   it "builds messages and passes each message to a listener" do
     zmq_socket = Class.new do
       def read
-        @buffer ||= ["message_type", "body part 1", "body part 2"]
+        @buffer ||= ["stream", "message_type", "body part 1", "body part 2"]
         @buffer.shift
       end
 
@@ -49,6 +82,7 @@ describe Pantry::Communication::SubscribeSocket do
     socket.send("process_next_message")
 
     message = listener.handled_message
+    assert_equal "stream", message.stream
     assert_equal "message_type", message.type
     assert_equal ["body part 1", "body part 2"], message.body
   end

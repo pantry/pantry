@@ -6,7 +6,17 @@ module Pantry
   # The pantry Client
   class Client
 
-    def initialize
+    attr_reader :application
+
+    attr_reader :environment
+
+    attr_reader :roles
+
+    def initialize(application: nil, environment: nil, roles: [])
+      @application = application
+      @environment = environment
+      @roles       = roles
+
       @message_subscriptions = {}
     end
 
@@ -16,6 +26,11 @@ module Pantry
         Pantry.config.pub_sub_port
       )
       @subscribe_socket.add_listener(self)
+      @subscribe_socket.filter_on(
+        application: @application,
+        environment: @environment,
+        roles: @roles
+      )
       @subscribe_socket.open
     end
 

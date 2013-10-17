@@ -14,8 +14,8 @@ module Pantry
       @publish_socket.open
     end
 
-    def publish_to_clients(message)
-      @publish_socket.send_message(message)
+    def publish_to_clients(message, filter = nil)
+      @publish_socket.send_message(message, filter)
     end
 
     def shutdown
