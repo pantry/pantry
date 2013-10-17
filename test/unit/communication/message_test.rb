@@ -8,6 +8,12 @@ describe Pantry::Communication::Message do
     assert_equal "message_type", message.type
   end
 
+  it "knows what stream it came across on" do
+    message = Pantry::Communication::Message.new("")
+    message.stream = "stream"
+    assert_equal "stream", message.stream
+  end
+
   it "can be given strings for the body parts" do
     message = Pantry::Communication::Message.new("type")
     message << "Part 1"
