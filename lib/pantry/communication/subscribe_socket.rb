@@ -4,6 +4,11 @@ require 'pantry/communication/message_filter'
 
 module Pantry
   module Communication
+
+    # The SubscribeSocket manages the Subscription side of the Pub/Sub channel,
+    # using a 0MQ PUB socket. This socket can subscribe to any number of streams
+    # depending on the filtering given. Messages received by this socket are passed
+    # to the configured listener as Messages.
     class SubscribeSocket
       include Celluloid::ZMQ
 

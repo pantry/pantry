@@ -48,7 +48,9 @@ Management Stuff
 
 #### Communication
 
-Pantry Server will have three 0MQ endpoints: PUB, REQ, REP. The PUB socket is a fan-out to all clients, telling them to do something. The REP socket receives responses from clients once they've finished their work, or are asking for information. The REQ socket sends requests to individual nodes.
+##### Publish
+
+Pantry Server exposes a ZMQ Publish socket down which command requests are blasted out to listening clients.
 
 ### Pantry Client
 
@@ -58,8 +60,9 @@ The Pantry Client is a functionality wrapper around chef-solo (chef-client? what
 
 #### Communication
 
-Pantry Clients keep three 0MQ endpoints open to match the Server: SUB, REP, REQ. The SUB socket listens for published events meant for all nodes. REP receives individual requests from a server and REQ sends the server information it has requested, or to tell the server that this node is checked in, etc.
+##### Subscribe
 
+Pantry Clients Subscribe to the Server's Publish socket, listening against multiple streams to ensure that the Client receives only and exactly the messages meant for it.
 
 ## Security
 
