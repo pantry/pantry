@@ -1,4 +1,5 @@
 require 'pantry/config'
+require 'pantry/communication/message'
 require 'pantry/communication/publish_socket'
 
 module Pantry

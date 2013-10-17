@@ -52,7 +52,7 @@ describe "Basic Server Client Communication" do
         client2_test_message = true
       end
 
-      @server.publish_to_clients("test_message")
+      @server.publish_to_clients(Pantry::Communication::Message.new("test_message"))
 
       # Give communication time to happen
       sleep 1
