@@ -1,7 +1,7 @@
 before_install:
-  - sudo apt-add-repository ppa:chris-lea/zeromq -y
-  - sudo apt-get update
-  - sudo apt-get install libzmq3 libzmq3-dev -y
+  - travis_retry sudo apt-add-repository ppa:chris-lea/zeromq -y
+  - travis_retry sudo apt-get update
+  - travis_retry sudo apt-get install libzmq3 libzmq3-dev -y
 language: ruby
 rvm:
   - 2.0.0
