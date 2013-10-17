@@ -1,4 +1,5 @@
 require 'pantry/communication'
+require 'pantry/communication/message'
 
 module Pantry
   module Communication
@@ -23,22 +24,35 @@ module Pantry
         @socket.subscribe("")
 
         @running = true
-        self.async.run
+        self.async.process_messages
       end
 
       def close
         @running = false
       end
 
-      def run
+      protected
+
+      def process_messages
         while @running
-          async.handle_message(@socket.read)
+          process_next_message
         end
+      end
+
+      def process_next_message
+        message = Message.new(@socket.read)
+
+        while @socket.more_parts?
+          message << @socket.read
+        end
+
+        async.handle_message(message)
       end
 
       def handle_message(message)
         @listener.handle_message(message) if @listener
       end
+
     end
   end
 end

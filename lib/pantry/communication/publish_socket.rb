@@ -19,11 +19,20 @@ module Pantry
       end
 
       def send_message(message)
-        @socket.send(message.to_s)
+        @socket.write(serialize(message))
       end
 
       def close
         @socket.close
+      end
+
+      private
+
+      def serialize(message)
+        [
+          message.type,
+          message.body
+        ].flatten.compact
       end
     end
   end
