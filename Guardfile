@@ -1,6 +1,8 @@
-ignore ".*.swp"
+ignore %r{.swp$}
 
-guard :bundler
+guard :bundler do
+  watch("Gemfile")
+end
 
 guard :shell do
   watch(%r{^(doc/.+\.dot)$}) { |m| system("dot -O -Tpng #{m[1]}") }
