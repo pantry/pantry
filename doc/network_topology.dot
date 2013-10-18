@@ -1,0 +1,46 @@
+digraph pantry {
+  rankdir = LR;
+  color = black;
+  splines = ortho;
+  node [shape=rectangle];
+
+  subgraph cluster_server {
+    label = "Pantry Server";
+    labeljust = left;
+    edge [style=dashed];
+
+    server     [label="Server"];
+    server_web [label="Web"];
+    api        [label="ROUTER"];
+    publish    [label="PUB"];
+
+    server_dealer [label="DEALER"];
+
+    server_web -> server [dir=both];
+    api        -> server [dir=both];
+
+    server -> publish;
+    server -> server_dealer [dir=both];
+  }
+
+  subgraph cluster_client {
+    label = "Pantry Client";
+    labeljust = right;
+    edge [style=dashed];
+
+    client        [label="Client"];
+    subscribe     [label="SUB"];
+    provisioning  [label="Chef"];
+    shell         [label="Shell"];
+    client_dealer [label="DEALER"];
+
+    client     -> provisioning [dir=both];
+    client     -> shell        [dir=both];
+
+    subscribe     -> client;
+    client_dealer -> client [dir=both];
+  }
+
+  server_dealer -> client_dealer [dir=both];
+  publish       -> subscribe;
+}
