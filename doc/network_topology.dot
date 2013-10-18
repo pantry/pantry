@@ -14,13 +14,13 @@ digraph pantry {
     api        [label="ROUTER"];
     publish    [label="PUB"];
 
-    server_dealer [label="DEALER"];
+    server_dealer [label="ROUTER"];
 
     server_web -> server [dir=both];
     api        -> server [dir=both];
 
     server -> publish;
-    server -> server_dealer [dir=both];
+    server -> server_dealer [dir=back];
   }
 
   subgraph cluster_client {
@@ -32,15 +32,16 @@ digraph pantry {
     subscribe     [label="SUB"];
     provisioning  [label="Chef"];
     shell         [label="Shell"];
+
     client_dealer [label="DEALER"];
 
     client     -> provisioning [dir=both];
     client     -> shell        [dir=both];
 
     subscribe     -> client;
-    client_dealer -> client [dir=both];
+    client_dealer -> client [dir=back];
   }
 
-  server_dealer -> client_dealer [dir=both];
+  server_dealer -> client_dealer [dir=back];
   publish       -> subscribe;
 }
