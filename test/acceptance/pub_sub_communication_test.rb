@@ -1,6 +1,6 @@
 require 'acceptance/test_helper'
 
-describe "Basic Server Client Communication" do
+describe "Pub/Sub Communication" do
 
   # We are dealing with actual socket communication here, so we want
   # to set up the socket communication itself once then play with various
@@ -41,7 +41,7 @@ describe "Basic Server Client Communication" do
   end
 
   describe "Server" do
-    it "can give a message to all connected clients" do
+    it "can publish a message to all connected clients" do
       client1_test_message = false
       @client1.on(:test_message) do |message|
         client1_test_message = true
@@ -61,7 +61,7 @@ describe "Basic Server Client Communication" do
       assert client2_test_message, "Client 2 did not get the message"
     end
 
-    it "can give a message to a subset of all connected clients" do
+    it "can publish a message to a subset of all connected clients" do
       client3 = Pantry::Client.new(roles: %w(database))
       client3.run
 
@@ -79,9 +79,9 @@ describe "Basic Server Client Communication" do
       end
 
       @server.publish_to_clients(Pantry::Communication::Message.new("test_message"),
-                                 Pantry::Communication::MessageFilter.new(roles: %w(database)))
+                                  Pantry::Communication::MessageFilter.new(roles: %w(database)))
       @server.publish_to_clients(Pantry::Communication::Message.new("test_message"),
-                                 Pantry::Communication::MessageFilter.new(roles: %w(task)))
+                                  Pantry::Communication::MessageFilter.new(roles: %w(task)))
 
       # Give communication time to happen
       sleep 1
@@ -89,14 +89,5 @@ describe "Basic Server Client Communication" do
       assert_equal "test_message", client3_test_messages.first.type
       assert_equal ["test_message", "test_message"], client4_test_messages.map(&:type)
     end
-
-    it "can request information from a specific client"
-
-    it "can request information from specific clients"
   end
-
-  describe "Client" do
-    it "can request information from the server"
-  end
-
 end
