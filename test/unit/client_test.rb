@@ -63,4 +63,16 @@ describe Pantry::Client do
     assert test_message_called, "Test message didn't trigger the callback"
   end
 
+  describe "Identity" do
+    it "can be given a specific identity" do
+      c = Pantry::Client.new identity: "My Test Client"
+      assert_equal "My Test Client", c.identity
+    end
+
+    it "defaults to the hostname of the machine" do
+      c = Pantry::Client.new
+      assert_equal `hostname`.strip, c.identity
+    end
+  end
+
 end

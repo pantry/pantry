@@ -2,6 +2,8 @@ require 'pantry/config'
 require 'pantry/communication/message'
 require 'pantry/communication/subscribe_socket'
 
+require 'socket'
+
 module Pantry
 
   # The pantry Client. The Client runs on any server that needs provisioning,
@@ -16,10 +18,18 @@ module Pantry
 
     attr_reader :roles
 
-    def initialize(application: nil, environment: nil, roles: [])
+    # This client's current identity. By default a client's identity is it's `hostname`,
+    # but a specific one can be given. These identities should be unique across the set
+    # of clients connecting to a single Pantry Server, but the system will happily
+    # send messages to multiple clients with the same identity, however responses are not
+    # guarenteed to be consistent.
+    attr_reader :identity
+
+    def initialize(application: nil, environment: nil, roles: [], identity: nil)
       @application = application
       @environment = environment
       @roles       = roles
+      @identity    = identity || current_hostname
 
       @message_subscriptions = {}
     end
@@ -58,6 +68,12 @@ module Pantry
     # Close down all communication channels and clean up resources
     def shutdown
       @subscribe_socket.close
+    end
+
+    protected
+
+    def current_hostname
+      Socket.gethostname
     end
 
   end
