@@ -6,9 +6,6 @@ describe Pantry::Communication::PublishSocket do
 
   before do
     Celluloid.boot
-
-    Celluloid::ZMQ::PubSocket.any_instance.stubs(:linger=)
-    Celluloid::ZMQ::PubSocket.any_instance.stubs(:bind)
   end
 
   it "opens a ZMQ PubSocket, bound to host / port" do
@@ -19,35 +16,4 @@ describe Pantry::Communication::PublishSocket do
     socket.open
   end
 
-  it "serializes a message and sends it down the pipe" do
-    Celluloid::ZMQ::PubSocket.any_instance.expects(:write).with(
-      ["", "message_type", "message_body_1", "message_body_2"]
-    )
-
-    socket = Pantry::Communication::PublishSocket.new("host", 1234)
-    socket.open
-
-    message = Pantry::Communication::Message.new("message_type")
-    message << "message_body_1"
-    message << "message_body_2"
-
-    socket.send_message(message, Pantry::Communication::MessageFilter.new)
-  end
-
-  it "sends messages only to the streams specified in the filter" do
-    filter = Pantry::Communication::MessageFilter.new(application: "pantry", environment: "test")
-
-    Celluloid::ZMQ::PubSocket.any_instance.expects(:write).with(
-      ["pantry.test", "message_type", "message_body_1", "message_body_2"]
-    )
-
-    socket = Pantry::Communication::PublishSocket.new("host", 1234)
-    socket.open
-
-    message = Pantry::Communication::Message.new("message_type")
-    message << "message_body_1"
-    message << "message_body_2"
-
-    socket.send_message(message, filter)
-  end
 end

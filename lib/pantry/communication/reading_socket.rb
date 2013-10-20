@@ -30,7 +30,7 @@ module Pantry
       end
 
       def build_socket
-        raise "Implement the socket setup. Must return the socket object."
+        raise "Implement the socket setup. Must return the socket object already connected/bound."
       end
 
       def close
