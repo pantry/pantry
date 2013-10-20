@@ -92,6 +92,15 @@ describe Pantry::Communication::MessageFilter do
 
       assert_equal "db", filter.stream
     end
+
+    it "uses the client identity if given" do
+      filter = Pantry::Communication::MessageFilter.new(
+        identity: "12345.client",
+        roles:    %w(app db)
+      )
+
+      assert_equal "12345.client", filter.stream
+    end
   end
 
 end

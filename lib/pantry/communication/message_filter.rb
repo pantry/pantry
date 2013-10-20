@@ -23,14 +23,20 @@ module Pantry
     #
     # This class is also used to when sending messages, to choose which specific stream
     # (e.g. the deepest buildable) to send a given message down.
+    #
+    # A client identity token can also be given via +identity+. If identity is provided
+    # then that stream will be chosen above all others. Use this to send a message to
+    # specific clients.
     class MessageFilter
 
-      def initialize(application: nil, environment: nil, roles: [])
+      def initialize(application: nil, environment: nil, roles: [], identity: nil)
         @application = application
         @environment = environment
         @roles       = roles
+        @identity    = identity
       end
 
+      # List out all communication streams this MessageFilter is configured to know about.
       def streams
         base_stream = @application ? [@application] : []
         list = base_stream.clone
@@ -47,8 +53,14 @@ module Pantry
         list.empty? ? [""] : list
       end
 
+      # Return the most specific stream that matches this MessageFilter.
+      # +identity+ is chosen above all others.
       def stream
-        [@application, @environment, @roles.first].compact.join(".")
+        if @identity
+          @identity
+        else
+          [@application, @environment, @roles.first].compact.join(".")
+        end
       end
 
     end
