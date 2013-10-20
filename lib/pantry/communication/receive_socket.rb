@@ -1,62 +1,19 @@
 require 'celluloid/zmq'
 require 'pantry/communication'
-require 'pantry/communication/message'
+require 'pantry/communication/reading_socket'
 
 module Pantry
   module Communication
 
-    class ReceiveSocket
-      include Celluloid::ZMQ
+    # The ReceiveSocket receives communication from Clients via the
+    # Dealer / Router socket pair. This class is the Server's Router side.
+    class ReceiveSocket < ReadingSocket
 
-      def initialize(host, port)
-        @host     = host
-        @port     = port
-        @listener = nil
+      def build_socket
+        socket = Celluloid::ZMQ::RouterSocket.new
+        socket.bind("tcp://#{host}:#{port}")
+        socket
       end
-
-      def add_listener(listener)
-        @listener = listener
-      end
-
-      def open
-        @socket = Celluloid::ZMQ::RouterSocket.new
-        @socket.bind("tcp://#{@host}:#{@port}")
-
-        @running = true
-        self.async.process_messages
-      end
-
-      def close
-        @running = false
-      end
-
-      protected
-
-      def process_messages
-        while @running
-          process_next_message
-        end
-
-        @socket.close
-      end
-
-      def process_next_message
-        message = Message.new
-
-        message.stream = @socket.read
-        message.type = @socket.read
-
-        while @socket.more_parts?
-          message << @socket.read
-        end
-
-        async.handle_message(message)
-      end
-
-      def handle_message(message)
-        @listener.handle_message(message) if @listener
-      end
-
 
     end
 
