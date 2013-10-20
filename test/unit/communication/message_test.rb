@@ -22,4 +22,11 @@ describe Pantry::Communication::Message do
     assert_equal ["Part 1", "Part 2"], message.body
   end
 
+  it "can be given the identity of the sending party" do
+    message = Pantry::Communication::Message.new("type")
+    message.identity = "server1"
+
+    assert_equal "server1", message.identity
+  end
+
 end
