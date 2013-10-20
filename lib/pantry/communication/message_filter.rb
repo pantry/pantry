@@ -29,6 +29,8 @@ module Pantry
     # specific clients.
     class MessageFilter
 
+      attr_reader :application, :environment, :roles, :identity
+
       def initialize(application: nil, environment: nil, roles: [], identity: nil)
         @application = application
         @environment = environment
@@ -61,6 +63,16 @@ module Pantry
         else
           [@application, @environment, @roles.first].compact.join(".")
         end
+      end
+
+      def ==(other)
+        return false unless other
+        return false unless other.is_a?(MessageFilter)
+
+        self.application   == other.application &&
+          self.environment == other.environment &&
+          self.roles       == other.roles &&
+          self.identity    == other.identity
       end
 
     end

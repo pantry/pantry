@@ -103,4 +103,29 @@ describe Pantry::Communication::MessageFilter do
     end
   end
 
+  describe "#equality" do
+    it "return true on empty filters" do
+      assert_equal(
+        Pantry::Communication::MessageFilter.new,
+        Pantry::Communication::MessageFilter.new
+      )
+    end
+
+    it "returns true on matching all options" do
+      assert_equal(
+        Pantry::Communication::MessageFilter.new(
+          application: "app", environment: "test", roles: %w(db)),
+        Pantry::Communication::MessageFilter.new(
+          application: "app", environment: "test", roles: %w(db))
+      )
+    end
+
+    it "returns false if other is nil" do
+      refute_equal(
+        Pantry::Communication::MessageFilter.new,
+        nil
+      )
+    end
+  end
+
 end
