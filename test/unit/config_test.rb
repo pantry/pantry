@@ -18,4 +18,9 @@ describe Pantry::Config do
     assert_equal 100, Pantry.config.pub_sub_port
   end
 
+  it "has an entry for the client-info receive port" do
+    Pantry.config.receive_port = 7788
+    assert_equal 7788, Pantry.config.receive_port
+  end
+
 end

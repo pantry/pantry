@@ -12,5 +12,8 @@ module Pantry
 
     # Port used for Pub/Sub communication
     attr_accessor :pub_sub_port
+
+    # Port clients use to send information to the Server
+    attr_accessor :receive_port
   end
 end
