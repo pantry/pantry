@@ -6,6 +6,12 @@ describe Pantry::Client do
 
   before do
     Celluloid.init
+
+    Pantry::Communication::SubscribeSocket.any_instance.stubs(:open)
+    Pantry::Communication::SubscribeSocket.any_instance.stubs(:close)
+
+    Pantry::Communication::SendSocket.any_instance.stubs(:open)
+    Pantry::Communication::SendSocket.any_instance.stubs(:close)
   end
 
   it "can take a list of roles this Client manages" do
@@ -48,6 +54,16 @@ describe Pantry::Client do
         identity: "client2"
       )
     )
+
+    client.run
+    client.shutdown
+  end
+
+  it "sets up a Send socket for communication, closes it on shutdown" do
+    client = Pantry::Client.new
+
+    Pantry::Communication::SendSocket.any_instance.expects(:open)
+    Pantry::Communication::SendSocket.any_instance.expects(:close)
 
     client.run
     client.shutdown

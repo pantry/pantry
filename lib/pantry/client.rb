@@ -1,6 +1,7 @@
 require 'pantry/config'
 require 'pantry/communication/message'
 require 'pantry/communication/subscribe_socket'
+require 'pantry/communication/send_socket'
 
 require 'socket'
 
@@ -52,6 +53,12 @@ module Pantry
         )
       )
       @subscribe_socket.open
+
+      @send_socket = Communication::SendSocket.new(
+        Pantry.config.server_host,
+        Pantry.config.receive_port
+      )
+      @send_socket.open
     end
 
     # Map a message event type to a handler Proc.
@@ -71,6 +78,7 @@ module Pantry
     # Close down all communication channels and clean up resources
     def shutdown
       @subscribe_socket.close
+      @send_socket.close
     end
 
     protected
