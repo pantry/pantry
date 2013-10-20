@@ -23,7 +23,7 @@ describe Pantry::Communication::SubscribeSocket do
   describe "subscription filtering" do
     it "subscribes to the stream according to filter options given" do
       socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
-      socket.filter_on(application: "pantry")
+      socket.filter_on(Pantry::Communication::MessageFilter.new(application: "pantry"))
 
       Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")
 
@@ -32,22 +32,11 @@ describe Pantry::Communication::SubscribeSocket do
 
     it "subscribes to multiple streams to support nested scoping" do
       socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
-      socket.filter_on(application: "pantry", environment: "test")
+      socket.filter_on(Pantry::Communication::MessageFilter.new(
+        application: "pantry", environment: "test"))
 
       Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")
       Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test")
-
-      socket.open
-    end
-
-    it "subscribes to multiple streams for multiple roles" do
-      socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
-      socket.filter_on(application: "pantry", environment: "test", roles: %w(web app))
-
-      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")
-      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test")
-      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test.web")
-      Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry.test.app")
 
       socket.open
     end

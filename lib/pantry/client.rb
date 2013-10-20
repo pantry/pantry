@@ -44,9 +44,12 @@ module Pantry
       )
       @subscribe_socket.add_listener(self)
       @subscribe_socket.filter_on(
-        application: @application,
-        environment: @environment,
-        roles: @roles
+        Communication::MessageFilter.new(
+          application: @application,
+          environment: @environment,
+          roles: @roles,
+          identity: @identity
+        )
       )
       @subscribe_socket.open
     end

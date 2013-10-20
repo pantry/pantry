@@ -16,19 +16,15 @@ module Pantry
         @server_host    = server_host
         @subscribe_port = subscribe_port
         @listener = nil
-        @filters = {}
+        @filter = MessageFilter.new
       end
 
       def add_listener(listener)
         @listener = listener
       end
 
-      def filter_on(application: nil, environment: nil, roles: [])
-        @filters = {
-          application: application,
-          environment: environment,
-          roles:       roles
-        }
+      def filter_on(message_filter)
+        @filter = message_filter
       end
 
       def open
@@ -37,8 +33,7 @@ module Pantry
 
         @socket.connect("tcp://#{@server_host}:#{@subscribe_port}")
 
-        filter = MessageFilter.new(@filters)
-        filter.streams.each do |stream|
+        @filter.streams.each do |stream|
           @socket.subscribe(stream)
         end
 
@@ -56,6 +51,8 @@ module Pantry
         while @running
           process_next_message
         end
+
+        @socket.close
       end
 
       def process_next_message

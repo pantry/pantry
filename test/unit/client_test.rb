@@ -36,14 +36,17 @@ describe Pantry::Client do
 
   it "configures filtering if the client has been given a scope" do
     client = Pantry::Client.new application: "pantry", environment: "test",
-      roles: %w(application database)
+      roles: %w(application database), identity: "client2"
 
     Pantry::Communication::SubscribeSocket.any_instance.stubs(:add_listener)
     Pantry::Communication::SubscribeSocket.any_instance.stubs(:open)
     Pantry::Communication::SubscribeSocket.any_instance.stubs(:close)
 
     Pantry::Communication::SubscribeSocket.any_instance.expects(:filter_on).with(
-      application: "pantry", environment: "test", roles: %w(application database)
+      Pantry::Communication::MessageFilter.new(
+        application: "pantry", environment: "test", roles: %w(application database),
+        identity: "client2"
+      )
     )
 
     client.run
