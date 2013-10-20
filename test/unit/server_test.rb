@@ -35,7 +35,8 @@ describe Pantry::Server do
     server = Pantry::Server.new
     server.run
 
-    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with("message", nil)
+    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(
+      "message", Pantry::Communication::MessageFilter.new)
 
     server.publish_to_clients("message")
   end

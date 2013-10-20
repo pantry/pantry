@@ -31,7 +31,7 @@ describe Pantry::Communication::PublishSocket do
     message << "message_body_1"
     message << "message_body_2"
 
-    socket.send_message(message)
+    socket.send_message(message, Pantry::Communication::MessageFilter.new)
   end
 
   it "sends messages only to the streams specified in the filter" do

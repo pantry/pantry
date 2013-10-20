@@ -24,8 +24,8 @@ module Pantry
         @socket.bind("tcp://#{@host}:#{@port}")
       end
 
-      def send_message(message, filter = nil)
-        @socket.write(serialize(message, filter || MessageFilter.new))
+      def send_message(message, filter)
+        @socket.write(serialize(message, filter))
       end
 
       def close

@@ -31,7 +31,7 @@ module Pantry
     end
 
     # Broadcast a message to all clients, optionally filtering for certain clients.
-    def publish_to_clients(message, filter = nil)
+    def publish_to_clients(message, filter = Communication::MessageFilter.new)
       @publish_socket.send_message(message, filter)
     end
 
