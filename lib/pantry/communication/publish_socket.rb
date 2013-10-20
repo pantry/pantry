@@ -29,7 +29,7 @@ module Pantry
       end
 
       def close
-        @socket.close
+        @socket.close if @socket
       end
 
       private
