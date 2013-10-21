@@ -22,7 +22,7 @@ module Pantry
       attr_accessor :body
 
       # Identity of who sent this message
-      attr_accessor :identity
+      attr_accessor :source
 
       attr_writer :requires_response
 
@@ -31,6 +31,16 @@ module Pantry
         @requires_response = false
 
         @body = []
+      end
+
+      # Set the source of this message either by an object that responds to #identity
+      # or a string.
+      def source=(source)
+        if source.respond_to?(:identity)
+          @source = source.identity
+        else
+          @source = source
+        end
       end
 
       # Flag this message as requiring a response
@@ -61,7 +71,7 @@ module Pantry
       def metadata
         {
           :type              => self.type,
-          :identity          => self.identity,
+          :source            => self.source,
           :requires_response => self.requires_response?
         }
       end
@@ -69,7 +79,7 @@ module Pantry
       # Given a hash, pull out the parts into local variables
       def metadata=(hash)
         @type              = hash["type"]
-        @identity          = hash["identity"]
+        @source            = hash["source"]
         @requires_response = hash["requires_response"]
       end
 

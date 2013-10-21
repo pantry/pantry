@@ -1,4 +1,5 @@
 require 'unit/test_helper'
+require 'pantry/client'
 require 'pantry/communication/message'
 
 describe Pantry::Communication::Message do
@@ -22,11 +23,19 @@ describe Pantry::Communication::Message do
     assert_equal ["Part 1", "Part 2"], message.body
   end
 
-  it "can be given the identity of the sending party" do
+  it "can be given the source of the sending party" do
     message = Pantry::Communication::Message.new("type")
-    message.identity = "server1"
+    message.source = "server1"
 
-    assert_equal "server1", message.identity
+    assert_equal "server1", message.source
+  end
+
+  it "can pull the identity string from an object that responds to identity" do
+    message = Pantry::Communication::Message.new("type")
+    client = Pantry::Client.new identity: "johnsonville"
+    message.source = client
+
+    assert_equal "johnsonville", message.source
   end
 
   it "can be flagged to require a response" do
@@ -53,13 +62,13 @@ describe Pantry::Communication::Message do
     message = Pantry::Communication::Message.new
     message.type = "read_stuff"
     message.requires_response!
-    message.identity = "99 Luftballoons"
+    message.source = "99 Luftballoons"
 
     assert_equal(
       {
         :type => "read_stuff",
         :requires_response => true,
-        :identity => "99 Luftballoons"
+        :source => "99 Luftballoons"
       },
       message.metadata
     )
@@ -70,11 +79,11 @@ describe Pantry::Communication::Message do
     message.metadata = {
       "type" => "read_stuff",
       "requires_response" => true,
-      "identity" => "99 Luftballoons"
+      "source" => "99 Luftballoons"
     }
 
     assert_equal "read_stuff", message.type
-    assert_equal "99 Luftballoons", message.identity
+    assert_equal "99 Luftballoons", message.source
     assert       message.requires_response?
   end
 
