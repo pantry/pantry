@@ -39,6 +39,10 @@ module Pantry
         @running = false
       end
 
+      def has_source_header?
+        false
+      end
+
       protected
 
       def process_messages
@@ -51,6 +55,10 @@ module Pantry
 
       def process_next_message
         message = Message.new
+
+        if has_source_header?
+          message.source = @socket.read
+        end
 
         message.stream = @socket.read
         message.metadata = JSON.parse(@socket.read)

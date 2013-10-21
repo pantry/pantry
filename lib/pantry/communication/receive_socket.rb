@@ -15,6 +15,10 @@ module Pantry
         socket
       end
 
+      def has_source_header?
+        true
+      end
+
     end
 
   end

@@ -6,5 +6,6 @@ class Minitest::Test
 
   alias assert_not_nil refute_nil
   alias assert_not     refute
+  alias assert_false   refute
 
 end
