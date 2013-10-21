@@ -61,6 +61,14 @@ module Pantry
       end
     end
 
+    # Send a message to the Server
+    def send_request(message)
+      message.requires_response!
+      message.source = self
+
+      @networking.send_request(message)
+    end
+
     # Close down all communication channels and clean up resources
     def shutdown
       @networking.shutdown

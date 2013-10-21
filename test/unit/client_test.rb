@@ -67,6 +67,18 @@ describe Pantry::Client do
     client.receive_message(message)
   end
 
+  it "can request info of a the server" do
+    client = Pantry::Client.new(network_stack_class: FakeNetworkStack)
+    message = Pantry::Communication::Message.new("test message")
+
+    FakeNetworkStack.any_instance.expects(:send_request).with(message)
+
+    client.send_request( message)
+
+    assert message.requires_response?, "Message should require a response from the server"
+    assert_equal client.identity, message.source
+  end
+
   describe "Identity" do
     it "can be given a specific identity" do
       c = Pantry::Client.new identity: "My Test Client"

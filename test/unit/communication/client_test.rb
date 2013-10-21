@@ -71,4 +71,18 @@ describe Pantry::Communication::Client do
     client.run
     client.send_message(message)
   end
+
+  it "sends a message to the server, returning a future" do
+    pantry_client = Pantry::Client.new
+    client = Pantry::Communication::Client.new(pantry_client)
+    client.run
+
+    message = Pantry::Communication::Message.new("message")
+    Pantry::Communication::SendSocket.any_instance.expects(:send_message).with(message)
+
+    future = client.send_request(message)
+
+    assert_not_nil future
+    assert_false   future.ready?
+  end
 end
