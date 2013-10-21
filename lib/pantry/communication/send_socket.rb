@@ -12,7 +12,7 @@ module Pantry
       def build_socket
         socket = Celluloid::ZMQ::DealerSocket.new
         socket.linger = 0
-        socket.connect("tcp://#{@host}:#{@port}")
+        socket.connect("tcp://#{host}:#{port}")
         socket
       end
 
