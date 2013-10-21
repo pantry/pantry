@@ -18,7 +18,10 @@ describe "Pub/Sub Communication" do
         client2_test_message = true
       end
 
-      @server.publish_message(Pantry::Communication::Message.new("test_message"))
+      @server.publish_message(
+        Pantry::Communication::Message.new("test_message"),
+        Pantry::Communication::MessageFilter.new(application: "pantry")
+      )
 
       # Give communication time to happen
       sleep 1
