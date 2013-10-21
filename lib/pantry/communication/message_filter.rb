@@ -40,8 +40,17 @@ module Pantry
 
       # List out all communication streams this MessageFilter is configured to know about.
       def streams
-        base_stream = @application ? [@application] : []
-        list = base_stream.clone
+        list = []
+        base_stream = []
+
+        if @identity
+          list << @identity
+        end
+
+        if @application
+          list << @application
+          base_stream = [@application]
+        end
 
         if @environment
           list << [base_stream, @environment].flatten.compact.join(".")

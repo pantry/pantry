@@ -11,12 +11,14 @@ describe Pantry::Communication::MessageFilter do
 
     it "takes a hash of filters and builds streams from them" do
       filter = Pantry::Communication::MessageFilter.new(
+        identity:    "my_test_ident",
         application: "pantry",
         environment: "test",
         roles:       %w(db app)
       )
 
       expected_streams = [
+        "my_test_ident",
         "pantry",
         "pantry.test",
         "pantry.test.db",
