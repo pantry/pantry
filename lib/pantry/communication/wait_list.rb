@@ -10,20 +10,20 @@ module Pantry
     class WaitList
 
       def initialize
-        @futures = {}
+        @futures = Hash.new {|hash, key| hash[key] = []}
       end
 
       # Given an +identity+ of a Client or Server and the +message+ being sent,
       # create a Future for a response to this message.
       def wait_for(identity, message)
         future = Celluloid::Future.new
-        @futures[ [identity, message.type] ] = future
+        @futures[ [identity, message.type] ] << future
         future
       end
 
       # Is there a future waiting for this response message?
       def waiting_for?(message)
-        !@futures[ [message.source, message.type] ].nil?
+        !@futures[ [message.source, message.type] ].empty?
       end
 
       # Internal to Celluloid::Future, using #signal ends up in a Result object
@@ -35,7 +35,7 @@ module Pantry
       FutureResultWrapper = Struct.new(:value)
 
       def received(message)
-        if future = @futures[ [message.source, message.type] ]
+        if future = @futures[ [message.source, message.type] ].shift
           future.signal(FutureResultWrapper.new(message))
         end
       end
