@@ -1,4 +1,6 @@
 require 'celluloid/zmq'
+require 'json'
+
 require 'pantry/communication'
 require 'pantry/communication/message_filter'
 
@@ -39,7 +41,7 @@ module Pantry
       def serialize(message, filter)
         [
           filter.stream,
-          message.type,
+          message.metadata.to_json,
           message.body
         ].flatten.compact
       end

@@ -1,4 +1,6 @@
 require 'celluloid/zmq'
+require 'json'
+
 require 'pantry/communication'
 require 'pantry/communication/message'
 
@@ -51,7 +53,7 @@ module Pantry
         message = Message.new
 
         message.stream = @socket.read
-        message.type = @socket.read
+        message.metadata = JSON.parse(@socket.read)
 
         while @socket.more_parts?
           message << @socket.read

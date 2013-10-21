@@ -36,7 +36,7 @@ describe Pantry::Communication::WritingSocket do
     @writer.send_message(message)
 
     assert_equal(
-      ["", "message_type", "message_body_1", "message_body_2"],
+      ["", message.metadata.to_json, "message_body_1", "message_body_2"],
       @zmq_socket.written
     )
   end
@@ -51,7 +51,7 @@ describe Pantry::Communication::WritingSocket do
     @writer.send_message(message, filter)
 
     assert_equal(
-      ["pantry.test", "message_type", "message_body_1", "message_body_2"],
+      ["pantry.test", message.metadata.to_json, "message_body_1", "message_body_2"],
       @zmq_socket.written
     )
   end
