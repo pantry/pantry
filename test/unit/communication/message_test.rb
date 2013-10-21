@@ -29,4 +29,24 @@ describe Pantry::Communication::Message do
     assert_equal "server1", message.identity
   end
 
+  it "can be flagged to require a response" do
+    message = Pantry::Communication::Message.new("type")
+    message.requires_response!
+
+    assert message.requires_response?
+  end
+
+  it "can build a response version of itself" do
+    message = Pantry::Communication::Message.new("type")
+    message << "Body part 1"
+    message << "Body part 2"
+    message.requires_response!
+
+    response = message.build_response
+
+    assert_equal "type", response.type
+    assert_equal [], response.body
+    assert_not response.requires_response?, "Message shouldn't require a response"
+  end
+
 end

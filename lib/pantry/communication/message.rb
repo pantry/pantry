@@ -14,14 +14,37 @@ module Pantry
       attr_accessor :type
 
       # The full body of the message. See specific message types for handling.
-      attr_reader :body
+      attr_accessor :body
 
       # Identity of who sent this message
       attr_accessor :identity
 
+      attr_writer :requires_response
+
       def initialize(message_type = nil)
-        @type = message_type
+        @type              = message_type
+        @requires_response = false
+
         @body = []
+      end
+
+      # Flag this message as requiring a response
+      def requires_response!
+        @requires_response = true
+      end
+
+      # Does this message require a response message?
+      def requires_response?
+        @requires_response
+      end
+
+      # Build a copy of this message to use when responding
+      # to the message
+      def build_response
+        response = self.clone
+        response.body = []
+        response.requires_response = false
+        response
       end
 
       # Add a message part to this Message's body
