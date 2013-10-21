@@ -47,6 +47,8 @@ describe Pantry::Server do
     )
 
     server.send_request("client1", message)
+
+    assert message.requires_response?, "Message should require a response from the receiver"
   end
 
 end

@@ -4,6 +4,11 @@ require 'pantry/communication/message'
 
 describe Pantry::Client do
 
+  class FakeNetworkStack
+    def initialize(listener)
+    end
+  end
+
   it "can take a list of roles this Client manages" do
     client = Pantry::Client.new roles: %w(app db)
     assert_equal %w(app db), client.roles
@@ -20,11 +25,6 @@ describe Pantry::Client do
   end
 
   it "starts up and shuts down the networking stack" do
-    class FakeNetworkStack
-      def initialize(listener)
-      end
-    end
-
     FakeNetworkStack.any_instance.expects(:run)
     FakeNetworkStack.any_instance.expects(:shutdown)
 
@@ -44,6 +44,26 @@ describe Pantry::Client do
     client.receive_message(Pantry::Communication::Message.new("test_message"))
 
     assert test_message_called, "Test message didn't trigger the callback"
+  end
+
+  it "builds and sends a response message if message flagged as needing one" do
+    client = Pantry::Client.new(network_stack_class: FakeNetworkStack)
+
+    test_message_called = false
+    client.on(:test_message) do
+      test_message_called = true
+      "A response message"
+    end
+
+    message = Pantry::Communication::Message.new("test_message")
+    message.requires_response!
+
+    FakeNetworkStack.any_instance.expects(:send_message).with do |response|
+      assert_equal "test_message", response.type
+      assert_equal ["A response message"], response.body
+    end
+
+    client.receive_message(message)
   end
 
   describe "Identity" do

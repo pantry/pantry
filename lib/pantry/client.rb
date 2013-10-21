@@ -53,7 +53,11 @@ module Pantry
     # Callback from SubscribeSocket when a message is received
     def receive_message(message)
       if callback = @message_subscriptions[message.type]
-        callback.call(message)
+        results = callback.call(message)
+
+        if message.requires_response?
+          send_results_back_to_requester(message, results)
+        end
       end
     end
 
@@ -66,6 +70,13 @@ module Pantry
 
     def current_hostname
       Socket.gethostname
+    end
+
+    def send_results_back_to_requester(message, results)
+      response_message = message.build_response
+      response_message << results
+
+      @networking.send_message(response_message)
     end
 
   end

@@ -19,10 +19,10 @@ class Minitest::Test
       $server = Pantry::Server.new
       $server.run
 
-      $client1 = Pantry::Client.new
+      $client1 = Pantry::Client.new identity: "client1"
       $client1.run
 
-      $client2 = Pantry::Client.new
+      $client2 = Pantry::Client.new identity: "client2"
       $client2.run
 
       # Ensure communication figures itself out in time

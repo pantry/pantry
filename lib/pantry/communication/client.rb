@@ -40,8 +40,14 @@ module Pantry
         @send_socket.close
       end
 
+      # Receive a message from the server
       def handle_message(message)
         @listener.receive_message(message)
+      end
+
+      # Send a message back up to the server
+      def send_message(message)
+        @send_socket.send_message(message)
       end
 
     end

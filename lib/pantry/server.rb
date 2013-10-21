@@ -31,6 +31,8 @@ module Pantry
     # Returns a Future object, use #value to get the response from the Client
     # when it's available.
     def send_request(client_identity, message)
+      message.requires_response!
+
       @networking.send_request(
         message, Communication::MessageFilter.new(:identity => client_identity))
     end

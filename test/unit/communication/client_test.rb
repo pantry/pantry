@@ -60,4 +60,15 @@ describe Pantry::Communication::Client do
     client.run
     client.shutdown
   end
+
+  it "sends messages through the Send socket back to the server" do
+    pantry_client = Pantry::Client.new
+    client = Pantry::Communication::Client.new(pantry_client)
+    message = Pantry::Communication::Message.new("message")
+
+    Pantry::Communication::SendSocket.any_instance.expects(:send_message).with(message)
+
+    client.run
+    client.send_message(message)
+  end
 end
