@@ -18,7 +18,7 @@ describe "Pub/Sub Communication" do
         client2_test_message = true
       end
 
-      @server.publish_to_clients(Pantry::Communication::Message.new("test_message"))
+      @server.publish_message(Pantry::Communication::Message.new("test_message"))
 
       # Give communication time to happen
       sleep 1
@@ -44,10 +44,10 @@ describe "Pub/Sub Communication" do
         client4_test_messages << message
       end
 
-      @server.publish_to_clients(Pantry::Communication::Message.new("test_message"),
-                                  Pantry::Communication::MessageFilter.new(roles: %w(database)))
-      @server.publish_to_clients(Pantry::Communication::Message.new("test_message"),
-                                  Pantry::Communication::MessageFilter.new(roles: %w(task)))
+      @server.publish_message(Pantry::Communication::Message.new("test_message"),
+                              Pantry::Communication::MessageFilter.new(roles: %w(database)))
+      @server.publish_message(Pantry::Communication::Message.new("test_message"),
+                              Pantry::Communication::MessageFilter.new(roles: %w(task)))
 
       # Give communication time to happen
       sleep 1

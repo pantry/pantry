@@ -3,65 +3,50 @@ require 'pantry/server'
 
 describe Pantry::Server do
 
-  before do
-    Celluloid.init
-    Pantry::Communication::PublishSocket.any_instance.stubs(:open)
-
-    Pantry::Communication::ReceiveSocket.any_instance.stubs(:add_listener)
-    Pantry::Communication::ReceiveSocket.any_instance.stubs(:open)
+  class FakeNetworkStack
+    def initialize(listener)
+    end
   end
 
-  it "opens a publish socket for communication, closing it on shutdown" do
-    Pantry::Communication::PublishSocket.any_instance.expects(:open)
-    Pantry::Communication::PublishSocket.any_instance.expects(:close)
+  it "starts and stops the networking stack" do
+    FakeNetworkStack.any_instance.expects(:run)
+    FakeNetworkStack.any_instance.expects(:shutdown)
 
-    server = Pantry::Server.new
+    server = Pantry::Server.new(FakeNetworkStack)
     server.run
     server.shutdown
   end
 
-  it "opens a receive socket for communication, closing it on shutdown" do
-    server = Pantry::Server.new
+  it "can publish messages to all clients" do
+    server = Pantry::Server.new(FakeNetworkStack)
+    message = Pantry::Communication::Message.new("test message")
 
-    Pantry::Communication::ReceiveSocket.any_instance.expects(:add_listener).with(server)
-    Pantry::Communication::ReceiveSocket.any_instance.expects(:open)
-    Pantry::Communication::ReceiveSocket.any_instance.expects(:close)
+    FakeNetworkStack.any_instance.expects(:publish_message).with(
+      message, Pantry::Communication::MessageFilter.new
+    )
 
-    server.run
-    server.shutdown
+    server.publish_message(message)
   end
 
-  it "uses the publish socket to send messages to clients" do
-    server = Pantry::Server.new
-    server.run
+  it "can publish messages to a filtered set of clients" do
+    server = Pantry::Server.new(FakeNetworkStack)
+    message = Pantry::Communication::Message.new("test message")
+    filter = Pantry::Communication::MessageFilter.new(roles: %(db))
 
-    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(
-      "message", Pantry::Communication::MessageFilter.new)
+    FakeNetworkStack.any_instance.expects(:publish_message).with(message, filter)
 
-    server.publish_to_clients("message")
+    server.publish_message(message, filter)
   end
 
-  it "passes down a given MessageFilter to the socket" do
-    server = Pantry::Server.new
-    server.run
+  it "can request info of a specific client" do
+    server = Pantry::Server.new(FakeNetworkStack)
+    message = Pantry::Communication::Message.new("test message")
 
-    filter = Pantry::Communication::MessageFilter.new
-    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with("message", filter)
+    FakeNetworkStack.any_instance.expects(:send_request).with(
+      message, Pantry::Communication::MessageFilter.new(identity: "client1")
+    )
 
-    server.publish_to_clients("message", filter)
+    server.send_request("client1", message)
   end
 
-  it "sends a message to a single client via identity, returning a future" do
-    server = Pantry::Server.new
-    server.run
-
-    filter = Pantry::Communication::MessageFilter.new(identity: "client1")
-    message = Pantry::Communication::Message.new("message")
-    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
-
-    future = server.request_from_client("client1", message)
-
-    assert_not_nil future
-    assert_not future.ready?
-  end
 end
