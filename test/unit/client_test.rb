@@ -58,9 +58,10 @@ describe Pantry::Client do
     message = Pantry::Communication::Message.new("test_message")
     message.requires_response!
 
-    FakeNetworkStack.any_instance.expects(:send_message).with do |response|
-      assert_equal "test_message", response.type
-      assert_equal ["A response message"], response.body
+    FakeNetworkStack.any_instance.expects(:send_message).with do |response_message|
+      assert_equal client.identity, response_message.source
+      assert_equal "test_message", response_message.type
+      assert_equal ["A response message"], response_message.body
     end
 
     client.receive_message(message)

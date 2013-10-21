@@ -74,6 +74,7 @@ module Pantry
 
     def send_results_back_to_requester(message, results)
       response_message = message.build_response
+      response_message.source = self
       response_message << results
 
       @networking.send_message(response_message)
