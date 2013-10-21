@@ -46,7 +46,36 @@ describe Pantry::Communication::Message do
 
     assert_equal "type", response.type
     assert_equal [], response.body
-    assert_not response.requires_response?, "Message shouldn't require a response"
+    assert_false response.requires_response?, "Message shouldn't require a response"
+  end
+
+  it "has a hash of metadata" do
+    message = Pantry::Communication::Message.new
+    message.type = "read_stuff"
+    message.requires_response!
+    message.identity = "99 Luftballoons"
+
+    assert_equal(
+      {
+        :type => "read_stuff",
+        :requires_response => true,
+        :identity => "99 Luftballoons"
+      },
+      message.metadata
+    )
+  end
+
+  it "takes a hash of metadata and parses out approriate values" do
+    message = Pantry::Communication::Message.new
+    message.metadata = {
+      "type" => "read_stuff",
+      "requires_response" => true,
+      "identity" => "99 Luftballoons"
+    }
+
+    assert_equal "read_stuff", message.type
+    assert_equal "99 Luftballoons", message.identity
+    assert       message.requires_response?
   end
 
 end

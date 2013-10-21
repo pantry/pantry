@@ -5,6 +5,11 @@ module Pantry
     # Message is the container for communication between the client and server.
     # Messages know what stream they've been sent down, have a type to differentiate them
     # from each other, and an arbitrarily large body.
+    #
+    # Every message has three sections, the stream, metadata, and body. The stream defines
+    # where the message needs to go. The metadata defines information about the message, it's
+    # type, if it needs a response, everything that doesn't go in the body. The body is the
+    # request message itself.
     class Message
 
       # When receiving a message from pub/sub, which stream this Message originated from.
@@ -50,6 +55,22 @@ module Pantry
       # Add a message part to this Message's body
       def <<(part)
         @body << part
+      end
+
+      # Return all of this message's metadata as a hash
+      def metadata
+        {
+          :type              => self.type,
+          :identity          => self.identity,
+          :requires_response => self.requires_response?
+        }
+      end
+
+      # Given a hash, pull out the parts into local variables
+      def metadata=(hash)
+        @type              = hash["type"]
+        @identity          = hash["identity"]
+        @requires_response = hash["requires_response"]
       end
 
     end
