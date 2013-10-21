@@ -4,16 +4,6 @@ require 'pantry/communication/message'
 
 describe Pantry::Client do
 
-  before do
-    Celluloid.init
-
-    Pantry::Communication::SubscribeSocket.any_instance.stubs(:open)
-    Pantry::Communication::SubscribeSocket.any_instance.stubs(:close)
-
-    Pantry::Communication::SendSocket.any_instance.stubs(:open)
-    Pantry::Communication::SendSocket.any_instance.stubs(:close)
-  end
-
   it "can take a list of roles this Client manages" do
     client = Pantry::Client.new roles: %w(app db)
     assert_equal %w(app db), client.roles
@@ -29,42 +19,16 @@ describe Pantry::Client do
     assert_equal "production", client.environment
   end
 
-  it "sets up a subscribe socket for communication, closes it on shutdown" do
-    client = Pantry::Client.new
+  it "starts up and shuts down the networking stack" do
+    class FakeNetworkStack
+      def initialize(listener)
+      end
+    end
 
-    Pantry::Communication::SubscribeSocket.any_instance.expects(:add_listener).with(client)
-    Pantry::Communication::SubscribeSocket.any_instance.expects(:open)
-    Pantry::Communication::SubscribeSocket.any_instance.expects(:close)
+    FakeNetworkStack.any_instance.expects(:run)
+    FakeNetworkStack.any_instance.expects(:shutdown)
 
-    client.run
-    client.shutdown
-  end
-
-  it "configures filtering if the client has been given a scope" do
-    client = Pantry::Client.new application: "pantry", environment: "test",
-      roles: %w(application database), identity: "client2"
-
-    Pantry::Communication::SubscribeSocket.any_instance.stubs(:add_listener)
-    Pantry::Communication::SubscribeSocket.any_instance.stubs(:open)
-    Pantry::Communication::SubscribeSocket.any_instance.stubs(:close)
-
-    Pantry::Communication::SubscribeSocket.any_instance.expects(:filter_on).with(
-      Pantry::Communication::MessageFilter.new(
-        application: "pantry", environment: "test", roles: %w(application database),
-        identity: "client2"
-      )
-    )
-
-    client.run
-    client.shutdown
-  end
-
-  it "sets up a Send socket for communication, closes it on shutdown" do
-    client = Pantry::Client.new
-
-    Pantry::Communication::SendSocket.any_instance.expects(:open)
-    Pantry::Communication::SendSocket.any_instance.expects(:close)
-
+    client = Pantry::Client.new(network_stack_class: FakeNetworkStack)
     client.run
     client.shutdown
   end
@@ -77,7 +41,7 @@ describe Pantry::Client do
       test_message_called = true
     end
 
-    client.handle_message(Pantry::Communication::Message.new("test_message"))
+    client.receive_message(Pantry::Communication::Message.new("test_message"))
 
     assert test_message_called, "Test message didn't trigger the callback"
   end
