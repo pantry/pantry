@@ -1,0 +1,19 @@
+digraph message {
+  node [shape=record];
+  rankdir = LR;
+
+  subgraph cluster_zmq {
+    label = "ZMQ";
+    labeljust = right;
+    body [shape=record width=2 label="Stream |<metadata> Metadata | body[0] | body[1] | ..."];
+  }
+
+  subgraph cluster_metadata {
+    label = "JSON Metadata";
+    labeljust = right;
+
+    metadata [shape=record width=2 label="<top> Type | Source | Response\nRequired?"];
+  }
+
+  body:metadata -> metadata:top;
+}
