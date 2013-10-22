@@ -2,6 +2,8 @@ require 'pantry/communication/server'
 require 'pantry/communication/message'
 require 'pantry/communication/message_filter'
 
+require 'socket'
+
 module Pantry
 
   # The Pantry Server
@@ -37,6 +39,7 @@ module Pantry
     # when it's available.
     def send_request(client_identity, message)
       message.requires_response!
+      message.source = self
 
       @networking.send_request(
         message, Communication::MessageFilter.new(:identity => client_identity))
