@@ -1,5 +1,6 @@
 require 'pantry/communication/client'
 require 'pantry/communication/message_filter'
+require 'pantry/commands/client_commands'
 
 require 'socket'
 
@@ -29,9 +30,8 @@ module Pantry
       @roles       = roles
       @identity    = identity || current_hostname
 
+      @commands   = Commands::ClientCommands.new
       @networking = network_stack_class.new(self)
-
-      @message_subscriptions = {}
     end
 
     # Start up the Client.
@@ -41,23 +41,23 @@ module Pantry
       @networking.run
     end
 
+    # Close down all communication channels and clean up resources
+    def shutdown
+      @networking.shutdown
+    end
+
     # Map a message event type to a handler Proc.
     # All messages have a type, use this method to register a block to
     # handle any messages that come to this Client of the given type.
-    # TODO Move this or something like it to networking? Server needs the same
-    # Will actually probably build a Command system and drop this entirely
     def on(message_type, &block)
-      @message_subscriptions[message_type.to_s] = block
+      @commands.add_handler(message_type, &block)
     end
 
     # Callback from SubscribeSocket when a message is received
     def receive_message(message)
-      if callback = @message_subscriptions[message.type]
-        results = callback.call(message)
-
-        if message.requires_response?
-          send_results_back_to_requester(message, results)
-        end
+      results = @commands.process(message)
+      if message.requires_response?
+        send_results_back_to_requester(message, results)
       end
     end
 
@@ -67,11 +67,6 @@ module Pantry
       message.source = self
 
       @networking.send_request(message)
-    end
-
-    # Close down all communication channels and clean up resources
-    def shutdown
-      @networking.shutdown
     end
 
     protected
