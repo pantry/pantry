@@ -23,4 +23,24 @@ describe Pantry::Commands::CommandHandler do
     assert_nil commands.process(message)
   end
 
+  class TestMessage
+    def perform
+      "Test message ran"
+    end
+
+    def self.from_message(message)
+      self.new
+    end
+  end
+
+  it "works with Command classes" do
+    commands = Pantry::Commands::CommandHandler.new
+    message = Pantry::Communication::Message.new("TestMessage")
+
+    commands.add_command(TestMessage)
+    output = commands.process(message)
+
+    assert_equal "Test message ran", output
+  end
+
 end
