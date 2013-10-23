@@ -25,8 +25,7 @@ describe Pantry::Commands::ExecuteShell do
     command = Pantry::Commands::ExecuteShell.new("hostname", "--invalid")
     stdout, stderr, status = command.perform
 
-    assert_equal "", stdout
-    assert_match /illegal option/m, stderr
+    assert_not_equal "", stderr
     assert status > 0, "Status should have been a failure (> 0)"
   end
 
