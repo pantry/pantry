@@ -23,6 +23,14 @@ describe Pantry::Communication::Message do
     assert_equal ["Part 1", "Part 2"], message.body
   end
 
+  it "ensures the body is always a flattened array" do
+    message = Pantry::Communication::Message.new("type")
+    message << ["Part 1"]
+    message << [[[[["Part 2"]]]]]
+
+    assert_equal ["Part 1", "Part 2"], message.body
+  end
+
   it "can be given the source of the sending party" do
     message = Pantry::Communication::Message.new("type")
     message.source = "server1"

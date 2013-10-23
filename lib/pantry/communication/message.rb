@@ -65,6 +65,7 @@ module Pantry
       # Add a message part to this Message's body
       def <<(part)
         @body << part
+        @body.flatten!
       end
 
       # Return all of this message's metadata as a hash
