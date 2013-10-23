@@ -68,6 +68,12 @@ module Pantry
         @body.flatten!
       end
 
+      # Get a copy of the body data usable for sending down the network.
+      # For now, this ensures that every entry is a string.
+      def body
+        @body.map(&:to_s)
+      end
+
       # Return all of this message's metadata as a hash
       def metadata
         {

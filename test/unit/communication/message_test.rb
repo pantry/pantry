@@ -31,6 +31,23 @@ describe Pantry::Communication::Message do
     assert_equal ["Part 1", "Part 2"], message.body
   end
 
+  it "ensures all parts of a Message are strings" do
+    message = Pantry::Communication::Message.new("type")
+    message << 1
+    message << 2
+
+    assert_equal ["1", "2"], message.body
+  end
+
+  it "turns nil entries into the empty string" do
+    message = Pantry::Communication::Message.new("type")
+    message << 1
+    message << nil
+    message << 2
+
+    assert_equal ["1", "", "2"], message.body
+  end
+
   it "can be given the source of the sending party" do
     message = Pantry::Communication::Message.new("type")
     message.source = "server1"
