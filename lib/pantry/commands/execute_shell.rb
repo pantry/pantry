@@ -1,12 +1,13 @@
-require 'pantry/communication/message'
 require 'open3'
+
+require 'pantry/commands/command'
 
 module Pantry
   module Commands
 
     # Execute a Shell command, returning STDOUT, STDERR, and the status code.
     # Will not execute a sudo-d command, use ExecuteSudo instead.
-    class ExecuteShell
+    class ExecuteShell < Command
 
       def initialize(command, *arguments)
         @command   = command
@@ -19,7 +20,7 @@ module Pantry
       end
 
       def to_message
-        message = Pantry::Communication::Message.new("ExecuteShell")
+        message = super
         message << @command
         message << @arguments
         message

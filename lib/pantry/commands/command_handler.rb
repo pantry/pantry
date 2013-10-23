@@ -17,7 +17,7 @@ module Pantry
       # The Message's +type+ for this kind of message is simply the name of the class
       # without any scope information. E.g. ExecuteShell not Pantry::Command::ExecuteShell.
       def add_command(command_class)
-        @handlers[command_class.name.split("::").last] = build_command_proc(command_class)
+        @handlers[Command.command_type(command_class)] = build_command_proc(command_class)
       end
 
       # Given a message, figure out which handler should be triggered and get things rolling
