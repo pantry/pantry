@@ -28,6 +28,16 @@ describe Pantry::Client do
     assert_equal "production", client.environment
   end
 
+  it "packages up all filter information into a Filter object" do
+    client = Pantry::Client.new environment: "production", application: "pantry"
+
+    filter = Pantry::Communication::ClientFilter.new(
+      environment: "production", application: "pantry", identity: client.identity)
+
+    assert_equal filter, client.filter
+    assert_equal "production", client.environment
+  end
+
   it "starts up and shuts down the networking stack" do
     FakeNetworkStack.any_instance.expects(:run)
     FakeNetworkStack.any_instance.expects(:shutdown)

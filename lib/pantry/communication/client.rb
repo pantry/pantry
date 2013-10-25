@@ -25,14 +25,7 @@ module Pantry
           Pantry.config.pub_sub_port
         )
         @subscribe_socket.add_listener(self)
-        @subscribe_socket.filter_on(
-          Communication::ClientFilter.new(
-            application: @listener.application,
-            environment: @listener.environment,
-            roles: @listener.roles,
-            identity: @listener.identity
-          )
-        )
+        @subscribe_socket.filter_on(@listener.filter)
         @subscribe_socket.open
 
         @send_socket = Communication::SendSocket.new(
