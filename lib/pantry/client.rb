@@ -1,6 +1,7 @@
 require 'pantry/communication/client'
 require 'pantry/communication/message_filter'
 require 'pantry/commands/client_commands'
+require 'pantry/commands/register_client'
 
 require 'socket'
 
@@ -36,9 +37,11 @@ module Pantry
 
     # Start up the Client.
     # This sets up the appropriate communication channels to the
-    # server and then waits for information to come.
+    # server, sends a registration message so the Server knows who
+    # just connected, and then waits for information to come.
     def run
       @networking.run
+      send_registration_message
     end
 
     # Close down all communication channels and clean up resources
@@ -73,6 +76,13 @@ module Pantry
 
     def current_hostname
       Socket.gethostname
+    end
+
+    def send_registration_message
+      message = Pantry::Commands::RegisterClient.new(self).to_message
+      message.source = self
+
+      @networking.send_message(message)
     end
 
     def send_results_back_to_requester(message, results)

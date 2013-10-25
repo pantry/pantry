@@ -9,6 +9,10 @@ describe Pantry::Client do
     end
   end
 
+  before do
+    FakeNetworkStack.any_instance.stubs(:send_message)
+  end
+
   it "can take a list of roles this Client manages" do
     client = Pantry::Client.new roles: %w(app db)
     assert_equal %w(app db), client.roles
@@ -31,6 +35,18 @@ describe Pantry::Client do
     client = Pantry::Client.new(network_stack_class: FakeNetworkStack)
     client.run
     client.shutdown
+  end
+
+  it "sends a registration packet once networking is up" do
+    client = Pantry::Client.new(identity: "johnson", network_stack_class: FakeNetworkStack)
+
+    FakeNetworkStack.any_instance.stubs(:run)
+    FakeNetworkStack.any_instance.expects(:send_message).with do |message|
+      assert_equal "RegisterClient", message.type
+      assert_equal client.identity, message.source
+    end
+
+    client.run
   end
 
   it "executes callbacks when a message matches" do
