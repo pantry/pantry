@@ -1,8 +1,3 @@
-require 'pantry/client'
-require 'pantry/commands/command'
-
-require 'json'
-
 module Pantry
   module Commands
 

@@ -1,5 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/commands/execute_shell'
 
 describe Pantry::Commands::ExecuteShell do
 

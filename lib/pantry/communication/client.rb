@@ -1,9 +1,3 @@
-require 'pantry/config'
-require 'pantry/communication'
-require 'pantry/communication/subscribe_socket'
-require 'pantry/communication/send_socket'
-require 'pantry/communication/wait_list'
-
 module Pantry
   module Communication
 

@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/server'
-require 'pantry/client'
 
 describe Pantry::Server do
 

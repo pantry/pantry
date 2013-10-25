@@ -1,7 +1,3 @@
-require 'pantry/communication'
-require 'pantry/communication/client_filter'
-require 'pantry/communication/reading_socket'
-
 module Pantry
   module Communication
 

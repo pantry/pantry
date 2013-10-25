@@ -1,5 +1,3 @@
-require 'pantry/commands/command'
-
 module Pantry
   module Commands
 

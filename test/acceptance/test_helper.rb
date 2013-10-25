@@ -1,9 +1,8 @@
 require 'minitest/autorun'
-require 'pantry/server'
-require 'pantry/client'
-require 'pantry/cli'
 require 'support/matchers'
 require 'timeout'
+
+require 'pantry'
 
 class Minitest::Test
 

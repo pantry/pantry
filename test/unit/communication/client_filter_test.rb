@@ -1,5 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/communication/client_filter'
 
 describe Pantry::Communication::ClientFilter do
 

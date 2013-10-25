@@ -1,7 +1,3 @@
-require 'pantry/commands/command_handler'
-
-require 'pantry/commands/execute_shell'
-
 module Pantry
   module Commands
 

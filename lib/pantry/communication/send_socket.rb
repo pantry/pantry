@@ -1,6 +1,3 @@
-require 'pantry/communication'
-require 'pantry/communication/writing_socket'
-
 module Pantry
   module Communication
 

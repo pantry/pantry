@@ -1,5 +1,4 @@
 require 'acceptance/test_helper'
-require 'timeout'
 
 describe "Client requests information from the Server" do
 

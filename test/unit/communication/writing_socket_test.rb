@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/communication/message'
-require 'pantry/communication/writing_socket'
 
 describe Pantry::Communication::WritingSocket do
 

@@ -1,7 +1,3 @@
-require 'pantry/commands/command_handler'
-require 'pantry/commands/register_client'
-require 'pantry/commands/list_clients'
-
 module Pantry
   module Commands
 

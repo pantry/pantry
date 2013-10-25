@@ -1,7 +1,3 @@
-require 'open3'
-
-require 'pantry/commands/command'
-
 module Pantry
   module Commands
 

@@ -1,7 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/server'
-require 'pantry/commands/server_commands'
-require 'pantry/communication/message'
 
 describe Pantry::Commands::ServerCommands do
 

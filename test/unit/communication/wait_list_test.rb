@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/communication/wait_list'
-require 'pantry/communication/message'
 
 describe Pantry::Communication::WaitList do
 

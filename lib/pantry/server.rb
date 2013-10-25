@@ -1,10 +1,3 @@
-require 'socket'
-
-require 'pantry/communication/server'
-require 'pantry/communication/message'
-require 'pantry/communication/client_filter'
-require 'pantry/commands/server_commands'
-
 module Pantry
 
   # The Pantry Server

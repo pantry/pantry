@@ -1,5 +1,3 @@
-require 'celluloid'
-
 module Pantry
   module Communication
 

@@ -1,10 +1,3 @@
-require 'pantry/communication/client'
-require 'pantry/communication/client_filter'
-require 'pantry/commands/client_commands'
-require 'pantry/commands/register_client'
-
-require 'socket'
-
 module Pantry
 
   # The pantry Client. The Client runs on any server that needs provisioning,

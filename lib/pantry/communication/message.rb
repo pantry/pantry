@@ -1,5 +1,3 @@
-require 'pantry/communication/client_filter'
-
 module Pantry
   module Communication
 

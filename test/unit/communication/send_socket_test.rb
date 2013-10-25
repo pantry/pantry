@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/communication/send_socket'
-require 'pantry/communication/message'
 
 describe Pantry::Communication::SendSocket do
 

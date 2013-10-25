@@ -1,5 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/communication/subscribe_socket'
 
 describe Pantry::Communication::SubscribeSocket do
 

@@ -1,7 +1,3 @@
-require 'celluloid/zmq'
-require 'pantry/communication'
-require 'pantry/communication/reading_socket'
-
 module Pantry
   module Communication
 

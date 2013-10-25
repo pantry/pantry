@@ -1,7 +1,3 @@
-require 'pantry/client'
-require 'pantry/commands/list_clients'
-require 'pantry/communication/client_filter'
-
 module Pantry
 
   # Pantry's Command Line Interface.
@@ -12,7 +8,7 @@ module Pantry
     # All commands the CLI knows how to handle.
     # Key is the CLI command, and value is the Command Class that will handle the request
     COMMAND_MAP = {
-      "status" => Commands::ListClients
+      "status" => Pantry::Commands::ListClients
     }
 
     # Set up a new CLI, optionally passing in a set of filters to limit the set of

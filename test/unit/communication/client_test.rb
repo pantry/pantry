@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/client'
-require 'pantry/communication/client'
 
 describe Pantry::Communication::Client do
 

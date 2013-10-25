@@ -1,5 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/communication/reading_socket'
 
 describe Pantry::Communication::ReadingSocket do
 

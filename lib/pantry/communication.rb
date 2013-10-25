@@ -1,5 +1,3 @@
-require 'celluloid/zmq'
-
 module Pantry
 
   # The Communication subsystem of Pantry is managed via 0MQ through the

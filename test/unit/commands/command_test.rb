@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/commands/command'
-require 'pantry/communication/message'
 
 describe Pantry::Commands::Command do
 

@@ -1,5 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/config'
 
 describe Pantry::Config do
 

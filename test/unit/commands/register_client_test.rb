@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/server'
-require 'pantry/commands/register_client'
 
 describe Pantry::Commands::RegisterClient do
 

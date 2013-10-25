@@ -1,7 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/server'
-require 'pantry/client'
-require 'pantry/commands/list_clients'
 
 describe Pantry::Commands::ListClients do
 

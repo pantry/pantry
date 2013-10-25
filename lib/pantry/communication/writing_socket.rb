@@ -1,9 +1,3 @@
-require 'celluloid/zmq'
-require 'json'
-
-require 'pantry/communication'
-require 'pantry/communication/client_filter'
-
 module Pantry
   module Communication
 

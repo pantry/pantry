@@ -1,5 +1,3 @@
-require 'pantry/communication/message'
-
 module Pantry
   module Commands
 

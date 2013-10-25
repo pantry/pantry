@@ -1,6 +1,4 @@
 require 'unit/test_helper'
-require 'pantry/communication/publish_socket'
-require 'pantry/communication/message'
 
 describe Pantry::Communication::PublishSocket do
 
