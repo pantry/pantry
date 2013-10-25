@@ -1,4 +1,5 @@
 require 'pantry/commands/command_handler'
+require 'pantry/commands/register_client'
 
 module Pantry
   module Commands
@@ -9,6 +10,11 @@ module Pantry
 
       def initialize(server)
         super
+        install_handlers
+      end
+
+      def install_handlers
+        add_command(RegisterClient)
       end
 
     end
