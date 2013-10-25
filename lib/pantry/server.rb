@@ -52,7 +52,7 @@ module Pantry
       @commands.add_handler(message_type, &block)
     end
 
-    # Callback from the network when a message is received from a client.
+    # Callback from the network when a message is received unsolicited from a client.
     def receive_message(message)
       results = @commands.process(message)
       if message.requires_response?
