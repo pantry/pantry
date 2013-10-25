@@ -89,14 +89,9 @@ describe Pantry::Communication::Message do
     message.requires_response!
     message.source = "99 Luftballoons"
 
-    assert_equal(
-      {
-        :type => "read_stuff",
-        :requires_response => true,
-        :source => "99 Luftballoons"
-      },
-      message.metadata
-    )
+    assert_equal "read_stuff", message.metadata[:type]
+    assert_equal "99 Luftballoons", message.metadata[:source]
+    assert message.metadata[:requires_response]
   end
 
   it "takes a hash of metadata and parses out approriate values" do
@@ -110,6 +105,18 @@ describe Pantry::Communication::Message do
     assert_equal "read_stuff", message.type
     assert_equal "99 Luftballoons", message.source
     assert       message.requires_response?
+  end
+
+  it "can take a set of filters and adds them to the metadata" do
+    message = Pantry::Communication::Message.new
+    message.filters = {application: "pantry"}
+
+    assert_equal "pantry", message.metadata[:filters][:application]
+
+    message = Pantry::Communication::Message.new
+    message.metadata = { "filters" => { "application" => "pantry" } }
+
+    assert_equal "pantry", message.filters["application"]
   end
 
 end

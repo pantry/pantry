@@ -24,13 +24,17 @@ module Pantry
       # Identity of who sent this message
       attr_accessor :source
 
+      # Filters that limit who should receive this message
+      attr_accessor :filters
+
       attr_writer :requires_response
 
       def initialize(message_type = nil)
         @type              = message_type
         @requires_response = false
 
-        @body = []
+        @body    = []
+        @filters = {}
       end
 
       # Set the source of this message either by an object that responds to #identity
@@ -79,7 +83,8 @@ module Pantry
         {
           :type              => self.type,
           :source            => self.source,
-          :requires_response => self.requires_response?
+          :requires_response => self.requires_response?,
+          :filters           => self.filters
         }
       end
 
@@ -88,6 +93,7 @@ module Pantry
         @type              = hash["type"]
         @source            = hash["source"]
         @requires_response = hash["requires_response"]
+        @filters           = hash["filters"]
       end
 
     end
