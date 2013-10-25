@@ -18,4 +18,19 @@ describe Pantry::CLI do
     cli.request("status")
   end
 
+  it "can be given a set of filters to limit the request to a certain subset of clients" do
+    cli = Pantry::CLI.new(
+      filter = Pantry::Communication::ClientFilter.new(
+        application: "pantry", environment: "test", roles: %w(db app)
+      )
+    )
+
+    Pantry::Client.any_instance.expects(:send_request).with do |message|
+      assert_equal "ListClients", message.type
+      assert_equal filter, message.filter
+    end
+
+    cli.request("status")
+  end
+
 end

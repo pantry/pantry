@@ -1,5 +1,6 @@
 require 'pantry/client'
 require 'pantry/commands/list_clients'
+require 'pantry/communication/client_filter'
 
 module Pantry
 
@@ -14,11 +15,15 @@ module Pantry
       "status" => Commands::ListClients
     }
 
-    def initialize
+    # Set up a new CLI, optionally passing in a set of filters to limit the set of
+    # Clients we're trying to request info from.
+    def initialize(client_filter = nil)
       # TODO Figure out this CLI's identity and pass it into the Client
       # Also, hook an at_exit @client.shutdown?
       @client = Pantry::Client.new
       @client.run
+
+      @client_filter = client_filter || Pantry::Communication::ClientFilter.new
     end
 
     # Process a command from the command line.
@@ -26,7 +31,10 @@ module Pantry
     # that command class and sends it down the pipe.
     def request(command)
       if handler = COMMAND_MAP[command]
-        @client.send_request(handler.new.to_message)
+        message = handler.new.to_message
+        message.filter = @client_filter
+
+        @client.send_request(message)
       else
         # TODO Error don't know how to handle command
       end

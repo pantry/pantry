@@ -63,4 +63,23 @@ describe Pantry::Commands::CommandHandler do
     assert_equal "Test Client", response
   end
 
+  class ReturnMessageIdentity < Pantry::Commands::Command
+    def perform
+      self.message
+    end
+
+    def self.from_message(message)
+      self.new
+    end
+  end
+
+  it "sets the server or client on the command before it's performed" do
+    message = Pantry::Communication::Message.new("ReturnMessageIdentity")
+
+    command_handler.add_command(ReturnMessageIdentity)
+    response = command_handler.process(message)
+
+    assert_equal message, response
+  end
+
 end
