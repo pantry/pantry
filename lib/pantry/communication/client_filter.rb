@@ -1,3 +1,5 @@
+require 'set'
+
 module Pantry
   module Communication
 
@@ -39,11 +41,11 @@ module Pantry
       end
 
       # List out all communication streams this ClientFilter is configured to know about.
-      def streams
+      def streams(skip_identity = false)
         list = []
         base_stream = []
 
-        if @identity
+        if @identity && !skip_identity
           list << @identity
         end
 
@@ -82,6 +84,18 @@ module Pantry
           self.environment == other.environment &&
           self.roles       == other.roles &&
           self.identity    == other.identity
+      end
+
+      # A filter includes another filter if the other filter matches.
+      # This does not look at identities.
+      def includes?(filter)
+        return true if self == filter
+        return true if streams == [""]
+
+        my_stream =    Set.new(streams(:skip_identity))
+        other_stream = Set.new(filter.streams(:skip_identity))
+
+        my_stream.subset?(other_stream)
       end
 
       def to_hash
