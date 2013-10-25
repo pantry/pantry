@@ -25,8 +25,8 @@ module Pantry
       # Identity of who sent this message
       attr_accessor :source
 
-      # Filters that limit who should receive this message
-      attr_accessor :filters
+      # ClientFilter that limit who should receive this message
+      attr_accessor :filter
 
       attr_writer :requires_response
 
@@ -34,8 +34,8 @@ module Pantry
         @type              = message_type
         @requires_response = false
 
-        @body    = []
-        @filters = {}
+        @body   = []
+        @filter = Pantry::Communication::ClientFilter.new
       end
 
       # Set the source of this message either by an object that responds to #identity
@@ -85,7 +85,7 @@ module Pantry
           :type              => self.type,
           :source            => self.source,
           :requires_response => self.requires_response?,
-          :filters           => self.filters.to_hash
+          :filter            => self.filter.to_hash
         }
       end
 
@@ -94,7 +94,7 @@ module Pantry
         @type              = hash[:type]
         @source            = hash[:source]
         @requires_response = hash[:requires_response]
-        @filters           = Pantry::Communication::ClientFilter.new(hash[:filters] || {})
+        @filter            = Pantry::Communication::ClientFilter.new(hash[:filter] || {})
       end
 
     end

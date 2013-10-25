@@ -110,14 +110,14 @@ describe Pantry::Communication::Message do
   it "can take a set of filters and adds them to the metadata" do
     filter = Pantry::Communication::ClientFilter.new(application: "pantry")
     message = Pantry::Communication::Message.new
-    message.filters = filter
+    message.filter = filter
 
-    assert_equal filter, message.filters
+    assert_equal filter, message.filter
 
     message = Pantry::Communication::Message.new
-    message.metadata = { :filters => { application: "pantry" } }
+    message.metadata = { :filter => { application: "pantry" } }
 
-    assert_equal "pantry", message.filters.application
+    assert_equal "pantry", message.filter.application
   end
 
 end
