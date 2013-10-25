@@ -1,3 +1,5 @@
+require 'pantry/commands/command'
+
 module Pantry
   module Commands
 
@@ -5,8 +7,9 @@ module Pantry
     # Given a mapping of available commands, maps the incoming message to the appropriate
     # command handler and returns the response. Returns nil if no command found.
     class CommandHandler
-      def initialize
+      def initialize(server_or_client)
         @handlers = {}
+        @server_or_client = server_or_client
       end
 
       def add_handler(command_type, &block)
@@ -33,7 +36,9 @@ module Pantry
 
       def build_command_proc(command_class)
         proc do |message|
-          command_class.from_message(message).perform
+          command_obj = command_class.from_message(message)
+          command_obj.server_or_client = @server_or_client
+          command_obj.perform
         end
       end
     end

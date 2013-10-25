@@ -18,6 +18,14 @@ describe Pantry::Commands::Command do
     assert_equal "Command", message.type
   end
 
+  it "has a link back to the Server or Client handling the command" do
+    command = Pantry::Commands::Command.new
+    command.server_or_client = "client"
+
+    assert_equal "client", command.server
+    assert_equal "client", command.client
+  end
+
   class SubCommand < Pantry::Commands::Command
   end
 

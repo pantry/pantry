@@ -28,6 +28,23 @@ module Pantry
         command_class.name.split("::").last
       end
 
+      # Set a link back to the Server or Client that's handling
+      # this command. This will be set by the CommandHandler before calling
+      # #perform.
+      def server_or_client=(server_or_client)
+        @server_or_client = server_or_client
+      end
+
+      # Get the Server handling this command
+      def server
+        @server_or_client
+      end
+
+      # Get the Client handling this command
+      def client
+        @server_or_client
+      end
+
     end
 
   end

@@ -9,7 +9,7 @@ module Pantry
     # This class hooks up all commands the client knows how to run.
     class ClientCommands < CommandHandler
 
-      def initialize
+      def initialize(client)
         super
         install_handlers
       end

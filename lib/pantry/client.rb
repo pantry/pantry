@@ -30,7 +30,7 @@ module Pantry
       @roles       = roles
       @identity    = identity || current_hostname
 
-      @commands   = Commands::ClientCommands.new
+      @commands   = Commands::ClientCommands.new(self)
       @networking = network_stack_class.new(self)
     end
 
