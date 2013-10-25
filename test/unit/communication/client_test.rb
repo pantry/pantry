@@ -40,7 +40,7 @@ describe Pantry::Communication::Client do
     Pantry::Communication::SubscribeSocket.any_instance.stubs(:close)
 
     Pantry::Communication::SubscribeSocket.any_instance.expects(:filter_on).with(
-      Pantry::Communication::MessageFilter.new(
+      Pantry::Communication::ClientFilter.new(
         application: "pantry", environment: "test", roles: %w(application database),
         identity: "client2"
       )

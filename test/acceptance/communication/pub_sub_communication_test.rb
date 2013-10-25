@@ -20,7 +20,7 @@ describe "Pub/Sub Communication" do
 
       @server.publish_message(
         Pantry::Communication::Message.new("test_message"),
-        Pantry::Communication::MessageFilter.new(application: "pantry")
+        Pantry::Communication::ClientFilter.new(application: "pantry")
       )
 
       # Give communication time to happen
@@ -48,9 +48,9 @@ describe "Pub/Sub Communication" do
       end
 
       @server.publish_message(Pantry::Communication::Message.new("test_message"),
-                              Pantry::Communication::MessageFilter.new(roles: %w(database)))
+                              Pantry::Communication::ClientFilter.new(roles: %w(database)))
       @server.publish_message(Pantry::Communication::Message.new("test_message"),
-                              Pantry::Communication::MessageFilter.new(roles: %w(task)))
+                              Pantry::Communication::ClientFilter.new(roles: %w(task)))
 
       # Give communication time to happen
       sleep 1

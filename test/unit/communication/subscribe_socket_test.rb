@@ -23,7 +23,7 @@ describe Pantry::Communication::SubscribeSocket do
   describe "subscription filtering" do
     it "subscribes to the stream according to filter options given" do
       socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
-      socket.filter_on(Pantry::Communication::MessageFilter.new(application: "pantry"))
+      socket.filter_on(Pantry::Communication::ClientFilter.new(application: "pantry"))
 
       Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")
 
@@ -32,7 +32,7 @@ describe Pantry::Communication::SubscribeSocket do
 
     it "subscribes to multiple streams to support nested scoping" do
       socket = Pantry::Communication::SubscribeSocket.new("host", 1235)
-      socket.filter_on(Pantry::Communication::MessageFilter.new(
+      socket.filter_on(Pantry::Communication::ClientFilter.new(
         application: "pantry", environment: "test"))
 
       Celluloid::ZMQ::SubSocket.any_instance.expects(:subscribe).with("pantry")

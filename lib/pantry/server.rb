@@ -2,7 +2,7 @@ require 'socket'
 
 require 'pantry/communication/server'
 require 'pantry/communication/message'
-require 'pantry/communication/message_filter'
+require 'pantry/communication/client_filter'
 require 'pantry/commands/server_commands'
 
 module Pantry
@@ -41,7 +41,7 @@ module Pantry
     end
 
     # Broadcast a message to all clients, optionally filtering for certain clients.
-    def publish_message(message, filter = Communication::MessageFilter.new)
+    def publish_message(message, filter = Communication::ClientFilter.new)
       @networking.publish_message(message,filter)
     end
 
@@ -68,7 +68,7 @@ module Pantry
       message.source = self
 
       @networking.send_request(
-        message, Communication::MessageFilter.new(:identity => client_identity))
+        message, Communication::ClientFilter.new(:identity => client_identity))
     end
 
     protected
@@ -83,7 +83,7 @@ module Pantry
       response_message << results
 
       @networking.publish_message(response_message,
-                                  Communication::MessageFilter.new(:identity => message.source))
+                                  Communication::ClientFilter.new(:identity => message.source))
     end
 
   end

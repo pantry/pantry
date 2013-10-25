@@ -2,7 +2,7 @@ require 'celluloid/zmq'
 require 'json'
 
 require 'pantry/communication'
-require 'pantry/communication/message_filter'
+require 'pantry/communication/client_filter'
 
 module Pantry
   module Communication
@@ -32,7 +32,7 @@ module Pantry
         @socket.close if @socket
       end
 
-      def send_message(message, filter = MessageFilter.new)
+      def send_message(message, filter = ClientFilter.new)
         @socket.write(serialize(message, filter))
       end
 

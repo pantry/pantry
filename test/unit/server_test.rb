@@ -36,7 +36,7 @@ describe Pantry::Server do
     message = Pantry::Communication::Message.new("test message")
 
     FakeNetworkStack.any_instance.expects(:publish_message).with(
-      message, Pantry::Communication::MessageFilter.new
+      message, Pantry::Communication::ClientFilter.new
     )
 
     server.publish_message(message)
@@ -45,7 +45,7 @@ describe Pantry::Server do
   it "can publish messages to a filtered set of clients" do
     server = Pantry::Server.new(FakeNetworkStack)
     message = Pantry::Communication::Message.new("test message")
-    filter = Pantry::Communication::MessageFilter.new(roles: %(db))
+    filter = Pantry::Communication::ClientFilter.new(roles: %(db))
 
     FakeNetworkStack.any_instance.expects(:publish_message).with(message, filter)
 
@@ -57,7 +57,7 @@ describe Pantry::Server do
     message = Pantry::Communication::Message.new("test message")
 
     FakeNetworkStack.any_instance.expects(:send_request).with(
-      message, Pantry::Communication::MessageFilter.new(identity: "client1")
+      message, Pantry::Communication::ClientFilter.new(identity: "client1")
     )
 
     server.send_request("client1", message)

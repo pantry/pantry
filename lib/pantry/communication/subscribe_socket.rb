@@ -1,5 +1,5 @@
 require 'pantry/communication'
-require 'pantry/communication/message_filter'
+require 'pantry/communication/client_filter'
 require 'pantry/communication/reading_socket'
 
 module Pantry
@@ -13,11 +13,11 @@ module Pantry
 
       def initialize(host, port)
         super
-        @filter = MessageFilter.new
+        @filter = ClientFilter.new
       end
 
-      def filter_on(message_filter)
-        @filter = message_filter
+      def filter_on(client_filter)
+        @filter = client_filter
       end
 
       def build_socket

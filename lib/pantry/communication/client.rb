@@ -26,7 +26,7 @@ module Pantry
         )
         @subscribe_socket.add_listener(self)
         @subscribe_socket.filter_on(
-          Communication::MessageFilter.new(
+          Communication::ClientFilter.new(
             application: @listener.application,
             environment: @listener.environment,
             roles: @listener.roles,

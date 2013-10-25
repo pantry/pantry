@@ -1,5 +1,5 @@
 require 'pantry/communication/client'
-require 'pantry/communication/message_filter'
+require 'pantry/communication/client_filter'
 require 'pantry/commands/client_commands'
 require 'pantry/commands/register_client'
 

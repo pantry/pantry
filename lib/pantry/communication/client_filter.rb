@@ -1,7 +1,7 @@
 module Pantry
   module Communication
 
-    # MessageFilter handles and manages building filters that map configuration values
+    # ClientFilter handles and manages building filters that map configuration values
     # to 0MQ stream names. A message stream is a period-delimited string that works
     # with 0MQ's Subscription prefix matcher, allowing Clients to choose which messages
     # they want to receive. Streams are built to enable tiered delivery capability.
@@ -27,7 +27,7 @@ module Pantry
     # A client identity token can also be given via +identity+. If identity is provided
     # then that stream will be chosen above all others. Use this to send a message to
     # specific clients.
-    class MessageFilter
+    class ClientFilter
 
       attr_reader :application, :environment, :roles, :identity
 
@@ -38,7 +38,7 @@ module Pantry
         @identity    = identity
       end
 
-      # List out all communication streams this MessageFilter is configured to know about.
+      # List out all communication streams this ClientFilter is configured to know about.
       def streams
         list = []
         base_stream = []
@@ -64,7 +64,7 @@ module Pantry
         list.empty? ? [""] : list
       end
 
-      # Return the most specific stream that matches this MessageFilter.
+      # Return the most specific stream that matches this ClientFilter.
       # +identity+ is chosen above all others.
       def stream
         if @identity
@@ -76,7 +76,7 @@ module Pantry
 
       def ==(other)
         return false unless other
-        return false unless other.is_a?(MessageFilter)
+        return false unless other.is_a?(ClientFilter)
 
         self.application   == other.application &&
           self.environment == other.environment &&

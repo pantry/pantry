@@ -36,16 +36,16 @@ describe Pantry::Communication::Server do
     server.run
 
     Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(
-      "message", Pantry::Communication::MessageFilter.new)
+      "message", Pantry::Communication::ClientFilter.new)
 
-    server.publish_message("message", Pantry::Communication::MessageFilter.new)
+    server.publish_message("message", Pantry::Communication::ClientFilter.new)
   end
 
-  it "passes down a given MessageFilter to the socket" do
+  it "passes down a given ClientFilter to the socket" do
     server = Pantry::Communication::Server.new(nil)
     server.run
 
-    filter = Pantry::Communication::MessageFilter.new
+    filter = Pantry::Communication::ClientFilter.new
     Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with("message", filter)
 
     server.publish_message("message", filter)
@@ -55,7 +55,7 @@ describe Pantry::Communication::Server do
     server = Pantry::Communication::Server.new(nil)
     server.run
 
-    filter = Pantry::Communication::MessageFilter.new(identity: "client1")
+    filter = Pantry::Communication::ClientFilter.new(identity: "client1")
     message = Pantry::Communication::Message.new("message")
     Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
 

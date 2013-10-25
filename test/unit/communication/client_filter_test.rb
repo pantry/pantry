@@ -1,16 +1,16 @@
 require 'unit/test_helper'
-require 'pantry/communication/message_filter'
+require 'pantry/communication/client_filter'
 
-describe Pantry::Communication::MessageFilter do
+describe Pantry::Communication::ClientFilter do
 
   describe "#streams" do
     it "returns empty string if no filters given" do
-      filter = Pantry::Communication::MessageFilter.new({})
+      filter = Pantry::Communication::ClientFilter.new({})
       assert_equal [""], filter.streams
     end
 
     it "takes a hash of filters and builds streams from them" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         identity:    "my_test_ident",
         application: "pantry",
         environment: "test",
@@ -29,7 +29,7 @@ describe Pantry::Communication::MessageFilter do
     end
 
     it "handles environment and roles, no application" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         environment: "test",
         roles:       %w(db app)
       )
@@ -44,7 +44,7 @@ describe Pantry::Communication::MessageFilter do
     end
 
     it "handles application and roles, no environment, properly" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         application: "pantry",
         roles:       %w(db app)
       )
@@ -59,7 +59,7 @@ describe Pantry::Communication::MessageFilter do
     end
 
     it "handles just roles" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         roles:       %w(db app)
       )
 
@@ -69,7 +69,7 @@ describe Pantry::Communication::MessageFilter do
 
   describe "#stream" do
     it "returns the most explicit stream matching filters given" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         application: "pantry",
         environment: "test",
         roles:       %w(db)
@@ -79,7 +79,7 @@ describe Pantry::Communication::MessageFilter do
     end
 
     it "ignores environment if left out" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         application: "pantry",
         roles:       %w(db)
       )
@@ -88,7 +88,7 @@ describe Pantry::Communication::MessageFilter do
     end
 
     it "ignores application if left out" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         roles:       %w(db)
       )
 
@@ -96,7 +96,7 @@ describe Pantry::Communication::MessageFilter do
     end
 
     it "uses the client identity if given" do
-      filter = Pantry::Communication::MessageFilter.new(
+      filter = Pantry::Communication::ClientFilter.new(
         identity: "12345.client",
         roles:    %w(app db)
       )
@@ -108,23 +108,23 @@ describe Pantry::Communication::MessageFilter do
   describe "#equality" do
     it "return true on empty filters" do
       assert_equal(
-        Pantry::Communication::MessageFilter.new,
-        Pantry::Communication::MessageFilter.new
+        Pantry::Communication::ClientFilter.new,
+        Pantry::Communication::ClientFilter.new
       )
     end
 
     it "returns true on matching all options" do
       assert_equal(
-        Pantry::Communication::MessageFilter.new(
+        Pantry::Communication::ClientFilter.new(
           application: "app", environment: "test", roles: %w(db)),
-        Pantry::Communication::MessageFilter.new(
+        Pantry::Communication::ClientFilter.new(
           application: "app", environment: "test", roles: %w(db))
       )
     end
 
     it "returns false if other is nil" do
       refute_equal(
-        Pantry::Communication::MessageFilter.new,
+        Pantry::Communication::ClientFilter.new,
         nil
       )
     end

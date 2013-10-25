@@ -42,7 +42,7 @@ describe Pantry::Communication::WritingSocket do
   end
 
   it "sends messages only to the streams specified in the filter" do
-    filter = Pantry::Communication::MessageFilter.new(application: "pantry", environment: "test")
+    filter = Pantry::Communication::ClientFilter.new(application: "pantry", environment: "test")
 
     message = Pantry::Communication::Message.new("message_type")
     message << "message_body_1"
