@@ -97,9 +97,9 @@ describe Pantry::Communication::Message do
   it "takes a hash of metadata and parses out approriate values" do
     message = Pantry::Communication::Message.new
     message.metadata = {
-      "type" => "read_stuff",
-      "requires_response" => true,
-      "source" => "99 Luftballoons"
+      type: "read_stuff",
+      requires_response: true,
+      source: "99 Luftballoons"
     }
 
     assert_equal "read_stuff", message.type
@@ -108,15 +108,16 @@ describe Pantry::Communication::Message do
   end
 
   it "can take a set of filters and adds them to the metadata" do
+    filter = Pantry::Communication::ClientFilter.new(application: "pantry")
     message = Pantry::Communication::Message.new
-    message.filters = {application: "pantry"}
+    message.filters = filter
 
-    assert_equal "pantry", message.metadata[:filters][:application]
+    assert_equal filter, message.filters
 
     message = Pantry::Communication::Message.new
-    message.metadata = { "filters" => { "application" => "pantry" } }
+    message.metadata = { :filters => { application: "pantry" } }
 
-    assert_equal "pantry", message.filters["application"]
+    assert_equal "pantry", message.filters.application
   end
 
 end

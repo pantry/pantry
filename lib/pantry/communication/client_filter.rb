@@ -84,6 +84,15 @@ module Pantry
           self.identity    == other.identity
       end
 
+      def to_hash
+        {
+          application: @application,
+          environment: @environment,
+          roles:       @roles,
+          identity:    @identity
+        }
+      end
+
     end
   end
 end

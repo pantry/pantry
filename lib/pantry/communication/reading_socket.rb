@@ -61,7 +61,7 @@ module Pantry
         end
 
         message.stream = @socket.read
-        message.metadata = JSON.parse(@socket.read)
+        message.metadata = JSON.parse(@socket.read, symbolize_names: true)
 
         while @socket.more_parts?
           message << @socket.read

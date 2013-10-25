@@ -130,4 +130,17 @@ describe Pantry::Communication::ClientFilter do
     end
   end
 
+  describe "#to_hash" do
+    it "returns a hash representation of the filter" do
+      filter = Pantry::Communication::ClientFilter.new(
+        application: "app", environment: "test", roles: %w(db), identity: "test"
+      )
+
+      assert_equal(
+        {application: "app", environment: "test", roles: %w(db), identity: "test"},
+        filter.to_hash
+      )
+    end
+  end
+
 end

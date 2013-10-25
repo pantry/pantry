@@ -1,3 +1,4 @@
+require 'pantry/communication/client_filter'
 
 module Pantry
   module Communication
@@ -84,16 +85,16 @@ module Pantry
           :type              => self.type,
           :source            => self.source,
           :requires_response => self.requires_response?,
-          :filters           => self.filters
+          :filters           => self.filters.to_hash
         }
       end
 
       # Given a hash, pull out the parts into local variables
       def metadata=(hash)
-        @type              = hash["type"]
-        @source            = hash["source"]
-        @requires_response = hash["requires_response"]
-        @filters           = hash["filters"]
+        @type              = hash[:type]
+        @source            = hash[:source]
+        @requires_response = hash[:requires_response]
+        @filters           = Pantry::Communication::ClientFilter.new(hash[:filters] || {})
       end
 
     end
