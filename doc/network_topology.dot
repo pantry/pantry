@@ -11,13 +11,11 @@ digraph pantry {
 
     server     [label="Server"];
     server_web [label="Web"];
-    api        [label="ROUTER"];
     publish    [label="PUB"];
 
     server_dealer [label="ROUTER"];
 
     server_web -> server [dir=both];
-    api        -> server [dir=both];
 
     server -> publish;
     server -> server_dealer [dir=back];
