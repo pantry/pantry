@@ -9,6 +9,9 @@ module Pantry
     # should be sent back to the requester.
     class Command
 
+      # Save the Message that triggered the creation of this Command
+      attr_accessor :message
+
       # Run whatever this command needs to do.
       # All Command subclasses must implement this method.
       def perform

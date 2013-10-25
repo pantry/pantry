@@ -26,6 +26,14 @@ describe Pantry::Commands::Command do
     assert_equal "client", command.client
   end
 
+  it "has a link back to the message that triggered the command" do
+    message = Pantry::Communication::Message.new
+    command = Pantry::Commands::Command.new
+    command.message = message
+
+    assert_equal message, command.message
+  end
+
   class SubCommand < Pantry::Commands::Command
   end
 
