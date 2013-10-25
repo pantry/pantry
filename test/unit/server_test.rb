@@ -1,5 +1,6 @@
 require 'unit/test_helper'
 require 'pantry/server'
+require 'pantry/client'
 
 describe Pantry::Server do
 
@@ -15,6 +16,19 @@ describe Pantry::Server do
     server = Pantry::Server.new(FakeNetworkStack)
     server.run
     server.shutdown
+  end
+
+  describe "Client Registry" do
+
+    it "can be given a Client to keep track of" do
+      server = Pantry::Server.new
+      client = Pantry::Client.new
+
+      server.register_client(client)
+
+      assert_equal [client], server.clients
+    end
+
   end
 
   it "can publish messages to all clients" do

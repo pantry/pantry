@@ -13,11 +13,15 @@ module Pantry
     # This server's Identity. By default this is the server's hostname but can be specified manually.
     attr_accessor :identity
 
+    # List of clients this Server knows about
+    attr_reader :clients
+
     # Initialize the Pantry Server
     def initialize(network_stack_class = Communication::Server)
       @commands   = Commands::ServerCommands.new(self)
       @networking = network_stack_class.new(self)
       @identity   = current_hostname
+      @clients    = []
     end
 
     # Start up the networking stack and start the server
@@ -28,6 +32,12 @@ module Pantry
     # Close down networking and clean up resources
     def shutdown
       @networking.shutdown
+    end
+
+    # Register a client as in the system
+    # TODO Improve. Very dumb plain array add
+    def register_client(client)
+      @clients << client
     end
 
     # Broadcast a message to all clients, optionally filtering for certain clients.
