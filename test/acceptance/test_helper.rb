@@ -1,6 +1,7 @@
 require 'minitest/autorun'
 require 'pantry/server'
 require 'pantry/client'
+require 'pantry/cli'
 require 'support/matchers'
 require 'timeout'
 
@@ -13,7 +14,7 @@ class Minitest::Test
     if $basic_server_client_comm_setup.nil?
       Celluloid.boot
 
-      Pantry.config.server_host = "127.0.0.1"
+      Pantry.config.server_host  = "127.0.0.1"
       Pantry.config.pub_sub_port = 10101
       Pantry.config.receive_port = 10102
 
