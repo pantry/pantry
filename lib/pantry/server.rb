@@ -58,7 +58,6 @@ module Pantry
     # when it's available.
     def send_request(client_identity, message)
       message.requires_response!
-      message.source = self
 
       @networking.send_request(
         message, Communication::ClientFilter.new(:identity => client_identity))
@@ -72,7 +71,6 @@ module Pantry
 
     def send_results_back_to_requester(message, results)
       response_message = message.build_response
-      response_message.source = self
       response_message << results
 
       @networking.publish_message(response_message,

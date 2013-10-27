@@ -51,7 +51,6 @@ describe Pantry::Client do
     FakeNetworkStack.any_instance.stubs(:run)
     FakeNetworkStack.any_instance.expects(:send_message).with do |message|
       assert_equal "RegisterClient", message.type
-      assert_equal client.identity, message.source
     end
 
     client.run
@@ -83,7 +82,6 @@ describe Pantry::Client do
     message.requires_response!
 
     FakeNetworkStack.any_instance.expects(:send_message).with do |response_message|
-      assert_equal client.identity, response_message.source
       assert_equal "test_message", response_message.type
       assert_equal ["A response message"], response_message.body
     end
@@ -100,7 +98,6 @@ describe Pantry::Client do
     client.send_request( message)
 
     assert message.requires_response?, "Message should require a response from the server"
-    assert_equal client.identity, message.source
   end
 
   describe "Identity" do

@@ -60,7 +60,6 @@ describe Pantry::Server do
 
     server.send_request("client1", message)
 
-    assert_equal server.identity, message.source
     assert message.requires_response?, "Message should require a response from the receiver"
   end
 
@@ -91,7 +90,6 @@ describe Pantry::Server do
     message.requires_response!
 
     FakeNetworkStack.any_instance.expects(:publish_message).with do |response_message, filter|
-      assert_equal server.identity, response_message.source
       assert_equal "test_message", response_message.type
       assert_equal ["A response message"], response_message.body
       assert_equal "client1", filter.stream

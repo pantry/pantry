@@ -30,24 +30,36 @@ describe Pantry::Communication::Server do
     server.shutdown
   end
 
-  it "uses the publish socket to send messages to clients" do
-    server = Pantry::Communication::Server.new(nil)
-    server.run
+  describe "#publish_message" do
+    let(:listener) { Pantry::Server.new }
+    let(:message) { Pantry::Communication::Message.new }
+    let(:server)  { Pantry::Communication::Server.new(listener) }
 
-    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(
-      "message", Pantry::Communication::ClientFilter.new)
+    before do
+      server.run
+    end
 
-    server.publish_message("message", Pantry::Communication::ClientFilter.new)
-  end
+    it "uses the publish socket to send messages to clients" do
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(
+        message, Pantry::Communication::ClientFilter.new)
 
-  it "passes down a given ClientFilter to the socket" do
-    server = Pantry::Communication::Server.new(nil)
-    server.run
+      server.publish_message(message, Pantry::Communication::ClientFilter.new)
+    end
 
-    filter = Pantry::Communication::ClientFilter.new
-    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with("message", filter)
+    it "sets the source of the message to the sender" do
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with do |message, filter|
+        listener.identity == message.source
+      end
 
-    server.publish_message("message", filter)
+      server.publish_message(message, Pantry::Communication::ClientFilter.new)
+    end
+
+    it "passes down a given ClientFilter to the socket" do
+      filter = Pantry::Communication::ClientFilter.new
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
+
+      server.publish_message(message, filter)
+    end
   end
 
   it "sends a message to a single client via identity, returning a future" do

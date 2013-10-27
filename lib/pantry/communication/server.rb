@@ -35,16 +35,17 @@ module Pantry
         @receive_socket.close
       end
 
-      # Send a message to all clients who match the given filter.
-      def publish_message(message, filter)
-        @publish_socket.send_message(message, filter)
-      end
-
       # Send a request to all clients, expecting a result. Returns a Future
       # which can be queried later for the client response.
       def send_request(message, filter)
-        @publish_socket.send_message(message, filter)
+        publish_message(message, filter)
         @response_wait_list.wait_for(filter.identity, message)
+      end
+
+      # Send a message to all clients who match the given filter.
+      def publish_message(message, filter)
+        message.source = @listener
+        @publish_socket.send_message(message, filter)
       end
 
       # Listener callback from ReceiveSocket. See if we need to match this response

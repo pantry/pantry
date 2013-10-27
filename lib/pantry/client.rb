@@ -70,8 +70,6 @@ module Pantry
     # Send a message to the Server
     def send_request(message)
       message.requires_response!
-      message.source = self
-
       @networking.send_request(message)
     end
 
@@ -83,14 +81,11 @@ module Pantry
 
     def send_registration_message
       message = Pantry::Commands::RegisterClient.new(self).to_message
-      message.source = self
-
       @networking.send_message(message)
     end
 
     def send_results_back_to_requester(message, results)
       response_message = message.build_response
-      response_message.source = self
       response_message << results
 
       @networking.send_message(response_message)

@@ -45,16 +45,17 @@ module Pantry
         end
       end
 
-      # Send a message back up to the server
-      def send_message(message)
-        @send_socket.send_message(message)
-      end
-
       # Send a request to the server, setting up a future
       # that will eventually have the response
       def send_request(message)
-        @send_socket.send_message(message)
+        send_message(message)
         @response_wait_list.wait_for(TEMP_SERVER_IDENTITY, message)
+      end
+
+      # Send a message back up to the server
+      def send_message(message)
+        message.source = @listener
+        @send_socket.send_message(message)
       end
 
     end
