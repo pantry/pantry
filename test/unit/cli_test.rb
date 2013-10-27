@@ -2,6 +2,8 @@ require 'unit/test_helper'
 
 describe Pantry::CLI do
 
+  let(:filter) { Pantry::Communication::ClientFilter.new }
+
   before do
     Pantry::Client.any_instance.stubs(:run)
   end
@@ -9,26 +11,47 @@ describe Pantry::CLI do
   it "builds a message from a command request and sends it to the server" do
     cli = Pantry::CLI.new
 
-    Pantry::Client.any_instance.expects(:send_request).with do |message|
+    cli.expects(:send_request).with do |message|
       assert_equal "ListClients", message.type
     end
 
-    cli.request("status")
+    cli.request(filter, "status")
+  end
+
+  it "passes along arguments to the command handler" do
+    cli = Pantry::CLI.new
+
+    cli.expects(:send_request).with do |message|
+      assert_equal "ExecuteShell", message.type
+      assert_equal "whoami", message.body[0]
+    end
+
+    cli.request(filter, "execute", "whoami")
   end
 
   it "can be given a set of filters to limit the request to a certain subset of clients" do
-    cli = Pantry::CLI.new(
-      filter = Pantry::Communication::ClientFilter.new(
-        application: "pantry", environment: "test", roles: %w(db app)
-      )
+    cli = Pantry::CLI.new
+
+    filter = Pantry::Communication::ClientFilter.new(
+      application: "pantry", environment: "test", roles: %w(db app)
     )
 
-    Pantry::Client.any_instance.expects(:send_request).with do |message|
+    cli.expects(:send_request).with do |message|
       assert_equal "ListClients", message.type
       assert_equal filter, message.filter
     end
 
-    cli.request("status")
+    cli.request(filter, "status")
+  end
+
+  it "treats all received messages as responses (does not execute commands)" do
+    cli = Pantry::CLI.new
+
+    message = Pantry::Communication::Message.new("ExecuteShell")
+    message << "johnson"
+
+    cli.receive_message(message)
+    # Does not explode.
   end
 
 end

@@ -1,9 +1,7 @@
 module Pantry
 
   # Pantry's Command Line Interface.
-  # Is a Pantry::Client for all intents and purposes, builds and handles a mapping
-  # between CLI input and commands to request.
-  class CLI
+  class CLI < Client
 
     # All commands the CLI knows how to handle.
     # Key is the CLI command, and value is the Command Class that will handle the request
@@ -11,15 +9,8 @@ module Pantry
       "status" => Pantry::Commands::ListClients
     }
 
-    # Set up a new CLI, optionally passing in a set of filters to limit the set of
-    # Clients we're trying to request info from.
-    def initialize(client_filter = nil)
-      # TODO Figure out this CLI's identity and pass it into the Client
-      # Also, hook an at_exit @client.shutdown?
-      @client = Pantry::Client.new
-      @client.run
-
-      @client_filter = client_filter || Pantry::Communication::ClientFilter.new
+    def shutdown
+      @client.shutdown
     end
 
     # Process a command from the command line.
@@ -30,10 +21,16 @@ module Pantry
         message = handler.new.to_message
         message.filter = @client_filter
 
-        @client.send_request(message)
+        send_request(message)
       else
         # TODO Error don't know how to handle command
       end
+    end
+
+    # All messages received by this client are assumed to be responses
+    # from previous commands.
+    def receive_message(message)
+      # Do nothing right now
     end
 
   end
