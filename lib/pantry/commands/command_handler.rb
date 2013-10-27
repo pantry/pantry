@@ -21,6 +21,11 @@ module Pantry
         @handlers[Command.command_type(command_class)] = build_command_proc(command_class)
       end
 
+      # Does this CommandHandler know how to handle the given command?
+      def can_handle?(message)
+        !@handlers[message.type].nil?
+      end
+
       # Given a message, figure out which handler should be triggered and get things rolling
       def process(message)
         if handler = @handlers[message.type]

@@ -22,6 +22,18 @@ describe Pantry::Commands::CommandHandler do
     assert_nil command_handler.process(message)
   end
 
+  it "knows if it can process a given command or not" do
+    command_handler.add_handler(:message_type) do |message|
+      "Return Value"
+    end
+
+    message = Pantry::Communication::Message.new("unknown_type")
+    assert_false command_handler.can_handle?(message), "Should not be able to handle unknown_type"
+
+    message = Pantry::Communication::Message.new("message_type")
+    assert command_handler.can_handle?(message), "Should be able to handle message_type"
+  end
+
   class TestMessage < Pantry::Commands::Command
     def perform
       "Test message ran"
