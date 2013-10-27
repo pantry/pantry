@@ -31,6 +31,7 @@ module Pantry
       def initialize(message_type = nil)
         @type              = message_type
         @requires_response = false
+        @forwarded         = false
 
         @body   = []
         @filter = Pantry::Communication::ClientFilter.new
@@ -54,6 +55,17 @@ module Pantry
       # Does this message require a response message?
       def requires_response?
         @requires_response
+      end
+
+      # Has this message been forwarded through the Server?
+      # This flag is checked when the message comes back through the Server,
+      # which lets it know if the message needs to continue back to another Client.
+      def forwarded!
+        @forwarded = true
+      end
+
+      def forwarded?
+        @forwarded
       end
 
       # Build a copy of this message to use when responding

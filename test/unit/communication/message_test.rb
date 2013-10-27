@@ -81,6 +81,14 @@ describe Pantry::Communication::Message do
     assert_false response.requires_response?, "Message shouldn't require a response"
   end
 
+  it "can be flagged as being forwarded" do
+    message = Pantry::Communication::Message.new("type")
+    assert_false message.forwarded?
+
+    message.forwarded!
+    assert message.forwarded?
+  end
+
   it "has a hash of metadata" do
     message = Pantry::Communication::Message.new
     message.type = "read_stuff"
