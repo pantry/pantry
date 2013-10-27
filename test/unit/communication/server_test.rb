@@ -62,6 +62,39 @@ describe Pantry::Communication::Server do
     end
   end
 
+  describe "Message forwarding" do
+    let(:listener) { Pantry::Server.new }
+    let(:message) {
+      message = Pantry::Communication::Message.new
+      message.source = "client427"
+      message
+    }
+    let(:server)  { Pantry::Communication::Server.new(listener) }
+
+    before do
+      server.run
+    end
+
+    it "publishes the message to connected clients untouched" do
+      filter = Pantry::Communication::ClientFilter.new(application: "pantry")
+      message.filter = filter
+
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
+      server.forward_message(message)
+
+      assert message.forwarded?, "Message should have been marked as forwarded"
+    end
+
+    it "forwards off responses to forwarded messages" do
+      filter = Pantry::Communication::ClientFilter.new(identity: "client500")
+      message.filter = filter
+      message.forwarded!
+
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
+      server.handle_message(message)
+    end
+  end
+
   it "sends a message to a single client via identity, returning a future" do
     server = Pantry::Communication::Server.new(nil)
     server.run

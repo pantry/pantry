@@ -48,10 +48,20 @@ module Pantry
         @publish_socket.send_message(message, filter)
       end
 
+      # Send a message to all connected subscribers without modifying the package.
+      # Used when handling requests meant for other clients (say from the CLI). The source
+      # is untouched so the Client(s) handling know how to respond.
+      def forward_message(message)
+        message.forwarded!
+        @publish_socket.send_message(message, message.filter)
+      end
+
       # Listener callback from ReceiveSocket. See if we need to match this response
       # with a previous request or if it's a new message entirely.
       def handle_message(message)
-        if @response_wait_list.waiting_for?(message)
+        if message.forwarded?
+          forward_message(message)
+        elsif @response_wait_list.waiting_for?(message)
           @response_wait_list.received(message)
         else
           @listener.receive_message(message)

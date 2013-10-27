@@ -98,6 +98,18 @@ describe Pantry::Server do
     server.receive_message(message)
   end
 
+  it "forwards an unhandleable command on to connected clients" do
+    server = Pantry::Server.new(FakeNetworkStack)
+
+    message = Pantry::Communication::Message.new("ExecuteShell")
+    message.source = "client1"
+    message.requires_response!
+
+    FakeNetworkStack.any_instance.expects(:forward_message).with(message)
+
+    server.receive_message(message)
+  end
+
   describe "Identity" do
     it "can be given a specific identity" do
       s = Pantry::Server.new
