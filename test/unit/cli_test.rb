@@ -35,11 +35,11 @@ describe Pantry::CLI do
     filter = Pantry::Communication::ClientFilter.new(application: "pantry")
 
     cli.expects(:send_request).with do |message|
-      assert_equal "ListClients", message.type
-#      assert_equal "pantry", message.to
+      assert_equal "ExecuteShell", message.type
+      assert_equal "pantry", message.to
     end
 
-    cli.request(filter, "status")
+    cli.request(filter, "execute", "whoami")
   end
 
   it "treats all received messages as responses (does not execute commands)" do

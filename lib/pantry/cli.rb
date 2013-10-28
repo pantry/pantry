@@ -14,6 +14,10 @@ module Pantry
       "execute" => Pantry::Commands::ExecuteShell
     }
 
+    # List of commands that are meant for the server. Any others are sent
+    # through to clients.
+    SERVER_COMMANDS = %w(status)
+
     def shutdown
       @client.shutdown
     end
@@ -39,14 +43,16 @@ module Pantry
     protected
 
     def build_message_from(handler, filter, command, arguments)
-      command =
+      command_obj =
         if handler.respond_to?(:call)
           handler.call(filter, command, arguments)
         else
           handler.new(*arguments)
         end
 
-      command.to_message
+      message = command_obj.to_message
+      message.to = filter.stream unless SERVER_COMMANDS.include?(command)
+      message
     end
 
   end
