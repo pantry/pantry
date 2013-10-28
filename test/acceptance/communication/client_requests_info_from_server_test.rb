@@ -14,9 +14,7 @@ describe "Client requests information from the Server" do
     message = Pantry::Communication::Message.new("client_info")
     response_future = @client1.send_request(message)
 
-    Timeout::timeout(1) do
-      assert_equal ["Server responds"], response_future.value.body
-    end
+    assert_equal ["Server responds"], response_future.value(2).body
   end
 
   it "handles multiple requests in the proper order" do
@@ -31,10 +29,8 @@ describe "Client requests information from the Server" do
       futures << @client1.send_request(message)
     end
 
-    Timeout::timeout(5) do
-      futures.each_with_index do |future, idx|
-        assert_equal ["Server responds #{idx + 1}"], future.value.body
-      end
+    futures.each_with_index do |future, idx|
+      assert_equal ["Server responds #{idx + 1}"], future.value(1).body
     end
   end
 

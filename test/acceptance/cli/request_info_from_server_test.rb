@@ -18,7 +18,7 @@ describe "CLI can ask Server for information" do
     # `pantry status`
     future = cli.request(filter, "status")
 
-    response = Timeout::timeout(2) { future.value }
+    response = future.value(2)
 
     # May find any number of clients, including the CLI client, so just look
     # for a few we know should be there
@@ -38,7 +38,7 @@ describe "CLI can ask Server for information" do
     # `pantry chatbot status`
     future = cli.request(filter, "status")
 
-    response = Timeout::timeout(2) { future.value }
+    response = future.value(2)
 
     assert_equal 2, response.body.length
     assert_equal "client3", response.body[0]

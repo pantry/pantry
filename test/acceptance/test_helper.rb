@@ -1,6 +1,5 @@
 require 'minitest/autorun'
 require 'support/matchers'
-require 'timeout'
 
 require 'pantry'
 

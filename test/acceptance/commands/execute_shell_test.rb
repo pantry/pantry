@@ -11,9 +11,7 @@ describe "Server requesting a command line execution on clients" do
 
     future = @server.send_request(@client1.identity, message)
 
-    Timeout::timeout(1) do
-      assert_equal [`hostname`, "", "0"], future.value.body
-    end
+    assert_equal [`hostname`, "", "0"], future.value(1).body
   end
 
 end
