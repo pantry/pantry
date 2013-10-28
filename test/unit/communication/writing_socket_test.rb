@@ -28,28 +28,14 @@ describe Pantry::Communication::WritingSocket do
 
   it "serializes a message and sends it down the pipe" do
     message = Pantry::Communication::Message.new("message_type")
+    message.to = "stream"
     message << "message_body_1"
     message << "message_body_2"
 
     @writer.send_message(message)
 
     assert_equal(
-      ["", message.metadata.to_json, "message_body_1", "message_body_2"],
-      @zmq_socket.written
-    )
-  end
-
-  it "sends messages only to the streams specified in the filter" do
-    filter = Pantry::Communication::ClientFilter.new(application: "pantry", environment: "test")
-
-    message = Pantry::Communication::Message.new("message_type")
-    message << "message_body_1"
-    message << "message_body_2"
-
-    @writer.send_message(message, filter)
-
-    assert_equal(
-      ["pantry.test", message.metadata.to_json, "message_body_1", "message_body_2"],
+      ["stream", message.metadata.to_json, "message_body_1", "message_body_2"],
       @zmq_socket.written
     )
   end

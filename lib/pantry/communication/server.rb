@@ -37,15 +37,9 @@ module Pantry
 
       # Send a request to all clients, expecting a result. Returns a Future
       # which can be queried later for the client response.
-      def send_request(message, filter)
-        publish_message(message, filter)
-        @response_wait_list.wait_for(filter.identity, message)
-      end
-
-      # Send a message to all clients who match the given filter.
-      def publish_message(message, filter)
-        message.source = @listener
-        @publish_socket.send_message(message, filter)
+      def send_request(message)
+        publish_message(message)
+        @response_wait_list.wait_for(message.to, message)
       end
 
       # Send a message to all connected subscribers without modifying the package.
@@ -53,7 +47,13 @@ module Pantry
       # is untouched so the Client(s) handling know how to respond.
       def forward_message(message)
         message.forwarded!
-        @publish_socket.send_message(message, message.filter)
+        publish_message(message)
+      end
+
+      # Send a message to all clients who match the given filter.
+      def publish_message(message)
+        message.from ||= @listener
+        @publish_socket.send_message(message)
       end
 
       # Listener callback from ReceiveSocket. See if we need to match this response

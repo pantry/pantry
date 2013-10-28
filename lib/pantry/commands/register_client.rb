@@ -17,7 +17,7 @@ module Pantry
         details = JSON.parse(message.body[0])
 
         self.new(Pantry::Client.new(
-          identity:    message.source,
+          identity:    message.from,
           application: details["application"],
           environment: details["environment"],
           roles:       details["roles"]

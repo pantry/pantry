@@ -21,7 +21,7 @@ module Pantry
 
       # Is there a future waiting for this response message?
       def waiting_for?(message)
-        !@futures[ [message.source, message.type] ].empty?
+        !@futures[ [message.from, message.type] ].empty?
       end
 
       # Internal to Celluloid::Future, using #signal ends up in a Result object
@@ -33,7 +33,7 @@ module Pantry
       FutureResultWrapper = Struct.new(:value)
 
       def received(message)
-        if future = @futures[ [message.source, message.type] ].shift
+        if future = @futures[ [message.from, message.type] ].shift
           future.signal(FutureResultWrapper.new(message))
         end
       end

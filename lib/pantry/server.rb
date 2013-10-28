@@ -35,7 +35,8 @@ module Pantry
 
     # Broadcast a message to all clients, optionally filtering for certain clients.
     def publish_message(message, filter = Communication::ClientFilter.new)
-      @networking.publish_message(message,filter)
+      message.to = filter.stream
+      @networking.publish_message(message)
     end
 
     # Map a message event type to a handler Proc.
@@ -66,9 +67,9 @@ module Pantry
     # when it's available.
     def send_request(client_identity, message)
       message.requires_response!
+      message.to = client_identity
 
-      @networking.send_request(
-        message, Communication::ClientFilter.new(:identity => client_identity))
+      @networking.send_request(message)
     end
 
     protected
@@ -81,8 +82,7 @@ module Pantry
       response_message = message.build_response
       response_message << results
 
-      @networking.publish_message(response_message,
-                                  Communication::ClientFilter.new(:identity => message.source))
+      @networking.publish_message(response_message)
     end
 
   end

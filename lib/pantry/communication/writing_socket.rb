@@ -26,15 +26,15 @@ module Pantry
         @socket.close if @socket
       end
 
-      def send_message(message, filter = ClientFilter.new)
-        @socket.write(serialize(message, filter))
+      def send_message(message)
+        @socket.write(serialize(message))
       end
 
       private
 
-      def serialize(message, filter)
+      def serialize(message)
         [
-          filter.stream,
+          message.to,
           message.metadata.to_json,
           message.body
         ].flatten.compact

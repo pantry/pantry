@@ -11,8 +11,11 @@ module Pantry
     # request message itself.
     class Message
 
-      # When receiving a message from pub/sub, which stream this Message originated from.
-      attr_accessor :stream
+      # Where or who is this message intended for (Can be an identity or a stream)
+      attr_accessor :to
+
+      # Who is this message coming from (Should be an identity)
+      attr_accessor :from
 
       # What type of message are we?
       attr_accessor :type
@@ -20,30 +23,23 @@ module Pantry
       # The full body of the message. See specific message types for handling.
       attr_accessor :body
 
-      # Identity of who sent this message
-      attr_accessor :source
-
-      # ClientFilter that limit who should receive this message
-      attr_accessor :filter
-
       attr_writer :requires_response
 
       def initialize(message_type = nil)
-        @type              = message_type
+        @type = message_type
+        @body = []
+
         @requires_response = false
         @forwarded         = false
-
-        @body   = []
-        @filter = Pantry::Communication::ClientFilter.new
       end
 
       # Set the source of this message either by an object that responds to #identity
       # or a string.
-      def source=(source)
+      def from=(source)
         if source.respond_to?(:identity)
-          @source = source.identity
+          @from = source.identity
         else
-          @source = source
+          @from = source
         end
       end
 
@@ -73,6 +69,8 @@ module Pantry
       def build_response
         response = self.clone
         response.body = []
+        response.to   = self.from
+        response.from = self.to
         response.requires_response = false
         response
       end
@@ -93,18 +91,18 @@ module Pantry
       def metadata
         {
           :type              => self.type,
-          :source            => self.source,
-          :requires_response => self.requires_response?,
-          :filter            => self.filter.to_hash
+          :from              => self.from,
+          :to                => self.to,
+          :requires_response => self.requires_response?
         }
       end
 
       # Given a hash, pull out the parts into local variables
       def metadata=(hash)
         @type              = hash[:type]
-        @source            = hash[:source]
+        @from              = hash[:from]
+        @to                = hash[:to]
         @requires_response = hash[:requires_response]
-        @filter            = Pantry::Communication::ClientFilter.new(hash[:filter] || {})
       end
 
     end

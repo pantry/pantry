@@ -29,7 +29,7 @@ describe Pantry::Communication::ReadingSocket do
       def read
         @buffer ||= [
           "stream",
-          {:type => "message_type", :source => nil, :requires_response => false}.to_json,
+          {:type => "message_type", :from => "zee client", :to => "stream", :requires_response => false}.to_json,
           "body part 1",
           "body part 2"
         ]
@@ -56,7 +56,8 @@ describe Pantry::Communication::ReadingSocket do
     reader.process_next_message
 
     message = listener.handled_message
-    assert_equal "stream", message.stream
+    assert_equal "stream", message.to
+    assert_equal "zee client", message.from
     assert_equal "message_type", message.type
     assert_false message.requires_response?
     assert_equal ["body part 1", "body part 2"], message.body
@@ -96,7 +97,6 @@ describe Pantry::Communication::ReadingSocket do
     reader.process_next_message
 
     message = listener.handled_message
-    assert_equal "stream", message.stream
     assert_equal "message_type", message.type
     assert_false message.requires_response?
     assert_equal ["body part 1", "body part 2"], message.body

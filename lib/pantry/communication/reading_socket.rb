@@ -51,10 +51,10 @@ module Pantry
         message = Message.new
 
         if has_source_header?
-          message.source = @socket.read
+          message.from = @socket.read
         end
 
-        message.stream = @socket.read
+        message.to = @socket.read
         message.metadata = JSON.parse(@socket.read, symbolize_names: true)
 
         while @socket.more_parts?

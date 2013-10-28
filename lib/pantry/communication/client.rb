@@ -36,8 +36,6 @@ module Pantry
 
       # Receive a message from the server
       def handle_message(message)
-        message.source = TEMP_SERVER_IDENTITY
-
         if @response_wait_list.waiting_for?(message)
           @response_wait_list.received(message)
         else
@@ -54,7 +52,8 @@ module Pantry
 
       # Send a message back up to the server
       def send_message(message)
-        message.source = @listener
+        message.from = @listener
+        message.to ||= TEMP_SERVER_IDENTITY
         @send_socket.send_message(message)
       end
 

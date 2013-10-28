@@ -76,7 +76,7 @@ describe Pantry::Communication::Client do
     message = Pantry::Communication::Message.new("message")
 
     Pantry::Communication::SendSocket.any_instance.expects(:send_message).with do |message|
-      message.source == pantry_client.identity
+      message.from == pantry_client.identity
     end
 
     client.run

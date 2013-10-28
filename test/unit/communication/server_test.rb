@@ -40,25 +40,17 @@ describe Pantry::Communication::Server do
     end
 
     it "uses the publish socket to send messages to clients" do
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(
-        message, Pantry::Communication::ClientFilter.new)
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
 
-      server.publish_message(message, Pantry::Communication::ClientFilter.new)
+      server.publish_message(message)
     end
 
-    it "sets the source of the message to the sender" do
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with do |message, filter|
-        listener.identity == message.source
+    it "sets the from of the message to the sender" do
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with do |message|
+        listener.identity == message.from
       end
 
-      server.publish_message(message, Pantry::Communication::ClientFilter.new)
-    end
-
-    it "passes down a given ClientFilter to the socket" do
-      filter = Pantry::Communication::ClientFilter.new
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
-
-      server.publish_message(message, filter)
+      server.publish_message(message)
     end
   end
 
@@ -66,7 +58,7 @@ describe Pantry::Communication::Server do
     let(:listener) { Pantry::Server.new }
     let(:message) {
       message = Pantry::Communication::Message.new
-      message.source = "client427"
+      message.from = "client427"
       message
     }
     let(:server)  { Pantry::Communication::Server.new(listener) }
@@ -76,21 +68,19 @@ describe Pantry::Communication::Server do
     end
 
     it "publishes the message to connected clients untouched" do
-      filter = Pantry::Communication::ClientFilter.new(application: "pantry")
-      message.filter = filter
+      message.to = "pantry"
 
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
       server.forward_message(message)
 
       assert message.forwarded?, "Message should have been marked as forwarded"
     end
 
     it "forwards off responses to forwarded messages" do
-      filter = Pantry::Communication::ClientFilter.new(identity: "client500")
-      message.filter = filter
+      message.to = "client500"
       message.forwarded!
 
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
       server.handle_message(message)
     end
   end
@@ -99,11 +89,10 @@ describe Pantry::Communication::Server do
     server = Pantry::Communication::Server.new(nil)
     server.run
 
-    filter = Pantry::Communication::ClientFilter.new(identity: "client1")
     message = Pantry::Communication::Message.new("message")
-    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message, filter)
+    Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
 
-    future = server.send_request(message, filter)
+    future = server.send_request(message)
 
     assert_not_nil future
     assert_not future.ready?

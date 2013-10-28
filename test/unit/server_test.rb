@@ -33,9 +33,9 @@ describe Pantry::Server do
     server = Pantry::Server.new(FakeNetworkStack)
     message = Pantry::Communication::Message.new("test message")
 
-    FakeNetworkStack.any_instance.expects(:publish_message).with(
-      message, Pantry::Communication::ClientFilter.new
-    )
+    FakeNetworkStack.any_instance.expects(:publish_message).with do |message|
+      message.to == ""
+    end
 
     server.publish_message(message)
   end
@@ -43,9 +43,11 @@ describe Pantry::Server do
   it "can publish messages to a filtered set of clients" do
     server = Pantry::Server.new(FakeNetworkStack)
     message = Pantry::Communication::Message.new("test message")
-    filter = Pantry::Communication::ClientFilter.new(roles: %(db))
+    filter = Pantry::Communication::ClientFilter.new(roles: %w(db))
 
-    FakeNetworkStack.any_instance.expects(:publish_message).with(message, filter)
+    FakeNetworkStack.any_instance.expects(:publish_message).with do |message|
+      message.to == "db"
+    end
 
     server.publish_message(message, filter)
   end
@@ -54,9 +56,9 @@ describe Pantry::Server do
     server = Pantry::Server.new(FakeNetworkStack)
     message = Pantry::Communication::Message.new("test message")
 
-    FakeNetworkStack.any_instance.expects(:send_request).with(
-      message, Pantry::Communication::ClientFilter.new(identity: "client1")
-    )
+    FakeNetworkStack.any_instance.expects(:send_request).with do |message|
+      assert_equal "client1", message.to
+    end
 
     server.send_request("client1", message)
 
@@ -86,13 +88,13 @@ describe Pantry::Server do
     end
 
     message = Pantry::Communication::Message.new("test_message")
-    message.source = "client1"
+    message.from = "client1"
     message.requires_response!
 
-    FakeNetworkStack.any_instance.expects(:publish_message).with do |response_message, filter|
+    FakeNetworkStack.any_instance.expects(:publish_message).with do |response_message|
       assert_equal "test_message", response_message.type
+      assert_equal message.from, response_message.to
       assert_equal ["A response message"], response_message.body
-      assert_equal "client1", filter.stream
     end
 
     server.receive_message(message)
@@ -102,7 +104,7 @@ describe Pantry::Server do
     server = Pantry::Server.new(FakeNetworkStack)
 
     message = Pantry::Communication::Message.new("ExecuteShell")
-    message.source = "client1"
+    message.from = "client1"
     message.requires_response!
 
     FakeNetworkStack.any_instance.expects(:forward_message).with(message)
