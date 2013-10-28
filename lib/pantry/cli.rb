@@ -24,8 +24,6 @@ module Pantry
     def request(filter, command, *arguments)
       if handler = COMMAND_MAP[command]
         message = build_message_from(handler, filter, command, arguments)
-        message.to = filter.stream
-
         send_request(message)
       else
         # TODO Error don't know how to handle command

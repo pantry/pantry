@@ -48,7 +48,7 @@ module Pantry
 
     # Callback from the network when a message is received unsolicited from a client.
     # If the message received is unhandleable by this Server, the message is forwarded
-    # on down to the clients who match the message's filters.
+    # on down to the clients who match the message's to line.
     def receive_message(message)
       if @commands.can_handle?(message)
         results = @commands.process(message)
@@ -57,8 +57,9 @@ module Pantry
           send_results_back_to_requester(message, results)
         end
       else
-        puts "Forwarding message on to clients #{message}"
-        @networking.forward_message(message)
+#        puts "[Server] Forwarding message on to clients #{message.inspect}"
+        forward_message(message)
+#        send_results_back_to_requester(message, [client count])
       end
     end
 
@@ -83,6 +84,10 @@ module Pantry
       response_message << results
 
       @networking.publish_message(response_message)
+    end
+
+    def forward_message(message)
+      @networking.forward_message(message)
     end
 
   end
