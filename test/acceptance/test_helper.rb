@@ -1,5 +1,6 @@
 require 'minitest/autorun'
 require 'support/matchers'
+require 'celluloid/test'
 
 require 'pantry'
 
