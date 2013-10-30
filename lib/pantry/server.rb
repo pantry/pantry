@@ -6,8 +6,8 @@ module Pantry
     # This server's Identity. By default this is the server's hostname but can be specified manually.
     attr_accessor :identity
 
-    # List of clients this Server knows about
-    attr_reader :clients
+    # Registry of clients this Server knows about
+    attr_reader :client_registry
 
     # Initialize the Pantry Server
     def initialize(network_stack_class = Communication::Server)

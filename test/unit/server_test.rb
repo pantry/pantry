@@ -24,7 +24,7 @@ describe Pantry::Server do
 
       server.register_client(client)
 
-      assert_equal [client], server.clients
+      assert_equal [client], server.client_registry.all
     end
 
   end

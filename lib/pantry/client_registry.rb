@@ -8,6 +8,10 @@ module Pantry
       @clients = []
     end
 
+    def all
+      @clients
+    end
+
     # Check in a client
     def check_in(client)
       @clients << client

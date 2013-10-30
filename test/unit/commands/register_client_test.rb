@@ -15,11 +15,13 @@ describe Pantry::Commands::RegisterClient do
     command.server_or_client = server
     command.perform
 
-    assert_equal 1, server.clients.length
-    assert_equal "client 427", server.clients[0].identity
-    assert_equal "pantry", server.clients[0].application
-    assert_equal "test", server.clients[0].environment
-    assert_equal %w(app db), server.clients[0].roles
+    clients = server.client_registry.all
+
+    assert_equal 1, clients.length
+    assert_equal "client 427", clients[0].identity
+    assert_equal "pantry", clients[0].application
+    assert_equal "test", clients[0].environment
+    assert_equal %w(app db), clients[0].roles
   end
 
   it "builds message including the Client's information for registration" do
