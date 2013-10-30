@@ -93,7 +93,8 @@ module Pantry
           :type              => self.type,
           :from              => self.from,
           :to                => self.to,
-          :requires_response => self.requires_response?
+          :requires_response => self.requires_response?,
+          :forwarded         => self.forwarded?
         }
       end
 
@@ -103,6 +104,7 @@ module Pantry
         @from              = hash[:from]
         @to                = hash[:to]
         @requires_response = hash[:requires_response]
+        @forwarded         = hash[:forwarded]
       end
 
     end

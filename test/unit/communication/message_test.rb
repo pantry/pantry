@@ -74,6 +74,7 @@ describe Pantry::Communication::Message do
     message << "Body part 2"
     message.to = "server"
     message.from = "client"
+    message.forwarded!
     message.requires_response!
 
     response = message.build_response
@@ -83,6 +84,7 @@ describe Pantry::Communication::Message do
     assert_false response.requires_response?, "Message shouldn't require a response"
     assert_equal "client", response.to
     assert_equal "server", response.from
+    assert response.forwarded?
   end
 
   it "can be flagged as being forwarded" do
@@ -97,6 +99,7 @@ describe Pantry::Communication::Message do
     message = Pantry::Communication::Message.new
     message.type = "read_stuff"
     message.requires_response!
+    message.forwarded!
     message.from = "99 Luftballoons"
     message.to = "streamer"
 
@@ -104,6 +107,7 @@ describe Pantry::Communication::Message do
     assert_equal "99 Luftballoons", message.metadata[:from]
     assert_equal "streamer", message.metadata[:to]
     assert message.metadata[:requires_response]
+    assert message.metadata[:forwarded]
   end
 
   it "takes a hash of metadata and parses out approriate values" do
@@ -111,6 +115,7 @@ describe Pantry::Communication::Message do
     message.metadata = {
       type: "read_stuff",
       requires_response: true,
+      forwarded: true,
       from: "99 Luftballoons",
       to: "streamer"
     }
@@ -119,6 +124,7 @@ describe Pantry::Communication::Message do
     assert_equal "99 Luftballoons", message.from
     assert_equal "streamer", message.to
     assert       message.requires_response?
+    assert       message.forwarded?
   end
 
 end
