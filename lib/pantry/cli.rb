@@ -15,29 +15,34 @@ module Pantry
     }
 
     # List of commands that are meant for the server. Any others are sent
-    # through to clients.
+    # through to clients. Will most likely build up a similar Command object structure
+    # for CLI commands that handle this kind of logic and clean up the COMMAND_MAP above.
     SERVER_COMMANDS = %w(status)
-
-    def shutdown
-      @client.shutdown
-    end
 
     # Process a command from the command line.
     # Figures out which command handler class to invoke, builds a message from
     # that command class and sends it down the pipe.
+    #
+    # Returns a CLI::Response object that will eventually have the responses
+    # from the Server and/or Clients.
     def request(filter, command, *arguments)
       if handler = COMMAND_MAP[command]
         message = build_message_from(handler, filter, command, arguments)
-        send_request(message)
+        @response = response_class_for(command).new(send_request(message))
       else
         # TODO Error don't know how to handle command
+        # raise UnknownCommandError.new(command, arguments)
       end
     end
 
     # All messages received by this client are assumed to be responses
     # from previous commands.
     def receive_message(message)
-      # Do nothing right now
+      puts "ZOMG GOT #{message.inspect}"
+
+      if @response
+        @response.receive_message(message)
+      end
     end
 
     protected
@@ -53,6 +58,45 @@ module Pantry
       message = command_obj.to_message
       message.to = filter.stream unless SERVER_COMMANDS.include?(command)
       message
+    end
+
+    def response_class_for(command)
+      if SERVER_COMMANDS.include?(command)
+        SingleResponse
+      else
+        MultiResponse
+      end
+    end
+
+    SERVER_RESPONSE_TIMEOUT = 5 # seconds
+    CLIENT_RESPONSE_TIMEOUT = 5 # seconds
+
+    class SingleResponse
+      def initialize(server_future)
+        @server_future = server_future
+      end
+
+      def message
+        @server_future.value(SERVER_RESPONSE_TIMEOUT)
+      end
+
+      def receive_message(message)
+        #no-op
+      end
+    end
+
+    class MultiResponse
+      def initialize(server_future)
+        @server_future = server_future
+      end
+
+      def messages
+
+      end
+
+      def receive_message(message)
+
+      end
     end
 
   end

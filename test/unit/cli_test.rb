@@ -13,7 +13,7 @@ describe Pantry::CLI do
 
     cli.expects(:send_request).with do |message|
       assert_equal "ListClients", message.type
-    end
+    end.returns(stub(:value => []))
 
     cli.request(filter, "status")
   end
@@ -24,7 +24,7 @@ describe Pantry::CLI do
     cli.expects(:send_request).with do |message|
       assert_equal "ExecuteShell", message.type
       assert_equal "whoami", message.body[0]
-    end
+    end.returns(stub(:value => []))
 
     cli.request(filter, "execute", "whoami")
   end
@@ -37,7 +37,7 @@ describe Pantry::CLI do
     cli.expects(:send_request).with do |message|
       assert_equal "ExecuteShell", message.type
       assert_equal "pantry", message.to
-    end
+    end.returns(stub(:value => []))
 
     cli.request(filter, "execute", "whoami")
   end
