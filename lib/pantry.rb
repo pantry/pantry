@@ -30,6 +30,8 @@ require 'pantry/communication/subscribe_socket'
 require 'pantry/communication/receive_socket'
 require 'pantry/communication/send_socket'
 
+require 'pantry/client_registry'
+
 require 'pantry/client'
 require 'pantry/server'
 require 'pantry/cli'

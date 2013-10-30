@@ -15,6 +15,8 @@ module Pantry
       @networking = network_stack_class.new(self)
       @identity   = current_hostname
       @clients    = []
+
+      @client_registry = ClientRegistry.new
     end
 
     # Start up the networking stack and start the server
@@ -27,10 +29,9 @@ module Pantry
       @networking.shutdown
     end
 
-    # Register a client as in the system
-    # TODO Improve. Very dumb plain array add
+    # Mark a client as checked-in
     def register_client(client)
-      @clients << client
+      @client_registry.check_in(client)
     end
 
     # Broadcast a message to all clients, optionally filtering for certain clients.
