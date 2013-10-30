@@ -88,14 +88,39 @@ module Pantry
     class MultiResponse
       def initialize(server_future)
         @server_future = server_future
+        @messages = []
+
+        # TODO Change this to a Condition on next release of Celluloid
+        @wait_on_messages = Celluloid::Future.new
       end
 
       def messages
-
+        ensure_server_response
+        ensure_all_messages_received
+        @messages
       end
 
+      FutureResultWrapper = Struct.new(:value)
       def receive_message(message)
+        @messages << message
 
+        if @server_response && @messages.length >= @server_response.body.length
+          @wait_on_messages.signal(FutureResultWrapper.new(nil))
+        end
+      end
+
+      protected
+
+      def ensure_server_response
+        @server_response = @server_future.value(SERVER_RESPONSE_TIMEOUT)
+      end
+
+      def ensure_all_messages_received
+        begin
+          @wait_on_messages.value(CLIENT_RESPONSE_TIMEOUT)
+        rescue Celluloid::TimeoutError
+          puts "Did not get signal, returning known list of messages"
+        end
       end
     end
 
