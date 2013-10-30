@@ -16,6 +16,8 @@ describe "CLI requests information from individual clients" do
     response = cli.request(filter, "execute", "whoami")
     all = response.messages
 
+    all = response.messages.sort {|a, b| a.from <=> b.from }
+
     assert_equal @client1.identity,   all[0].from
     assert_equal [`whoami`, "", "0"], all[0].body
 
