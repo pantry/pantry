@@ -108,6 +108,9 @@ describe Pantry::Server do
     message.requires_response!
 
     FakeNetworkStack.any_instance.expects(:forward_message).with(message)
+    FakeNetworkStack.any_instance.expects(:publish_message).with do |message|
+      message.to == "client1" && message.body == []
+    end
 
     server.receive_message(message)
   end

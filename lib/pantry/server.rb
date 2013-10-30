@@ -58,9 +58,10 @@ module Pantry
           send_results_back_to_requester(message, results)
         end
       else
-#        puts "[Server] Forwarding message on to clients #{message.inspect}"
         forward_message(message)
-#        send_results_back_to_requester(message, [client count])
+        matched_clients = @client_registry.all_matching(message.to).map(&:identity)
+        message.to = "server" #TODO HACK
+        send_results_back_to_requester(message, matched_clients)
       end
     end
 
