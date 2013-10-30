@@ -7,13 +7,9 @@ module Pantry
         @client_filter = client_filter
       end
 
-      # Return information about all connected Clients
+      # Return information about all connected Clients that match the given filter
       def perform
-        self.server.clients.select do |client|
-          @client_filter.includes?(client.filter)
-        end.map do |client|
-          client.identity
-        end
+        self.server.client_registry.all_matching(@client_filter).map(&:identity)
       end
 
       def self.from_message(message)

@@ -23,10 +23,17 @@ module Pantry
     end
 
     # Find and return all clients who will receive messages
-    # on the given stream
-    def all_matching(stream)
-      @clients.select do |client|
-        client.filter.matches?(stream)
+    # on the given stream or ClientFilter
+    def all_matching(stream_or_filter)
+      case stream_or_filter
+      when String
+        @clients.select do |client|
+          client.filter.matches?(stream_or_filter)
+        end
+      else
+        @clients.select do |client|
+          stream_or_filter.includes?(client.filter)
+        end
       end
     end
 

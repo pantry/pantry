@@ -23,4 +23,18 @@ describe Pantry::ClientRegistry do
     assert_equal [@c2], @registry.all_matching("client2")
   end
 
+  it "returns all known clients that match a given ClientFilter" do
+    assert_equal [@c1, @c2], @registry.all_matching(Pantry::Communication::ClientFilter.new)
+
+    filter = Pantry::Communication::ClientFilter.new(application: "pantry", environment: "test")
+    assert_equal [@c1], @registry.all_matching(filter)
+
+    filter = Pantry::Communication::ClientFilter.new(environment: "test")
+    assert_equal [@c2], @registry.all_matching(filter)
+  end
+
+  it "can return all known clients" do
+    assert_equal [@c1, @c2], @registry.all
+  end
+
 end
