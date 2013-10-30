@@ -129,6 +129,22 @@ describe Pantry::Communication::ClientFilter do
     end
   end
 
+  describe "#matches" do
+    it "returns true if the stream is matched by any part of the filter" do
+      filter = Pantry::Communication::ClientFilter.new(
+        application: "app", environment: "test", roles: %w(db))
+
+      assert filter.matches?("")
+      assert filter.matches?("app")
+      assert filter.matches?("app.test")
+      assert filter.matches?("app.test.db")
+
+      assert_false filter.matches?("app2")
+      assert_false filter.matches?("db")
+      assert_false filter.matches?("test")
+    end
+  end
+
   describe "#includes?" do
     it "returns true if the two filters are equal" do
       f1 = Pantry::Communication::ClientFilter.new(

@@ -84,6 +84,13 @@ module Pantry
           self.identity    == other.identity
       end
 
+      # Will this filter match on the given stream?
+      def matches?(test_stream)
+        self.streams.any? do |stream|
+          stream.start_with?(test_stream)
+        end
+      end
+
       # A filter includes another filter if the other filter matches.
       # This does not look at identities.
       def includes?(filter)
