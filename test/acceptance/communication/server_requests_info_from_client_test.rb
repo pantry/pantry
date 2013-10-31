@@ -26,9 +26,10 @@ describe "Server requests info from the Client" do
       "Client 2 responds"
     end
 
-    message = Pantry::Communication::Message.new("request_message")
-    future1 = @server.send_request(@client1.identity, message)
-    future2 = @server.send_request(@client2.identity, message)
+    message1 = Pantry::Communication::Message.new("request_message")
+    message2 = Pantry::Communication::Message.new("request_message")
+    future1 = @server.send_request(@client1, message1)
+    future2 = @server.send_request(@client2, message2)
 
     assert_equal ["Client 1 responds"], future1.value(1).body
     assert_equal ["Client 2 responds"], future2.value(1).body

@@ -18,6 +18,7 @@ class Minitest::Test
       Pantry.config.receive_port = 10102
 
       $server = Pantry::Server.new
+      $server.identity = "Test Server"
       $server.run
 
       $client1 = Pantry::Client.new identity: "client1", application: "pantry"

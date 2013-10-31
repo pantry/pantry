@@ -34,7 +34,7 @@ module Pantry
 
       def serialize(message)
         [
-          message.to,
+          message.to || "",
           message.metadata.to_json,
           message.body
         ].flatten.compact

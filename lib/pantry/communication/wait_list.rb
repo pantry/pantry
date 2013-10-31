@@ -11,17 +11,18 @@ module Pantry
         @futures = Hash.new {|hash, key| hash[key] = []}
       end
 
-      # Given an +identity+ of a Client or Server and the +message+ being sent,
-      # create a Future for a response to this message.
-      def wait_for(identity, message)
+      # Given a +message+ being sent, create a Future for a response to this message.
+      # This keys off of the Message's UUID, which must be kept in tact as it
+      # passes through the system.
+      def wait_for(message)
         future = Celluloid::Future.new
-        @futures[ [identity, message.type] ] << future
+        @futures[ message.uuid ] << future
         future
       end
 
       # Is there a future waiting for this response message?
       def waiting_for?(message)
-        !@futures[ [message.from, message.type] ].empty?
+        !@futures[ message.uuid ].empty?
       end
 
       # Internal to Celluloid::Future, using #signal ends up in a Result object
@@ -33,7 +34,7 @@ module Pantry
       FutureResultWrapper = Struct.new(:value)
 
       def received(message)
-        if future = @futures[ [message.from, message.type] ].shift
+        if future = @futures[ message.uuid ].shift
           future.signal(FutureResultWrapper.new(message))
         end
       end

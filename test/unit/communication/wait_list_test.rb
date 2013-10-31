@@ -7,9 +7,8 @@ describe Pantry::Communication::WaitList do
 
     @wait_list = Pantry::Communication::WaitList.new
     @message = Pantry::Communication::Message.new("do_something")
-    @message.from = "identity"
 
-    @future = @wait_list.wait_for("identity", @message)
+    @future = @wait_list.wait_for(@message)
   end
 
   it "creates and returns a future waiting for a response for the given identity and message" do
@@ -18,17 +17,6 @@ describe Pantry::Communication::WaitList do
 
   it "knows if the given message matches a waiting future" do
     assert @wait_list.waiting_for?(@message), "Wait List should be waiting for this message"
-  end
-
-  it "matches message identity and message type when finding futures" do
-    @message.from = "not me"
-
-    assert !@wait_list.waiting_for?(@message), "Wait List should not be waiting for 'not me'"
-
-    @message.from = "identity"
-    @message.type   = "some other type"
-
-    assert_false @wait_list.waiting_for?(@message), "Wait List should not be waiting for 'some other type'"
   end
 
   it "fulfills the waiting future if a message is received matching the waiting future" do
@@ -54,9 +42,9 @@ describe Pantry::Communication::WaitList do
     m3 = Pantry::Communication::Message.new("do_something")
     m3.from = "client"
 
-    future1 = wait_list.wait_for("client", m1)
-    future2 = wait_list.wait_for("client", m2)
-    future3 = wait_list.wait_for("client", m3)
+    future1 = wait_list.wait_for(m1)
+    future2 = wait_list.wait_for(m2)
+    future3 = wait_list.wait_for(m3)
 
     assert wait_list.waiting_for?(m1)
 

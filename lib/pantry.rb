@@ -1,6 +1,7 @@
 require 'celluloid'
 require 'celluloid/zmq'
 require 'json'
+require 'securerandom'
 require 'set'
 require 'socket'
 require 'open3'

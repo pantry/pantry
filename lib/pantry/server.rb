@@ -60,7 +60,6 @@ module Pantry
       else
         forward_message(message)
         matched_clients = @client_registry.all_matching(message.to).map(&:identity)
-        message.to = "server" #TODO HACK
         send_results_back_to_requester(message, matched_clients)
       end
     end

@@ -38,8 +38,6 @@ module Pantry
     # All messages received by this client are assumed to be responses
     # from previous commands.
     def receive_message(message)
-      puts "ZOMG GOT #{message.inspect}"
-
       if @response
         @response.receive_message(message)
       end

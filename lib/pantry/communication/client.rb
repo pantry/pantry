@@ -3,11 +3,6 @@ module Pantry
 
     class Client
 
-      # TODO HACK For now this always comes from the server
-      # so we work around not knowing the server's identity right now.
-      # Should update this to store the server's identity on auth
-      TEMP_SERVER_IDENTITY = "server"
-
       def initialize(listener)
         @listener = listener
         @response_wait_list = Communication::WaitList.new
@@ -47,13 +42,12 @@ module Pantry
       # that will eventually have the response
       def send_request(message)
         send_message(message)
-        @response_wait_list.wait_for(TEMP_SERVER_IDENTITY, message)
+        @response_wait_list.wait_for(message)
       end
 
       # Send a message back up to the server
       def send_message(message)
         message.from = @listener
-        message.to ||= TEMP_SERVER_IDENTITY
         @send_socket.send_message(message)
       end
 

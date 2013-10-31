@@ -11,6 +11,9 @@ module Pantry
     # request message itself.
     class Message
 
+      # Unique identifier for this Message. Automatically generated
+      attr_reader :uuid
+
       # Where or who is this message intended for (Can be an identity or a stream)
       attr_accessor :to
 
@@ -31,6 +34,8 @@ module Pantry
 
         @requires_response = false
         @forwarded         = false
+
+        @uuid = SecureRandom.uuid
       end
 
       # Set the source of this message either by an object that responds to #identity
@@ -90,6 +95,7 @@ module Pantry
       # Return all of this message's metadata as a hash
       def metadata
         {
+          :uuid              => self.uuid,
           :type              => self.type,
           :from              => self.from,
           :to                => self.to,
@@ -100,6 +106,7 @@ module Pantry
 
       # Given a hash, pull out the parts into local variables
       def metadata=(hash)
+        @uuid              = hash[:uuid]
         @type              = hash[:type]
         @from              = hash[:from]
         @to                = hash[:to]

@@ -7,6 +7,12 @@ describe Pantry::Communication::Message do
     assert_equal "message_type", message.type
   end
 
+  it "generates a UUID on construction" do
+    message = Pantry::Communication::Message.new("message_type")
+    assert_not_nil message.uuid
+    assert message.uuid.length > 10
+  end
+
   it "knows who the message is meant for" do
     message = Pantry::Communication::Message.new("")
     message.to = "stream"
@@ -85,6 +91,8 @@ describe Pantry::Communication::Message do
     assert_equal "client", response.to
     assert_equal "server", response.from
     assert response.forwarded?
+
+    assert_equal message.uuid, response.uuid
   end
 
   it "can be flagged as being forwarded" do
@@ -103,6 +111,7 @@ describe Pantry::Communication::Message do
     message.from = "99 Luftballoons"
     message.to = "streamer"
 
+    assert_not_nil message.metadata[:uuid]
     assert_equal "read_stuff", message.metadata[:type]
     assert_equal "99 Luftballoons", message.metadata[:from]
     assert_equal "streamer", message.metadata[:to]
@@ -117,9 +126,11 @@ describe Pantry::Communication::Message do
       requires_response: true,
       forwarded: true,
       from: "99 Luftballoons",
-      to: "streamer"
+      to: "streamer",
+      uuid: "123-4567-890-1234"
     }
 
+    assert_equal "123-4567-890-1234", message.uuid
     assert_equal "read_stuff", message.type
     assert_equal "99 Luftballoons", message.from
     assert_equal "streamer", message.to

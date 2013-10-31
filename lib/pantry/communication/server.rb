@@ -39,7 +39,7 @@ module Pantry
       # which can be queried later for the client response.
       def send_request(message)
         publish_message(message)
-        @response_wait_list.wait_for(message.to, message)
+        @response_wait_list.wait_for(message)
       end
 
       # Send a message to all connected subscribers without modifying the package.

@@ -39,4 +39,18 @@ describe Pantry::Communication::WritingSocket do
       @zmq_socket.written
     )
   end
+
+  it "ensures there's always something for the stream value" do
+    message = Pantry::Communication::Message.new("message_type")
+    message.to = nil
+    message << "message_body_1"
+    message << "message_body_2"
+
+    @writer.send_message(message)
+
+    assert_equal(
+      ["", message.metadata.to_json, "message_body_1", "message_body_2"],
+      @zmq_socket.written
+    )
+  end
 end
