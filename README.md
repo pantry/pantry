@@ -27,7 +27,7 @@ Prior to starting Pantry we did look closely at each of these other offerings, a
 
 All communication between Clients and Servers is handled with a custom ZeroMQ topology.
 
-![network_topology](https://github.com/collectiveidea/pantry/blob/master/doc/network_topology.dot.png)
+![network_topology](https://raw.github.com/collectiveidea/pantry/master/doc/network_topology.dot.png)
 
 ### Pantry Server
 
