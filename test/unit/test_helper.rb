@@ -4,3 +4,5 @@ require 'support/matchers'
 require 'celluloid/test'
 
 require 'pantry'
+
+Pantry.logger(nil)

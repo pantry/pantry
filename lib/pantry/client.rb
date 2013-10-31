@@ -45,10 +45,12 @@ module Pantry
     def run
       @networking.run
       send_registration_message
+      Pantry.logger.info("[#{@identity}] Client registered and waiting for commands")
     end
 
     # Close down all communication channels and clean up resources
     def shutdown
+      Pantry.logger.info("[#{@identity}] Client Shutting down")
       @networking.shutdown
     end
 
@@ -61,8 +63,11 @@ module Pantry
 
     # Callback from SubscribeSocket when a message is received
     def receive_message(message)
+      Pantry.logger.debug("[#{@identity}] Received message #{message.inspect}")
       results = @commands.process(message)
+
       if message.requires_response?
+        Pantry.logger.debug("[#{@identity}] Responding with #{results.inspect}")
         send_results_back_to_requester(message, results)
       end
     end
@@ -70,6 +75,9 @@ module Pantry
     # Send a message to the Server
     def send_request(message)
       message.requires_response!
+
+      Pantry.logger.debug("[#{@identity}] Sending request #{message.inspect}")
+
       @networking.send_request(message)
     end
 

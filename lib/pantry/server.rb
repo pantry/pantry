@@ -22,20 +22,24 @@ module Pantry
     # Start up the networking stack and start the server
     def run
       @networking.run
+      Pantry.logger.info("[#{@identity}] Server running")
     end
 
     # Close down networking and clean up resources
     def shutdown
+      Pantry.logger.info("[#{@identity}] Server Shutting Down")
       @networking.shutdown
     end
 
     # Mark a client as checked-in
     def register_client(client)
+      Pantry.logger.info("[#{@identity}] Received client registration :: #{client.identity}")
       @client_registry.check_in(client)
     end
 
     # Broadcast a message to all clients, optionally filtering for certain clients.
     def publish_message(message, filter = Communication::ClientFilter.new)
+      Pantry.logger.debug("[#{@identity}] Publishing #{message.inspect} to #{filter.stream.inspect}")
       message.to = filter.stream
       @networking.publish_message(message)
     end
@@ -51,15 +55,19 @@ module Pantry
     # If the message received is unhandleable by this Server, the message is forwarded
     # on down to the clients who match the message's to line.
     def receive_message(message)
+      Pantry.logger.debug("[#{@identity}] Received message #{message.inspect}")
       if @commands.can_handle?(message)
         results = @commands.process(message)
 
         if message.requires_response?
+          Pantry.logger.debug("[#{@identity}] Returning results #{results.inspect}")
           send_results_back_to_requester(message, results)
         end
       else
         forward_message(message)
         matched_clients = @client_registry.all_matching(message.to).map(&:identity)
+
+        Pantry.logger.debug("[#{@identity}] Forwarding message on to #{matched_clients.inspect}")
         send_results_back_to_requester(message, matched_clients)
       end
     end
@@ -70,6 +78,8 @@ module Pantry
     def send_request(client, message)
       message.requires_response!
       message.to = client.identity
+
+      Pantry.logger.debug("[#{@identity}] Sending request #{message.inspect}")
 
       @networking.send_request(message)
     end

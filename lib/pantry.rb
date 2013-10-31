@@ -1,12 +1,14 @@
 require 'celluloid'
 require 'celluloid/zmq'
 require 'json'
+require 'logger'
 require 'securerandom'
 require 'set'
 require 'socket'
 require 'open3'
 
 require 'pantry/config'
+require 'pantry/logger'
 
 require 'pantry/commands/command'
 require 'pantry/commands/command_handler'

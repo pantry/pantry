@@ -4,6 +4,8 @@ require 'celluloid/test'
 
 require 'pantry'
 
+Pantry.logger(nil)
+
 class Minitest::Test
 
   # We are dealing with actual socket communication here, so we want

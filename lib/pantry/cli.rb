@@ -30,8 +30,7 @@ module Pantry
         message = build_message_from(handler, filter, command, arguments)
         @response = response_class_for(command).new(send_request(message))
       else
-        # TODO Error don't know how to handle command
-        # raise UnknownCommandError.new(command, arguments)
+        Pantry.logger.error("[CLI] I don't know the #{command.inspect} command")
       end
     end
 
@@ -78,6 +77,10 @@ module Pantry
         @server_future.value(SERVER_RESPONSE_TIMEOUT)
       end
 
+      def messages
+        [message]
+      end
+
       def receive_message(message)
         #no-op
       end
@@ -90,34 +93,40 @@ module Pantry
 
         # TODO Change this to a Condition on next release of Celluloid
         @wait_on_messages = Celluloid::Future.new
+        ensure_server_response
       end
 
       def messages
-        ensure_server_response
         ensure_all_messages_received
         @messages
       end
 
       FutureResultWrapper = Struct.new(:value)
       def receive_message(message)
+        Pantry.logger.debug("[CLI] Received message #{message.inspect}")
         @messages << message
 
         if @server_response && @messages.length >= @server_response.body.length
-          @wait_on_messages.signal(FutureResultWrapper.new(nil))
+          Pantry.logger.debug("[CLI] Received all expected messages")
+          @wait_on_messages.signal(FutureResultWrapper.new("success"))
         end
       end
 
       protected
 
       def ensure_server_response
-        @server_response = @server_future.value(SERVER_RESPONSE_TIMEOUT)
+        begin
+          @server_response = @server_future.value(SERVER_RESPONSE_TIMEOUT)
+        rescue Celluloid::TimeoutError
+          Pantry.logger.error("[CLI] Did not receive response from Server in time.")
+        end
       end
 
       def ensure_all_messages_received
         begin
           @wait_on_messages.value(CLIENT_RESPONSE_TIMEOUT)
         rescue Celluloid::TimeoutError
-          puts "Did not get signal, returning known list of messages"
+          Pantry.logger.error("[CLI] Did not receive all expected messages.")
         end
       end
     end
