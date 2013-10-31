@@ -12,7 +12,7 @@ describe "Server requests info from the Client" do
     end
 
     message = Pantry::Communication::Message.new("request_message")
-    response_future = @server.send_request(@client1.identity, message)
+    response_future = @server.send_request(@client1, message)
 
     assert_equal ["Client 1 responds"], response_future.value(1).body
   end
@@ -45,7 +45,7 @@ describe "Server requests info from the Client" do
     futures = []
 
     10.times do
-      futures << @server.send_request(@client1.identity, message)
+      futures << @server.send_request(@client1, message)
     end
 
     10.times do |i|

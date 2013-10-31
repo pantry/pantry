@@ -67,9 +67,9 @@ module Pantry
     # Send a request to the Client(s) with the given identity.
     # Returns a Future object, use #value to get the response from the Client
     # when it's available.
-    def send_request(client_identity, message)
+    def send_request(client, message)
       message.requires_response!
-      message.to = client_identity
+      message.to = client.identity
 
       @networking.send_request(message)
     end

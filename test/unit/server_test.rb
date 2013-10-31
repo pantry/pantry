@@ -54,13 +54,14 @@ describe Pantry::Server do
 
   it "can request info of a specific client" do
     server = Pantry::Server.new(FakeNetworkStack)
+    client = Pantry::Client.new(identity: "client1")
     message = Pantry::Communication::Message.new("test message")
 
     FakeNetworkStack.any_instance.expects(:send_request).with do |message|
       assert_equal "client1", message.to
     end
 
-    server.send_request("client1", message)
+    server.send_request(client, message)
 
     assert message.requires_response?, "Message should require a response from the receiver"
   end
