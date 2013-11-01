@@ -16,6 +16,14 @@ describe Pantry::ClientRegistry do
     assert @registry.include?(@c2)
   end
 
+  it "does not duplicate clients in the list from multiple check-ins" do
+    @registry.check_in(@c1)
+    @registry.check_in(@c1)
+    @registry.check_in(@c1)
+
+    assert_equal [@c1, @c2], @registry.all
+  end
+
   it "returns all known clients that match the given stream" do
     assert_equal [@c1, @c2], @registry.all_matching("")
     assert_equal [@c1], @registry.all_matching("pantry.test")

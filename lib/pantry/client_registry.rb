@@ -5,11 +5,12 @@ module Pantry
   class ClientRegistry
 
     def initialize
-      @clients = []
+      @clients = Set.new
     end
 
+    # Return all known clients
     def all
-      @clients
+      @clients.to_a
     end
 
     # Check in a client
