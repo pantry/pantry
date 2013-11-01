@@ -10,12 +10,9 @@ digraph pantry {
     edge [style=dashed];
 
     server     [label="Server"];
-    server_web [label="Web"];
     publish    [label="PUB"];
 
     server_dealer [label="ROUTER"];
-
-    server_web -> server [dir=both];
 
     server -> publish;
     server -> server_dealer [dir=back];
