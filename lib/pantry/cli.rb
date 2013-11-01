@@ -19,6 +19,11 @@ module Pantry
     # for CLI commands that handle this kind of logic and clean up the COMMAND_MAP above.
     SERVER_COMMANDS = %w(status)
 
+    def initialize(**args)
+      args[:identity] ||= ENV["USER"]
+      super(**args)
+    end
+
     # Process a command from the command line.
     # Figures out which command handler class to invoke, builds a message from
     # that command class and sends it down the pipe.

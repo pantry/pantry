@@ -8,6 +8,11 @@ describe Pantry::CLI do
     Pantry::Client.any_instance.stubs(:run)
   end
 
+  it "defaults identity to the current ENV['USER']" do
+    cli = Pantry::CLI.new
+    assert_equal ENV["USER"], cli.identity
+  end
+
   it "builds a message from a command request and sends it to the server" do
     cli = Pantry::CLI.new
 
