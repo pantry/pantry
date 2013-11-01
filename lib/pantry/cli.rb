@@ -79,11 +79,16 @@ module Pantry
       end
 
       def message
-        @server_future.value(SERVER_RESPONSE_TIMEOUT)
+        begin
+          @server_future.value(SERVER_RESPONSE_TIMEOUT)
+        rescue Celluloid::TimeoutError => e
+          Pantry.logger.error("[CLI] Did not recieve any response from the server")
+          nil
+        end
       end
 
       def messages
-        [message]
+        [message].compact
       end
 
       def receive_message(message)
