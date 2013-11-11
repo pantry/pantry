@@ -90,6 +90,7 @@ module Pantry
       @networking.send_message(
         Pantry::Commands::RegisterClient.new(self).to_message
       )
+      after(Pantry.config.client_heartbeat_interval) { send_registration_message }
     end
 
     def send_results_back_to_requester(message, results)

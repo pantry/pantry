@@ -15,5 +15,15 @@ module Pantry
 
     # Port clients use to send information to the Server
     attr_accessor :receive_port
+
+    # How often, in seconds, the client pings the Server
+    attr_accessor :client_heartbeat_interval
+
+    def initialize
+
+      # Default client heartbeat to every 5 minutes
+      @client_heartbeat_interval = 300
+
+    end
   end
 end

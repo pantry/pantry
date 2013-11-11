@@ -19,6 +19,7 @@ class Minitest::Test
       Pantry.config.server_host  = "127.0.0.1"
       Pantry.config.pub_sub_port = 10101
       Pantry.config.receive_port = 10102
+      Pantry.config.client_heartbeat_interval = 1
 
       $server = Pantry::Server.new
       $server.identity = "Test Server"
