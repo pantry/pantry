@@ -5,35 +5,6 @@ describe Pantry::Commands::CommandHandler do
   let(:client)          { Pantry::Client.new(identity: "Test Client") }
   let(:command_handler) { Pantry::Commands::CommandHandler.new(client) }
 
-  it "executes commands that match the message type" do
-    command_handler.add_handler(:message_type) do |message|
-      "Return Value"
-    end
-
-    message = Pantry::Communication::Message.new("message_type")
-    response = command_handler.process(message)
-
-    assert_equal "Return Value", response
-  end
-
-  it "ignores messages that don't match any command" do
-    message = Pantry::Communication::Message.new("message_type")
-
-    assert_nil command_handler.process(message)
-  end
-
-  it "knows if it can process a given command or not" do
-    command_handler.add_handler(:message_type) do |message|
-      "Return Value"
-    end
-
-    message = Pantry::Communication::Message.new("unknown_type")
-    assert_false command_handler.can_handle?(message), "Should not be able to handle unknown_type"
-
-    message = Pantry::Communication::Message.new("message_type")
-    assert command_handler.can_handle?(message), "Should be able to handle message_type"
-  end
-
   class TestMessage < Pantry::Commands::Command
     def perform
       "Test message ran"
@@ -44,13 +15,28 @@ describe Pantry::Commands::CommandHandler do
     end
   end
 
-  it "works with Command classes" do
+  it "executes commands that match the message type" do
     message = Pantry::Communication::Message.new("TestMessage")
 
     command_handler.add_command(TestMessage)
     output = command_handler.process(message)
 
     assert_equal "Test message ran", output
+  end
+
+  it "ignores messages that don't match any command" do
+    message = Pantry::Communication::Message.new("message_type")
+    assert_nil command_handler.process(message)
+  end
+
+  it "knows if it can process a given command or not" do
+    command_handler.add_command(TestMessage)
+
+    message = Pantry::Communication::Message.new("unknown_type")
+    assert_false command_handler.can_handle?(message), "Should not be able to handle unknown_type"
+
+    message = Pantry::Communication::Message.new("TestMessage")
+    assert command_handler.can_handle?(message), "Should be able to handle TestMessage"
   end
 
   class ReturnClientIdentity < Pantry::Commands::Command

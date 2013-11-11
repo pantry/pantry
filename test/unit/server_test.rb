@@ -69,28 +69,23 @@ describe Pantry::Server do
   it "executes callbacks when a message matches" do
     server = Pantry::Server.new
 
-    test_message_called = false
-    server.on(:test_message) do
-      test_message_called = true
+    Pantry::Commands::ServerCommands.any_instance.stubs(:can_handle?).returns(true)
+    Pantry::Commands::ServerCommands.any_instance.expects(:process).with do |message|
+      message.type == "test_message"
     end
 
     server.receive_message(Pantry::Communication::Message.new("test_message"))
-
-    assert test_message_called, "Test message didn't trigger the callback"
   end
 
   it "builds and sends a response message if message flagged as needing one" do
     server = Pantry::Server.new(FakeNetworkStack)
 
-    test_message_called = false
-    server.on(:test_message) do
-      test_message_called = true
-      "A response message"
-    end
-
     message = Pantry::Communication::Message.new("test_message")
     message.from = "client1"
     message.requires_response!
+
+    Pantry::Commands::ServerCommands.any_instance.stubs(:can_handle?).returns(true)
+    Pantry::Commands::ServerCommands.any_instance.expects(:process).returns("A response message")
 
     FakeNetworkStack.any_instance.expects(:publish_message).with do |response_message|
       assert_equal "test_message", response_message.type

@@ -12,6 +12,8 @@ module Pantry
 
       # Run whatever this command needs to do.
       # All Command subclasses must implement this method.
+      # If the message triggering this Command expects a response, the return
+      # value of this method should be that response.
       def perform
       end
 

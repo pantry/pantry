@@ -11,8 +11,9 @@ module Pantry
       end
 
       def install_handlers
-        add_command(RegisterClient)
+        add_command(Echo)
         add_command(ListClients)
+        add_command(RegisterClient)
       end
 
     end

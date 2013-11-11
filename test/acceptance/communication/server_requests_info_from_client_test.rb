@@ -7,52 +7,38 @@ describe "Server requests info from the Client" do
   end
 
   it "asks a client for info and waits for the response" do
-    @client1.on(:request_message) do |message|
-      "Client 1 responds"
-    end
-
-    message = Pantry::Communication::Message.new("request_message")
+    message = Pantry::Commands::Echo.new.to_message
+    message << "Hello Client"
     response_future = @server.send_request(@client1, message)
 
-    assert_equal ["Client 1 responds"], response_future.value(1).body
+    assert_equal ["Hello Client"], response_future.value(1).body
   end
 
   it "asks multiple clients for info and matches responses with requests" do
-    @client1.on(:request_message) do |message|
-      "Client 1 responds"
-    end
+    message1 = Pantry::Commands::Echo.new.to_message
+    message1 << "Hello Client1"
 
-    @client2.on(:request_message) do |message|
-      "Client 2 responds"
-    end
+    message2 = Pantry::Commands::Echo.new.to_message
+    message2 << "Hello Client2"
 
-    message1 = Pantry::Communication::Message.new("request_message")
-    message2 = Pantry::Communication::Message.new("request_message")
     future1 = @server.send_request(@client1, message1)
     future2 = @server.send_request(@client2, message2)
 
-    assert_equal ["Client 1 responds"], future1.value(1).body
-    assert_equal ["Client 2 responds"], future2.value(1).body
+    assert_equal ["Hello Client1"], future1.value(1).body
+    assert_equal ["Hello Client2"], future2.value(1).body
   end
 
   it "handles multiple subsequent requests of the same type to the same client" do
-    message_count = 0
-    @client1.on(:request_message) do |message|
-      "Client 1 responds #{message_count += 1}"
-    end
-
-    message = Pantry::Communication::Message.new("request_message")
     futures = []
-
-    10.times do
+    10.times do |i|
+      message = Pantry::Commands::Echo.new.to_message
+      message << "Hello Client #{i}"
       futures << @server.send_request(@client1, message)
     end
 
     10.times do |i|
-      assert_equal ["Client 1 responds #{i + 1}"], futures[i].value(5).body
+      assert_equal ["Hello Client #{i}"], futures[i].value(5).body
     end
-
-    assert_equal 10, message_count
   end
 
 end

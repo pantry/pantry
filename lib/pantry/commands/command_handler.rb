@@ -10,10 +10,6 @@ module Pantry
         @server_or_client = server_or_client
       end
 
-      def add_handler(command_type, &block)
-        @handlers[command_type.to_s] = block
-      end
-
       # Install a Command class as a message handler for this process.
       # The Message's +type+ for this kind of message is simply the name of the class
       # without any scope information. E.g. ExecuteShell not Pantry::Command::ExecuteShell.

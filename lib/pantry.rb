@@ -15,6 +15,7 @@ require 'pantry/commands/command_handler'
 require 'pantry/commands/client_commands'
 require 'pantry/commands/server_commands'
 
+require 'pantry/commands/echo'
 require 'pantry/commands/execute_shell'
 require 'pantry/commands/list_clients'
 require 'pantry/commands/register_client'

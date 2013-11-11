@@ -1,6 +1,7 @@
 require 'minitest/autorun'
 require 'support/matchers'
 require 'celluloid/test'
+require 'mocha/setup'
 
 require 'pantry'
 

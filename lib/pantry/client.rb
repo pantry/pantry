@@ -5,6 +5,7 @@ module Pantry
   # be further configured to manage an application, for a given environment,
   # and across any number of roles.
   class Client
+    include Celluloid
 
     attr_reader :application
 
@@ -20,6 +21,9 @@ module Pantry
     # of clients connecting to a single Pantry Server, behavior of multiple clients with
     # the same identity is currently undefined.
     attr_reader :identity
+
+    # For testing / debugging purposes, keep hold of the last message this client received
+    attr_reader :last_received_message
 
     def initialize(application: nil, environment: nil, roles: [], identity: nil, network_stack_class: Communication::Client)
       @application = application
@@ -54,16 +58,11 @@ module Pantry
       @networking.shutdown
     end
 
-    # Map a message event type to a handler Proc.
-    # All messages have a type, use this method to register a block to
-    # handle any messages that come to this Client of the given type.
-    def on(message_type, &block)
-      @commands.add_handler(message_type, &block)
-    end
-
     # Callback from SubscribeSocket when a message is received
     def receive_message(message)
       Pantry.logger.debug("[#{@identity}] Received message #{message.inspect}")
+
+      @last_received_message = message
       results = @commands.process(message)
 
       if message.requires_response?
@@ -88,8 +87,9 @@ module Pantry
     end
 
     def send_registration_message
-      message = Pantry::Commands::RegisterClient.new(self).to_message
-      @networking.send_message(message)
+      @networking.send_message(
+        Pantry::Commands::RegisterClient.new(self).to_message
+      )
     end
 
     def send_results_back_to_requester(message, results)

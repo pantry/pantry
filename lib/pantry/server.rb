@@ -2,6 +2,7 @@ module Pantry
 
   # The Pantry Server
   class Server
+    include Celluloid
 
     # This server's Identity. By default this is the server's hostname but can be specified manually.
     attr_accessor :identity
@@ -42,13 +43,6 @@ module Pantry
       Pantry.logger.debug("[#{@identity}] Publishing #{message.inspect} to #{filter.stream.inspect}")
       message.to = filter.stream
       @networking.publish_message(message)
-    end
-
-    # Map a message event type to a handler Proc.
-    # All messages have a type, use this method to register a block to
-    # handle any messages that come to this Server of the given type.
-    def on(message_type, &block)
-      @commands.add_handler(message_type, &block)
     end
 
     # Callback from the network when a message is received unsolicited from a client.

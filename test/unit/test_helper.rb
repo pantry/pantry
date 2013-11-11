@@ -6,3 +6,12 @@ require 'celluloid/test'
 require 'pantry'
 
 Pantry.logger(nil)
+
+
+class Minitest::Test
+
+  def setup
+    Celluloid.init
+  end
+
+end
