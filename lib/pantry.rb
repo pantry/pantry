@@ -3,7 +3,6 @@ require 'celluloid/zmq'
 require 'json'
 require 'logger'
 require 'securerandom'
-require 'set'
 require 'socket'
 require 'open3'
 
@@ -19,6 +18,8 @@ require 'pantry/commands/echo'
 require 'pantry/commands/execute_shell'
 require 'pantry/commands/list_clients'
 require 'pantry/commands/register_client'
+
+require 'pantry/commands/run_chef_solo'
 
 require 'pantry/communication'
 require 'pantry/communication/server'
@@ -39,6 +40,3 @@ require 'pantry/client_registry'
 require 'pantry/client'
 require 'pantry/server'
 require 'pantry/cli'
-
-module Pantry
-end

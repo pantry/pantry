@@ -13,6 +13,7 @@ module Pantry
       def install_handlers
         add_command(Echo)
         add_command(ExecuteShell)
+        add_command(RunChefSolo)
       end
 
     end
