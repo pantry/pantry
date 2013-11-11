@@ -25,9 +25,13 @@ module Pantry
       # Given a message, figure out which handler should be triggered and get things rolling
       def process(message)
         if handler = @handlers[message.type]
+          Pantry.logger.debug("[#{@server_or_client.identity}] Running handler on #{message.inspect}")
           handler.call(message)
         else
-          # Warn log: no command handler found for message type
+          Pantry.logger.warn(
+            "[#{@server_or_client.identity}] No known handler for message type #{message.type}"
+          )
+          nil
         end
       end
 
