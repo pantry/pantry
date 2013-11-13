@@ -2,6 +2,10 @@ require 'unit/test_helper'
 
 describe Pantry::Commands::RunChefSolo do
 
+  it "has a custom type" do
+    assert_equal "Chef::ChefSolo", Pantry::Commands::RunChefSolo.command_type
+  end
+
   it "executes the chef-solo command, returning outputs" do
     Open3.expects(:capture3).with("chef-solo").returns(["chef ran", "error", 0])
 
