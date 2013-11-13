@@ -5,6 +5,7 @@ require 'logger'
 require 'securerandom'
 require 'socket'
 require 'open3'
+require 'yaml'
 
 require 'pantry/config'
 require 'pantry/logger'

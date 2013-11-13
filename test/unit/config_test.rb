@@ -28,4 +28,13 @@ describe Pantry::Config do
     assert_equal 5, Pantry.config.client_heartbeat_interval
   end
 
+  it "can load values from a given YAML file" do
+    config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
+    Pantry.config.load_file(config_file)
+
+    assert_equal "10.0.0.1", Pantry.config.server_host
+    assert_equal 12345, Pantry.config.pub_sub_port
+    assert_equal 54321, Pantry.config.receive_port
+    assert_equal 300, Pantry.config.client_heartbeat_interval
+  end
 end

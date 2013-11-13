@@ -1,0 +1,5 @@
+---
+server_host: 10.0.0.1
+pub_sub_port: 12345
+receive_port: 54321
+client_heartbeat_interval: 300

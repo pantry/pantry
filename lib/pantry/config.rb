@@ -30,5 +30,13 @@ module Pantry
       @client_heartbeat_interval = 300
 
     end
+
+    # Given a YAML config file, read in config values
+    def load_file(config_file)
+      configs = YAML.load_file(config_file)
+      @server_host  = configs["server_host"]
+      @pub_sub_port = configs["pub_sub_port"]
+      @receive_port = configs["receive_port"]
+    end
   end
 end
