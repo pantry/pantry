@@ -1,10 +1,10 @@
 require 'unit/test_helper'
 
-describe Pantry::Commands::ClientCommands do
+describe Pantry::ServerCommands do
 
   it "is a command handler" do
-    client = Pantry::Client.new
-    commands = Pantry::Commands::ClientCommands.new(client)
+    server = Pantry::Server.new
+    commands = Pantry::ServerCommands.new(server)
     message = Pantry::Communication::Message.new("message_type")
 
     assert_nil commands.process(message)

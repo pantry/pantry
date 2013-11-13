@@ -1,11 +1,11 @@
 require 'unit/test_helper'
 
-describe Pantry::Commands::CommandHandler do
+describe Pantry::CommandHandler do
 
   let(:client)          { Pantry::Client.new(identity: "Test Client") }
-  let(:command_handler) { Pantry::Commands::CommandHandler.new(client) }
+  let(:command_handler) { Pantry::CommandHandler.new(client) }
 
-  class TestMessage < Pantry::Commands::Command
+  class TestMessage < Pantry::Command
     def perform
       "Test message ran"
     end
@@ -39,7 +39,7 @@ describe Pantry::Commands::CommandHandler do
     assert command_handler.can_handle?(message), "Should be able to handle TestMessage"
   end
 
-  class ReturnClientIdentity < Pantry::Commands::Command
+  class ReturnClientIdentity < Pantry::Command
     def perform
       self.client.identity
     end
@@ -58,7 +58,7 @@ describe Pantry::Commands::CommandHandler do
     assert_equal "Test Client", response
   end
 
-  class ReturnMessageIdentity < Pantry::Commands::Command
+  class ReturnMessageIdentity < Pantry::Command
     def perform
       self.message
     end

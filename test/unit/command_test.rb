@@ -1,23 +1,23 @@
 require 'unit/test_helper'
 
-describe Pantry::Commands::Command do
+describe Pantry::Command do
 
   it "creates itself from a message" do
     message = Pantry::Communication::Message.new("Command")
-    command = Pantry::Commands::Command.from_message(message)
+    command = Pantry::Command.from_message(message)
 
     assert_nil command.perform
   end
 
   it "creates a message from itself" do
-    command = Pantry::Commands::Command.new
+    command = Pantry::Command.new
     message = command.to_message
 
     assert_equal "Command", message.type
   end
 
   it "has a link back to the Server or Client handling the command" do
-    command = Pantry::Commands::Command.new
+    command = Pantry::Command.new
     command.server_or_client = "client"
 
     assert_equal "client", command.server
@@ -26,13 +26,13 @@ describe Pantry::Commands::Command do
 
   it "has a link back to the message that triggered the command" do
     message = Pantry::Communication::Message.new
-    command = Pantry::Commands::Command.new
+    command = Pantry::Command.new
     command.message = message
 
     assert_equal message, command.message
   end
 
-  class SubCommand < Pantry::Commands::Command
+  class SubCommand < Pantry::Command
   end
 
   it "uses the subclass name when figuring out the message type" do
@@ -44,7 +44,7 @@ describe Pantry::Commands::Command do
 
   module John
     module Pete
-      class InnerClass < Pantry::Commands::Command
+      class InnerClass < Pantry::Command
       end
     end
   end
