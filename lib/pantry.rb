@@ -11,8 +11,6 @@ require 'pantry/logger'
 
 require 'pantry/command'
 require 'pantry/command_handler'
-require 'pantry/client_commands'
-require 'pantry/server_commands'
 
 require 'pantry/commands/echo'
 require 'pantry/commands/execute_shell'
@@ -100,3 +98,19 @@ module Pantry
 
   extend self
 end
+
+
+##
+# Register our built-in commands
+##
+Pantry.add_command(Pantry::Commands::Echo)
+
+Pantry.add_client_command(Pantry::Commands::ExecuteShell)
+
+Pantry.add_server_command(Pantry::Commands::ListClients)
+Pantry.add_server_command(Pantry::Commands::RegisterClient)
+
+##
+# Register Chef-base commands
+##
+Pantry.add_client_command(Pantry::Commands::RunChefSolo)

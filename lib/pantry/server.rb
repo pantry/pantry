@@ -12,7 +12,7 @@ module Pantry
 
     # Initialize the Pantry Server
     def initialize(network_stack_class = Communication::Server)
-      @commands   = ServerCommands.new(self)
+      @commands   = CommandHandler.new(self, Pantry.server_commands)
       @networking = network_stack_class.new(self)
       @identity   = current_hostname
       @clients    = []

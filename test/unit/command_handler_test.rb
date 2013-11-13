@@ -77,4 +77,15 @@ describe Pantry::CommandHandler do
     assert_equal message, response
   end
 
+  it "can take a list of command classes on construction to handle" do
+    handler = Pantry::CommandHandler.new(
+      client, [TestMessage, ReturnClientIdentity, ReturnMessageIdentity])
+
+    assert handler.can_handle?(Pantry::Communication::Message.new("TestMessage")),
+      "Did not register TestMessage"
+    assert handler.can_handle?(Pantry::Communication::Message.new("ReturnClientIdentity")),
+      "Did not register ReturnClientIdentity"
+    assert handler.can_handle?(Pantry::Communication::Message.new("ReturnMessageIdentity")),
+      "Did not register ReturnMessageIdentity"
+  end
 end

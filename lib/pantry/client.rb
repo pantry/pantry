@@ -38,7 +38,7 @@ module Pantry
         identity:    @identity
       )
 
-      @commands   = ClientCommands.new(self)
+      @commands   = CommandHandler.new(self, Pantry.client_commands)
       @networking = network_stack_class.new(self)
     end
 
