@@ -56,4 +56,17 @@ describe Pantry::Command do
     assert_equal "InnerClass", message.type
   end
 
+  class CustomNameCommand < Pantry::Command
+    def self.command_type
+      "Gir::WantsWaffles"
+    end
+  end
+
+  it "allows custom command types" do
+    command = CustomNameCommand.new
+    message = command.to_message
+
+    assert_equal "Gir::WantsWaffles", message.type
+  end
+
 end

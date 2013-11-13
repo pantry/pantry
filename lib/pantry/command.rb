@@ -23,11 +23,14 @@ module Pantry
 
     # Create a new Message from the information in the current Command
     def to_message
-      Pantry::Communication::Message.new(Command.command_type(self.class))
+      Pantry::Communication::Message.new(self.class.command_type)
     end
 
-    def self.command_type(command_class)
-      command_class.name.split("::").last
+    # The Type of this command, used to differentiate Messages.
+    # Defaults to the base class name, removing all scope information.
+    # Override this for a custom name.
+    def self.command_type
+      self.name.split("::").last
     end
 
     # Set a link back to the Server or Client that's handling
