@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+# The Pantry Server
+
+require 'rubygems'
+$:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
+require 'pantry'
+
+server_supervisor = Pantry::Server.supervise
+server = server_supervisor.actors.first
+server.run
+
+sleep
