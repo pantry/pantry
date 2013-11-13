@@ -21,6 +21,11 @@ module Pantry
 
     def initialize
 
+      # Default connectivity settings
+      @server_host = "127.0.0.1"
+      @pub_sub_port = 23001
+      @receive_port = 23002
+
       # Default client heartbeat to every 5 minutes
       @client_heartbeat_interval = 300
 
