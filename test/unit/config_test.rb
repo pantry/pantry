@@ -30,25 +30,58 @@ describe Pantry::Config do
       pantry_config.client_heartbeat_interval = 5
       assert_equal 5, pantry_config.client_heartbeat_interval
     end
+
+    it "can load values from a given YAML file" do
+      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
+      pantry_config.load_file(config_file)
+
+      assert_equal "10.0.0.1", pantry_config.server_host
+      assert_equal 12345, pantry_config.pub_sub_port
+      assert_equal 54321, pantry_config.receive_port
+      assert_equal 600, pantry_config.client_heartbeat_interval
+    end
+
+    it "does not set values to nil if not in the config" do
+      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "empty.yml")
+      pantry_config.load_file(config_file)
+
+      assert_equal "127.0.0.1", pantry_config.server_host
+      assert_equal 23001, pantry_config.pub_sub_port
+      assert_equal 23002, pantry_config.receive_port
+      assert_equal 300, pantry_config.client_heartbeat_interval
+    end
   end
 
-  it "can load values from a given YAML file" do
-    config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
-    pantry_config.load_file(config_file)
+  describe "Client-side Configuration" do
+    it "has an entry for the client's application" do
+      pantry_config.client_application = "pantry"
+      assert_equal "pantry", pantry_config.client_application
+    end
 
-    assert_equal "10.0.0.1", pantry_config.server_host
-    assert_equal 12345, pantry_config.pub_sub_port
-    assert_equal 54321, pantry_config.receive_port
-    assert_equal 600, pantry_config.client_heartbeat_interval
+    it "has an entry for the client's environment" do
+      pantry_config.client_environment = "pantry"
+      assert_equal "pantry", pantry_config.client_environment
+    end
+
+    it "has an entry for the client's identity" do
+      pantry_config.client_identity = "pantry"
+      assert_equal "pantry", pantry_config.client_identity
+    end
+
+    it "has an entry for the client's roles" do
+      pantry_config.client_roles = ["roles"]
+      assert_equal ["roles"], pantry_config.client_roles
+    end
+
+    it "can load values from a given YAML file" do
+      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
+      pantry_config.load_file(config_file)
+
+      assert_equal "pantry-test-1", pantry_config.client_identity
+      assert_equal "pantry", pantry_config.client_application
+      assert_equal "test", pantry_config.client_environment
+      assert_equal %w(database application), pantry_config.client_roles
+    end
   end
 
-  it "does not set values to nil if not in the config" do
-    config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "empty.yml")
-    pantry_config.load_file(config_file)
-
-    assert_equal "127.0.0.1", pantry_config.server_host
-    assert_equal 23001, pantry_config.pub_sub_port
-    assert_equal 23002, pantry_config.receive_port
-    assert_equal 300, pantry_config.client_heartbeat_interval
-  end
 end
