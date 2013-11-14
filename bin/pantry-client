@@ -5,6 +5,26 @@
 require 'rubygems'
 $:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 require 'pantry'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: pantry-client [options]"
+
+  opts.on("-c", "--config CONFIG_FILE",
+          "Configure Pantry Client from the CONFIG_FILE") do |config_file|
+    options[:config_file] = config_file
+  end
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+end.parse!
+
+if options[:config_file]
+  Pantry.config.load_file(options[:config_file])
+end
 
 client_supervisor = Pantry::Client.supervise
 client = client_supervisor.actors.first
