@@ -34,9 +34,22 @@ module Pantry
     # Given a YAML config file, read in config values
     def load_file(config_file)
       configs = YAML.load_file(config_file)
-      @server_host  = configs["server_host"]
-      @pub_sub_port = configs["pub_sub_port"]
-      @receive_port = configs["receive_port"]
+
+      if configs["server_host"]
+        @server_host  = configs["server_host"]
+      end
+
+      if configs["pub_sub_port"]
+        @pub_sub_port = configs["pub_sub_port"]
+      end
+
+      if configs["receive_port"]
+        @receive_port = configs["receive_port"]
+      end
+
+      if configs["client_heartbeat_interval"]
+        @client_heartbeat_interval = configs["client_heartbeat_interval"]
+      end
     end
   end
 end
