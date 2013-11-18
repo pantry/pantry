@@ -98,7 +98,7 @@ module Pantry
           :uuid              => self.uuid,
           :type              => self.type,
           :from              => self.from,
-          :to                => self.to,
+          :to                => self.to || "",
           :requires_response => self.requires_response?,
           :forwarded         => self.forwarded?
         }
@@ -109,7 +109,7 @@ module Pantry
         @uuid              = hash[:uuid]
         @type              = hash[:type]
         @from              = hash[:from]
-        @to                = hash[:to]
+        @to                = hash[:to] || ""
         @requires_response = hash[:requires_response]
         @forwarded         = hash[:forwarded]
       end

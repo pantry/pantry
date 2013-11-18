@@ -119,6 +119,11 @@ describe Pantry::Communication::Message do
     assert message.metadata[:forwarded]
   end
 
+  it "ensures the #to field is always a string when writing metadata" do
+    message = Pantry::Communication::Message.new
+    assert_equal "", message.metadata[:to]
+  end
+
   it "takes a hash of metadata and parses out approriate values" do
     message = Pantry::Communication::Message.new
     message.metadata = {
@@ -136,6 +141,14 @@ describe Pantry::Communication::Message do
     assert_equal "streamer", message.to
     assert       message.requires_response?
     assert       message.forwarded?
+  end
+
+  it "ensures the #to field is always a string when reading metadata" do
+    message = Pantry::Communication::Message.new
+    message.metadata = {
+      to: nil,
+    }
+    assert_equal "", message.to
   end
 
 end
