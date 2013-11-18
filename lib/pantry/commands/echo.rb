@@ -16,6 +16,12 @@ module Pantry
         self.new(message)
       end
 
+      def to_message
+        message = super
+        message << @message
+        message
+      end
+
     end
   end
 end

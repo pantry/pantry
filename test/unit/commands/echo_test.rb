@@ -13,4 +13,11 @@ describe Pantry::Commands::Echo do
     assert_equal ["This is a body", "Body part 2"], results
   end
 
+  it "creates a message with the requested string" do
+    command = Pantry::Commands::Echo.new("Hello World")
+    message = command.to_message
+
+    assert_equal "Hello World", message.body[0]
+  end
+
 end
