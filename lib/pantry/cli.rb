@@ -8,10 +8,10 @@ module Pantry
     # or a Proc/Lambda that knows how to build the command object, if the default doesn't
     # work (e.g ListClients).
     COMMAND_MAP = {
-      "status"  => lambda {|filter, command, arguments|
+      "echo"   => Pantry::Commands::Echo,
+      "status" => lambda {|filter, command, arguments|
         Pantry::Commands::ListClients.new(filter)
-      },
-      "execute" => Pantry::Commands::ExecuteShell
+      }
     }
 
     # List of commands that are meant for the server. Any others are sent

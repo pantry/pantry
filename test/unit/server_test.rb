@@ -96,10 +96,14 @@ describe Pantry::Server do
     server.receive_message(message)
   end
 
+  class ClientOnlyCommand < Pantry::Command
+  end
+
   it "forwards an unhandleable command on to connected clients" do
+    Pantry.add_client_command(ClientOnlyCommand)
     server = Pantry::Server.new(FakeNetworkStack)
 
-    message = Pantry::Communication::Message.new("ExecuteShell")
+    message = Pantry::Communication::Message.new("ClientOnlyCommand")
     message.from = "client1"
     message.requires_response!
 

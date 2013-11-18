@@ -7,6 +7,11 @@ require 'pantry'
 
 Pantry.logger(nil)
 
+# Set up a Server-only echo command so we can differentiate between
+# Client requests and Server requests in the acceptance tests.
+class ServerEchoCommand < Pantry::Commands::Echo
+end
+
 class Minitest::Test
 
   # We are dealing with actual socket communication here, so we want
@@ -20,6 +25,8 @@ class Minitest::Test
       Pantry.config.pub_sub_port = 10101
       Pantry.config.receive_port = 10102
       Pantry.config.client_heartbeat_interval = 1
+
+      Pantry.add_server_command(ServerEchoCommand)
 
       $server = Pantry::Server.new
       $server.identity = "Test Server"

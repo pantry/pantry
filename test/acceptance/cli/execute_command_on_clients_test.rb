@@ -12,17 +12,16 @@ describe "CLI requests information from individual clients" do
 
     filter = Pantry::Communication::ClientFilter.new(application: "pantry")
 
-    # `pantry execute whoami`
-    response = cli.request(filter, "execute", "whoami")
+    response = cli.request(filter, "echo", "This is Neat")
     all = response.messages
 
     all = response.messages.sort {|a, b| a.from <=> b.from }
 
-    assert_equal @client1.identity,   all[0].from
-    assert_equal [`whoami`, "", "0"], all[0].body
+    assert_equal @client1.identity, all[0].from
+    assert_equal ["This is Neat"],  all[0].body
 
-    assert_equal @client2.identity,   all[1].from
-    assert_equal [`whoami`, "", "0"], all[1].body
+    assert_equal @client2.identity, all[1].from
+    assert_equal ["This is Neat"],  all[1].body
   end
 
 end

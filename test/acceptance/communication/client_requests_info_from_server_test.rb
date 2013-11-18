@@ -7,8 +7,7 @@ describe "Client requests information from the Server" do
   end
 
   it "asks the server for information and waits for a response" do
-    message = Pantry::Commands::Echo.new.to_message
-    message << "Hello Server"
+    message = ServerEchoCommand.new("Hello Server").to_message
     response_future = @client1.send_request(message)
 
     assert_equal ["Hello Server"], response_future.value(2).body
@@ -17,8 +16,7 @@ describe "Client requests information from the Server" do
   it "handles multiple requests in the proper order" do
     futures = []
     10.times do |i|
-      message = Pantry::Commands::Echo.new.to_message
-      message << "Hello Server #{i}"
+      message = ServerEchoCommand.new("Hello Server #{i}").to_message
       futures << @client1.send_request(message)
     end
 

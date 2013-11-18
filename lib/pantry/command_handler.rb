@@ -15,7 +15,7 @@ module Pantry
 
     # Install a Command class as a message handler for this process.
     # The Message's +type+ for this kind of message is simply the name of the class
-    # without any scope information. E.g. ExecuteShell not Pantry::Command::ExecuteShell.
+    # without any scope information. E.g. Echo not Pantry::Command::Echo.
     def add_command(command_class)
       @handlers[command_class.command_type] = build_command_proc(command_class)
     end
