@@ -7,19 +7,15 @@ describe "Server requests info from the Client" do
   end
 
   it "asks a client for info and waits for the response" do
-    message = Pantry::Commands::Echo.new.to_message
-    message << "Hello Client"
+    message = Pantry::Commands::Echo.new("Hello Client").to_message
     response_future = @server.send_request(@client1, message)
 
     assert_equal ["Hello Client"], response_future.value(1).body
   end
 
   it "asks multiple clients for info and matches responses with requests" do
-    message1 = Pantry::Commands::Echo.new.to_message
-    message1 << "Hello Client1"
-
-    message2 = Pantry::Commands::Echo.new.to_message
-    message2 << "Hello Client2"
+    message1 = Pantry::Commands::Echo.new("Hello Client1").to_message
+    message2 = Pantry::Commands::Echo.new("Hello Client2").to_message
 
     future1 = @server.send_request(@client1, message1)
     future2 = @server.send_request(@client2, message2)
@@ -31,8 +27,7 @@ describe "Server requests info from the Client" do
   it "handles multiple subsequent requests of the same type to the same client" do
     futures = []
     10.times do |i|
-      message = Pantry::Commands::Echo.new.to_message
-      message << "Hello Client #{i}"
+      message = Pantry::Commands::Echo.new("Hello Client #{i}").to_message
       futures << @server.send_request(@client1, message)
     end
 
