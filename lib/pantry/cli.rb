@@ -88,7 +88,7 @@ module Pantry
       end
 
       def messages
-        [message].compact
+        @messages ||= [message].compact
       end
 
       def receive_message(message)

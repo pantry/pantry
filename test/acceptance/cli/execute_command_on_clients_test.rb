@@ -13,8 +13,6 @@ describe "CLI requests information from individual clients" do
     filter = Pantry::Communication::ClientFilter.new(application: "pantry")
 
     response = cli.request(filter, "echo", "This is Neat")
-    all = response.messages
-
     all = response.messages.sort {|a, b| a.from <=> b.from }
 
     p all
