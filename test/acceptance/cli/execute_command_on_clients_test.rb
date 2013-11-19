@@ -17,6 +17,8 @@ describe "CLI requests information from individual clients" do
 
     all = response.messages.sort {|a, b| a.from <=> b.from }
 
+    p all
+
     assert_equal @client1.identity, all[0].from
     assert_equal ["This is Neat"],  all[0].body
 
