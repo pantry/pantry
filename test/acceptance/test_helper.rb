@@ -14,43 +14,40 @@ end
 
 class Minitest::Test
 
-  # We are dealing with actual socket communication here, so we want
-  # to set up the socket communication itself once then play with various
-  # ways we communicate over these sockets.
-  def self.setup_environment
-    if $basic_server_client_comm_setup.nil?
-      Celluloid.boot
+  # Set up a fully functional Server + 2 Client environment on the given ports
+  # Make sure that the ports given are different for each test or port-conflict
+  # errors will happen.
+  #
+  # This helper exposes @server, @client1, and @client2 for use in tests
+  def set_up_environment(pub_sub_port: 10101, receive_port: 10102, heartbeat: 300)
+    Celluloid.boot
 
-      Pantry.config.server_host  = "127.0.0.1"
-      Pantry.config.pub_sub_port = 10101
-      Pantry.config.receive_port = 10102
-      Pantry.config.client_heartbeat_interval = 1
+    Pantry.config.server_host  = "127.0.0.1"
+    Pantry.config.pub_sub_port = pub_sub_port
+    Pantry.config.receive_port = receive_port
+    Pantry.config.client_heartbeat_interval = heartbeat
 
+    begin
       Pantry.add_server_command(ServerEchoCommand)
-
-      $server = Pantry::Server.new
-      $server.identity = "Test Server"
-      $server.run
-
-      $client1 = Pantry::Client.new identity: "client1", application: "pantry"
-      $client1.run
-
-      $client2 = Pantry::Client.new identity: "client2", application: "pantry"
-      $client2.run
-
-      # Ensure communication figures itself out in time
-      sleep 1
-
-      Minitest.after_run do
-        $client1.shutdown
-        $client2.shutdown
-        $server.shutdown
-      end
-
-      $basic_server_client_comm_setup = true
+    rescue Pantry::DuplicateCommandError
+      # Already registered
     end
 
-    [$server, $client1, $client2]
+    @server = Pantry::Server.new
+    @server.identity = "Test Server"
+    @server.run
+
+    @client1 = Pantry::Client.new identity: "client1", application: "pantry"
+    @client1.run
+
+    @client2 = Pantry::Client.new identity: "client2", application: "pantry"
+    @client2.run
+  end
+
+  def teardown
+    @client1.shutdown if @client1
+    @client2.shutdown if @client2
+    @server.shutdown  if @server
   end
 
 end

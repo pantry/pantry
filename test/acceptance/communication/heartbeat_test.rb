@@ -2,12 +2,10 @@ require 'acceptance/test_helper'
 
 describe "Client / Server heartbeats" do
 
-  before do
-    @server, @client1, @client2 = self.class.setup_environment
-  end
-
   describe "Client" do
     it "re-registers with the server every interval seconds" do
+      set_up_environment(pub_sub_port: 10500, receive_port: 10501, heartbeat: 1)
+
       # Clean out the server registry then wait for clients to re-register themselves
       @server.client_registry.clear!
 

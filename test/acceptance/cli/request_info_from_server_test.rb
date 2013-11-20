@@ -2,10 +2,6 @@ require 'acceptance/test_helper'
 
 describe "CLI can ask Server for information" do
 
-  before do
-    @server, @client1, @client2 = self.class.setup_environment
-  end
-
   let(:cli) do
     cli = Pantry::CLI.new(identity: "test_client")
     cli.run
@@ -13,6 +9,8 @@ describe "CLI can ask Server for information" do
   end
 
   it "can ask for all known nodes" do
+    set_up_environment(pub_sub_port: 10200, receive_port: 10201)
+
     filter = Pantry::Communication::ClientFilter.new
 
     # `pantry status`
@@ -26,6 +24,8 @@ describe "CLI can ask Server for information" do
   end
 
   it "can limit the query to a subset of clients" do
+    set_up_environment(pub_sub_port: 10202, receive_port: 10203)
+
     client3 = Pantry::Client.new(application: "chatbot", identity: "client3")
     client3.run
 

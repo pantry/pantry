@@ -2,11 +2,9 @@ require 'acceptance/test_helper'
 
 describe "CLI requests information from individual clients" do
 
-  before do
-    @server, @client1, @client2 = self.class.setup_environment
-  end
-
   it "receives responses from each client asked" do
+    set_up_environment(pub_sub_port: 10100, receive_port: 10101)
+
     cli = Pantry::CLI.new(identity: "cli1")
     cli.run
 

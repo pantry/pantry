@@ -2,12 +2,10 @@ require 'acceptance/test_helper'
 
 describe "Pub/Sub Communication" do
 
-  before do
-    @server, @client1, @client2 = self.class.setup_environment
-  end
-
   describe "Server" do
     it "can publish a message to all connected clients" do
+      set_up_environment(pub_sub_port: 10400, receive_port: 10401)
+
       @server.publish_message(
         Pantry::Communication::Message.new("test_message"),
         Pantry::Communication::ClientFilter.new(application: "pantry")
@@ -21,6 +19,8 @@ describe "Pub/Sub Communication" do
     end
 
     it "can publish a message to a subset of all connected clients" do
+      set_up_environment(pub_sub_port: 10402, receive_port: 10403)
+
       client3 = Pantry::Client.new(roles: %w(database), identity: "client3")
       client3.run
 
