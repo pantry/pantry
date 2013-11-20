@@ -58,11 +58,11 @@ module Pantry
           send_results_back_to_requester(message, results)
         end
       else
-        forward_message(message)
         matched_clients = @client_registry.all_matching(message.to).map(&:identity)
 
         Pantry.logger.debug("[#{@identity}] Forwarding message on to #{matched_clients.inspect}")
         send_results_back_to_requester(message, matched_clients)
+        forward_message(message)
       end
     end
 
