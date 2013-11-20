@@ -7,6 +7,19 @@ require 'pantry'
 
 Pantry.logger(nil)
 
+$all_exceptions = []
+Celluloid.exception_handler do |exception|
+  $all_exceptions << exception
+end
+
+Minitest.after_run do
+  $all_exceptions.each do |exception|
+    puts exception
+    puts exception.backtrace.reverse.join("\n")
+    puts ""
+  end
+end
+
 # Set up a Server-only echo command so we can differentiate between
 # Client requests and Server requests in the acceptance tests.
 class ServerEchoCommand < Pantry::Commands::Echo
