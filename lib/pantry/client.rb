@@ -6,6 +6,7 @@ module Pantry
   # and across any number of roles.
   class Client
     include Celluloid
+    finalizer :shutdown
 
     attr_reader :application
 
@@ -99,6 +100,5 @@ module Pantry
 
       @networking.send_message(response_message)
     end
-
   end
 end

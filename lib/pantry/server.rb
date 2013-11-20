@@ -3,6 +3,7 @@ module Pantry
   # The Pantry Server
   class Server
     include Celluloid
+    finalizer :shutdown
 
     # This server's Identity. By default this is the server's hostname but can be specified manually.
     attr_accessor :identity
