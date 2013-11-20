@@ -56,6 +56,7 @@ module Pantry
     # Close down all communication channels and clean up resources
     def shutdown
       Pantry.logger.info("[#{@identity}] Client Shutting down")
+      @registration_timer.cancel if @registration_timer
       @networking.shutdown
     end
 
@@ -91,7 +92,8 @@ module Pantry
       @networking.send_message(
         Pantry::Commands::RegisterClient.new(self).to_message
       )
-      after(Pantry.config.client_heartbeat_interval) { send_registration_message }
+      @registration_timer =
+        after(Pantry.config.client_heartbeat_interval) { send_registration_message }
     end
 
     def send_results_back_to_requester(message, results)
