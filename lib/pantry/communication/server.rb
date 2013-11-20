@@ -38,8 +38,9 @@ module Pantry
       # Send a request to all clients, expecting a result. Returns a Future
       # which can be queried later for the client response.
       def send_request(message)
-        publish_message(message)
-        @response_wait_list.wait_for(message)
+        @response_wait_list.wait_for(message).tap do
+          publish_message(message)
+        end
       end
 
       # Send a message to all connected subscribers without modifying the package.

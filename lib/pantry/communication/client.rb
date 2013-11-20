@@ -41,8 +41,9 @@ module Pantry
       # Send a request to the server, setting up a future
       # that will eventually have the response
       def send_request(message)
-        send_message(message)
-        @response_wait_list.wait_for(message)
+        @response_wait_list.wait_for(message).tap do
+          send_message(message)
+        end
       end
 
       # Send a message back up to the server
