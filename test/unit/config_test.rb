@@ -25,12 +25,6 @@ describe Pantry::Config do
       assert_equal 7788, pantry_config.receive_port
     end
 
-    it "has an entry for client heartbeat interval" do
-      assert_equal 300, pantry_config.client_heartbeat_interval
-      pantry_config.client_heartbeat_interval = 5
-      assert_equal 5, pantry_config.client_heartbeat_interval
-    end
-
     it "can load values from a given YAML file" do
       config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
       pantry_config.load_file(config_file)
@@ -38,7 +32,6 @@ describe Pantry::Config do
       assert_equal "10.0.0.1", pantry_config.server_host
       assert_equal 12345, pantry_config.pub_sub_port
       assert_equal 54321, pantry_config.receive_port
-      assert_equal 600, pantry_config.client_heartbeat_interval
     end
 
     it "does not set values to nil if not in the config" do
@@ -48,11 +41,16 @@ describe Pantry::Config do
       assert_equal "127.0.0.1", pantry_config.server_host
       assert_equal 23001, pantry_config.pub_sub_port
       assert_equal 23002, pantry_config.receive_port
-      assert_equal 300, pantry_config.client_heartbeat_interval
     end
   end
 
   describe "Client-side Configuration" do
+    it "has an entry for client heartbeat interval" do
+      assert_equal 300, pantry_config.client_heartbeat_interval
+      pantry_config.client_heartbeat_interval = 5
+      assert_equal 5, pantry_config.client_heartbeat_interval
+    end
+
     it "has an entry for the client's application" do
       pantry_config.client_application = "pantry"
       assert_equal "pantry", pantry_config.client_application
@@ -77,10 +75,18 @@ describe Pantry::Config do
       config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
       pantry_config.load_file(config_file)
 
+      assert_equal 600, pantry_config.client_heartbeat_interval
       assert_equal "pantry-test-1", pantry_config.client_identity
       assert_equal "pantry", pantry_config.client_application
       assert_equal "test", pantry_config.client_environment
       assert_equal %w(database application), pantry_config.client_roles
+    end
+
+    it "does not clobber certain values if config has set to nil" do
+      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "empty.yml")
+      pantry_config.load_file(config_file)
+
+      assert_equal 300, pantry_config.client_heartbeat_interval
     end
   end
 

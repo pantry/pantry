@@ -80,10 +80,6 @@ module Pantry
       if configs["receive_port"]
         @receive_port = configs["receive_port"]
       end
-
-      if configs["client_heartbeat_interval"]
-        @client_heartbeat_interval = configs["client_heartbeat_interval"]
-      end
     end
 
     def load_client_configs(configs)
@@ -93,6 +89,10 @@ module Pantry
       @client_application = configs["application"]
       @client_environment = configs["environment"]
       @client_roles       = configs["roles"]
+
+      if configs["heartbeat_interval"]
+        @client_heartbeat_interval = configs["heartbeat_interval"]
+      end
     end
   end
 end
