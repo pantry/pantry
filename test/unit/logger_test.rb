@@ -8,7 +8,8 @@ describe Pantry::Logger do
   end
 
   it "is accessible through top level Pantry.logger" do
-    assert_not_nil Pantry.logger
+    logger = Pantry.logger = Pantry::Logger.new
+    assert_equal logger, Pantry.logger
   end
 
   it "sets the celluloid logger" do

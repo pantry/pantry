@@ -4,6 +4,10 @@ module Pantry
     @@logger ||= Pantry::Logger.new
   end
 
+  def self.logger=(logger)
+    @@logger = logger
+  end
+
   # Wrapper around the Celluloid's logging system. Depending on the passed in
   # config, will send to STDOUT, Syslog, or a given file.
   # See Celluloid::Logger for API (should be the same as Ruby's Logger API)

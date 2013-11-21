@@ -82,6 +82,7 @@ module Pantry
       load_global_configs(configs)
       load_networking_configs(configs["networking"])
       load_client_configs(configs["client"])
+      apply_configuration
     end
 
     protected
@@ -121,6 +122,12 @@ module Pantry
       if configs["heartbeat_interval"]
         @client_heartbeat_interval = configs["heartbeat_interval"]
       end
+    end
+
+    def apply_configuration
+      # Reset our logger knowledge so the next call picks up the
+      # new configs
+      Pantry.logger = nil
     end
   end
 end
