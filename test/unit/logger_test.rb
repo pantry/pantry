@@ -35,6 +35,12 @@ describe Pantry::Logger do
     assert Celluloid.logger.is_a?(::Syslog::Logger), "Celluloid logger not set properly"
   end
 
+  it "sets the log's level according to config.log_level" do
+    logger = Pantry::Logger.new
+
+    assert_equal ::Logger::INFO, Celluloid.logger.level
+  end
+
   it "forwards unknown messages to the celluloid logger" do
     logger = Pantry::Logger.new
 

@@ -10,9 +10,16 @@ describe Pantry::Config do
   end
 
   describe "Global Configs" do
-    it "can be given a file as a logging destination" do
+    it "has an entry for logging destination" do
       pantry_config.log_to = "stdout"
       assert_equal "stdout", pantry_config.log_to
+    end
+
+    it "has an entry for the log level" do
+      assert_equal "info", pantry_config.log_level
+
+      pantry_config.log_level = "warn"
+      assert_equal "warn", pantry_config.log_level
     end
 
     it "can load values from a given YAML file" do
@@ -20,6 +27,14 @@ describe Pantry::Config do
       pantry_config.load_file(config_file)
 
       assert_equal "/var/log/pantry.log", pantry_config.log_to
+      assert_equal "warn", pantry_config.log_level
+    end
+
+    it "does not set values to nil if not in the config" do
+      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "empty.yml")
+      pantry_config.load_file(config_file)
+
+      assert_equal "info", pantry_config.log_level
     end
   end
 

@@ -19,6 +19,7 @@ module Pantry
           ::Logger.new(config.log_to)
         end
 
+      logger.level = log_level(config.log_level)
       Celluloid.logger = logger
     end
 
@@ -30,6 +31,25 @@ module Pantry
     # Forward all methods on to the internal Celluloid Logger.
     def method_missing(*args)
       Celluloid.logger.send(*args) if Celluloid.logger
+    end
+
+    protected
+
+    def log_level(log_level_string)
+      case log_level_string
+      when "debug"
+        ::Logger::DEBUG
+      when "info"
+        ::Logger::INFO
+      when "warn"
+        ::Logger::WARN
+      when "error"
+        ::Logger::ERROR
+      when "fatal"
+        ::Logger::FATAL
+      else
+        raise "Unknown log level given: #{log_level_string}"
+      end
     end
 
   end

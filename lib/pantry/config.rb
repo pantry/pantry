@@ -17,6 +17,12 @@ module Pantry
     # When using syslog, program name will be "pantry"
     attr_accessor :log_to
 
+    # After what level are logs dropped and ignored?
+    # Can be any of: "fatal", "error", "warn", "info", "debug"
+    # Each level will include the logs of all levels above it.
+    # Defaults to "info"
+    attr_accessor :log_level
+
     ##
     # Communication Configuration
     ##
@@ -51,6 +57,9 @@ module Pantry
 
     def initialize
 
+      # Logging defaults
+      @log_level = "info"
+
       # Default connectivity settings
       @server_host = "127.0.0.1"
       @pub_sub_port = 23001
@@ -79,6 +88,10 @@ module Pantry
 
     def load_global_configs(configs)
       @log_to = configs["log_to"]
+
+      if configs["log_level"]
+        @log_level = configs["log_level"]
+      end
     end
 
     def load_networking_configs(configs)

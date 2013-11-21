@@ -1,5 +1,6 @@
 ---
 log_to: /var/log/pantry.log
+log_level: warn
 
 networking:
   server_host: 10.0.0.1
