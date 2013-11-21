@@ -8,6 +8,16 @@ module Pantry
   # Global configuration values for running all of Pantry.
   class Config
     ##
+    # Global Configuration
+    ##
+
+    # Where does Pantry log to?
+    # Can be "stdout", "syslog", or a file system path
+    # Defaults to STDOUT
+    # When using syslog, program name will be "pantry"
+    attr_accessor :log_to
+
+    ##
     # Communication Configuration
     ##
 
@@ -60,11 +70,16 @@ module Pantry
     # Given a YAML config file, read in config values
     def load_file(config_file)
       configs = YAML.load_file(config_file)
+      load_global_configs(configs)
       load_networking_configs(configs["networking"])
       load_client_configs(configs["client"])
     end
 
     protected
+
+    def load_global_configs(configs)
+      @log_to = configs["log_to"]
+    end
 
     def load_networking_configs(configs)
       return unless configs

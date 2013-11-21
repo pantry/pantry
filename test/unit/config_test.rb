@@ -9,6 +9,20 @@ describe Pantry::Config do
     assert_same config, Pantry.config
   end
 
+  describe "Global Configs" do
+    it "can be given a file as a logging destination" do
+      pantry_config.log_to = "stdout"
+      assert_equal "stdout", pantry_config.log_to
+    end
+
+    it "can load values from a given YAML file" do
+      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
+      pantry_config.load_file(config_file)
+
+      assert_equal "/var/log/pantry.log", pantry_config.log_to
+    end
+  end
+
   describe "Communication Configuration" do
     it "has an entry for the server host name" do
       pantry_config.server_host = "127.0.0.1"

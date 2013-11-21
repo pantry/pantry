@@ -5,7 +5,7 @@ require 'mocha/setup'
 
 require 'pantry'
 
-Pantry.logger(nil)
+Pantry.logger.disable!
 
 $all_exceptions = []
 Celluloid.exception_handler do |exception|

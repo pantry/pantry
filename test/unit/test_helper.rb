@@ -5,8 +5,7 @@ require 'celluloid/test'
 
 require 'pantry'
 
-Pantry.logger(nil)
-
+Pantry.logger.disable!
 
 class Minitest::Test
 

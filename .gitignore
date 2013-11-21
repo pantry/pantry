@@ -1,4 +1,5 @@
 Gemfile.lock
 *.gem
 
+test/test.log
 proto

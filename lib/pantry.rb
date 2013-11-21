@@ -4,6 +4,7 @@ require 'json'
 require 'logger'
 require 'securerandom'
 require 'socket'
+require 'syslog/logger'
 require 'open3'
 require 'yaml'
 
