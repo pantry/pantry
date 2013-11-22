@@ -1,0 +1,54 @@
+---
+# Configure where to send Pantry log files.
+# Can be one of three values:
+#
+# - stdout / nil -- Send to STDOUT
+# - syslog       -- Send to the local syslog daemon. Program name is "pantry"
+# - [file path]  -- Write logs to the given file
+# log_to: /var/log/pantry.log
+
+# Minimum log output.
+# Levels are defined as:
+#
+# - fatal
+# - error
+# - warn
+# - info
+# - debug
+#
+# Each level includes all levels above it.
+# log_level: info
+
+networking:
+  # IP address or Domain hosting the Pantry Server we connect to
+  # server_host: 127.0.0.1
+
+  # Port over which Server publishes messages
+  # pub_sub_port: 23001
+
+  # Port over which the Client sends messages to the Server
+  # receive_port: 23002
+
+client:
+  # Set the unique identity of this Client. The default is the current
+  # hostname of the server. This name should be unique across the entire
+  # set of Clients talking to a given Server
+  # identity: "pantry-test-1"
+
+  # [Optional] A Client can be configured to manage a specific application.
+  # Use this if the Pantry network manages multiple applications.
+  # application: "pantry"
+
+  # [Optional] A Client can be configured to manage a certain environment of
+  # an application.
+  # environment: "test"
+
+  # [Optional] A Client can be configured as managing a certain set of roles
+  # for the given application. This must be an array
+  # roles:
+  #   - database
+  #   - application
+
+  # How often, in seconds, does this client ping the Server
+  # to ensure the Server knows about this Client?
+  # heartbeat_interval: 300

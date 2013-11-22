@@ -1,0 +1,30 @@
+---
+# Configure where to send Pantry log files.
+# Can be one of three values:
+#
+# - stdout / nil -- Send to STDOUT
+# - syslog       -- Send to the local syslog daemon. Program name is "pantry"
+# - [file path]  -- Write logs to the given file
+# log_to: stdout
+
+# Minimum log output.
+# Levels are defined as:
+#
+# - fatal
+# - error
+# - warn
+# - info
+# - debug
+#
+# Each level includes all levels above it.
+# log_level: info
+
+networking:
+  # IP address or Domain the Pantry Server binds to
+  # server_host: 127.0.0.1
+
+  # Port over which this Server publishes messages to Clients
+  # pub_sub_port: 23001
+
+  # Port over which Clients communicate back to this Server
+  # receive_port: 23002
