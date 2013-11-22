@@ -23,6 +23,11 @@ module Pantry
     # Defaults to "info"
     attr_accessor :log_level
 
+    # If logging to Syslog, set the program-name Pantry will
+    # use when sending logs to syslog.
+    # Defaults to "pantry"
+    attr_accessor :syslog_program_name
+
     ##
     # Communication Configuration
     ##
@@ -59,6 +64,7 @@ module Pantry
 
       # Logging defaults
       @log_level = "info"
+      @syslog_program_name = "pantry"
 
       # Default connectivity settings
       @server_host = "127.0.0.1"
@@ -92,6 +98,10 @@ module Pantry
 
       if configs["log_level"]
         @log_level = configs["log_level"]
+      end
+
+      if configs["syslog_program_name"]
+        @syslog_program_name = configs["syslog_program_name"]
       end
     end
 

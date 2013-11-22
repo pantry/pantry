@@ -19,6 +19,11 @@
 # Each level includes all levels above it.
 # log_level: info
 
+# Specify the Syslog program name
+# In the case that log_to is set to 'syslog' you can set the program name
+# for filtering messages.
+# syslog_program_name: pantry
+
 networking:
   # IP address or Domain the Pantry Server binds to
   # server_host: 127.0.0.1

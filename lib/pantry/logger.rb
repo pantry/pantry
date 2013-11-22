@@ -18,7 +18,7 @@ module Pantry
         if config.log_to.nil? || config.log_to == "stdout"
           ::Logger.new(STDOUT)
         elsif config.log_to == "syslog"
-          ::Syslog::Logger.new("pantry")
+          ::Syslog::Logger.new(config.syslog_program_name)
         else
           ::Logger.new(config.log_to)
         end

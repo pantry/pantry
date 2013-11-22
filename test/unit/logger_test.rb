@@ -2,6 +2,12 @@ require 'unit/test_helper'
 
 describe Pantry::Logger do
 
+  let(:mock_logger) {
+    logger = stub
+    logger.stubs(:level=)
+    logger
+  }
+
   after do
     # Unset global state caused by these tests
     Celluloid.logger = nil
@@ -31,9 +37,19 @@ describe Pantry::Logger do
     config = Pantry::Config.new
     config.log_to = "syslog"
 
-    logger = Pantry::Logger.new(config)
+    Syslog::Logger.expects(:new).with("pantry").returns(mock_logger)
 
-    assert Celluloid.logger.is_a?(::Syslog::Logger), "Celluloid logger not set properly"
+    logger = Pantry::Logger.new(config)
+  end
+
+  it "configures the Syslog program name if one given in the config" do
+    config = Pantry::Config.new
+    config.log_to = "syslog"
+    config.syslog_program_name = "pantry-client"
+
+    Syslog::Logger.expects(:new).with("pantry-client").returns(mock_logger)
+
+    logger = Pantry::Logger.new(config)
   end
 
   it "sets the log's level according to config.log_level" do
