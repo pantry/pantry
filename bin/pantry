@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+# The Pantry CLI
+
+require 'rubygems'
+$:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
+require 'pantry'
+require 'optparse'
+
+options = {
+  :application => nil,
+  :environment => nil,
+  :roles => []
+}
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: pantry [options] command [command args]"
+
+  opts.on("-a APPLICATION", "--application APPLICATION",
+          "Limit queries to nodes handling APPLICATION") do |application|
+    options[:application] = application
+  end
+
+  opts.on("-e ENVIRONMENT", "--environment ENVIRONMENT",
+          "Limit queries to nodes handling ENVIRONMENT") do |environment|
+    options[:environment] = environment
+  end
+
+  opts.on("-r ROLE1,ROLE2,...", "--role ROLE1,ROLE2,...",
+          "Limit queries to nodes handling the given ROLEs", Array) do |roles|
+    options[:roles] = roles
+  end
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+end
+
+##
+# CLI Configuration Defaults
+##
+
+Pantry.config.log_level = :error
+
+begin
+  parser.parse!
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
+  puts e
+  puts parser
+  exit 1
+end
+
+if ARGV.empty?
+  puts "No command given to run."
+  puts parser
+  exit 1
+end
+
+cli = Pantry::CLI.new
+cli.run
+
+message_filter = Pantry::Communication::ClientFilter.new(
+  application: options[:application],
+  environment: options[:environment],
+  roles:       options[:roles]
+)
+
+response = cli.request(message_filter, *ARGV)
+
+puts response.messages.inspect
+
