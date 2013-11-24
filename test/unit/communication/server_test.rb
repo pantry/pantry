@@ -3,31 +3,26 @@ require 'unit/test_helper'
 describe Pantry::Communication::Server do
 
   before do
-    Celluloid.init
     Pantry::Communication::PublishSocket.any_instance.stubs(:open)
 
     Pantry::Communication::ReceiveSocket.any_instance.stubs(:add_listener)
     Pantry::Communication::ReceiveSocket.any_instance.stubs(:open)
   end
 
-  it "opens a publish socket for communication, closing it on shutdown" do
+  it "opens a publish socket for communication" do
     Pantry::Communication::PublishSocket.any_instance.expects(:open)
-    Pantry::Communication::PublishSocket.any_instance.expects(:close)
 
     server = Pantry::Communication::Server.new(nil)
     server.run
-    server.shutdown
   end
 
-  it "opens a receive socket for communication, closing it on shutdown" do
+  it "opens a receive socket for communication" do
     server = Pantry::Communication::Server.new(nil)
 
     Pantry::Communication::ReceiveSocket.any_instance.expects(:add_listener).with(server)
     Pantry::Communication::ReceiveSocket.any_instance.expects(:open)
-    Pantry::Communication::ReceiveSocket.any_instance.expects(:close)
 
     server.run
-    server.shutdown
   end
 
   describe "#publish_message" do

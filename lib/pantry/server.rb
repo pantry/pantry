@@ -13,12 +13,13 @@ module Pantry
 
     # Initialize the Pantry Server
     def initialize(network_stack_class = Communication::Server)
-      @commands   = CommandHandler.new(self, Pantry.server_commands)
-      @networking = network_stack_class.new(self)
-      @identity   = current_hostname
-      @clients    = []
+      @commands = CommandHandler.new(self, Pantry.server_commands)
+      @identity = current_hostname
+      @clients  = []
 
       @client_registry = ClientRegistry.new
+
+      @networking = network_stack_class.new_link(self)
     end
 
     # Start up the networking stack and start the server
@@ -30,7 +31,6 @@ module Pantry
     # Close down networking and clean up resources
     def shutdown
       Pantry.logger.info("[#{@identity}] Server Shutting Down")
-      @networking.shutdown
     end
 
     # Mark a client as checked-in

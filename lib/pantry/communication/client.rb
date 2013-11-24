@@ -2,6 +2,7 @@ module Pantry
   module Communication
 
     class Client
+      include Celluloid
 
       def initialize(listener)
         @listener = listener
@@ -9,7 +10,7 @@ module Pantry
       end
 
       def run
-        @subscribe_socket = Communication::SubscribeSocket.new(
+        @subscribe_socket = Communication::SubscribeSocket.new_link(
           Pantry.config.server_host,
           Pantry.config.pub_sub_port
         )
@@ -17,16 +18,11 @@ module Pantry
         @subscribe_socket.filter_on(@listener.filter)
         @subscribe_socket.open
 
-        @send_socket = Communication::SendSocket.new(
+        @send_socket = Communication::SendSocket.new_link(
           Pantry.config.server_host,
           Pantry.config.receive_port
         )
         @send_socket.open
-      end
-
-      def shutdown
-        @subscribe_socket.close if @subscribe_socket
-        @send_socket.close      if @send_socket
       end
 
       # Receive a message from the server

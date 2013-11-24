@@ -5,6 +5,10 @@ describe Pantry::Client do
   class FakeNetworkStack
     def initialize(listener)
     end
+
+    def self.new_link(listener)
+      new(listener)
+    end
   end
 
   before do
@@ -54,11 +58,9 @@ describe Pantry::Client do
 
   it "starts up and shuts down the networking stack" do
     FakeNetworkStack.any_instance.expects(:run)
-    FakeNetworkStack.any_instance.expects(:shutdown)
 
     client = Pantry::Client.new(network_stack_class: FakeNetworkStack)
     client.run
-    client.shutdown
   end
 
   it "sends a registration packet once networking is up" do

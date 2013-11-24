@@ -40,7 +40,7 @@ module Pantry
       )
 
       @commands   = CommandHandler.new(self, Pantry.client_commands)
-      @networking = network_stack_class.new(self)
+      @networking = network_stack_class.new_link(self)
     end
 
     # Start up the Client.
@@ -53,11 +53,9 @@ module Pantry
       Pantry.logger.info("[#{@identity}] Client registered and waiting for commands")
     end
 
-    # Close down all communication channels and clean up resources
     def shutdown
       Pantry.logger.info("[#{@identity}] Client Shutting down")
       @registration_timer.cancel if @registration_timer
-      @networking.shutdown
     end
 
     # Callback from SubscribeSocket when a message is received

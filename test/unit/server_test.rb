@@ -5,15 +5,17 @@ describe Pantry::Server do
   class FakeNetworkStack
     def initialize(listener)
     end
+
+    def self.new_link(listener)
+      new(listener)
+    end
   end
 
-  it "starts and stops the networking stack" do
+  it "starts up the networking stack on run" do
     FakeNetworkStack.any_instance.expects(:run)
-    FakeNetworkStack.any_instance.expects(:shutdown)
 
     server = Pantry::Server.new(FakeNetworkStack)
     server.run
-    server.shutdown
   end
 
   describe "Client Registry" do

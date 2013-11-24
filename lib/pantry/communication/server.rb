@@ -4,6 +4,7 @@ module Pantry
     # The communication server embodies everything the Pantry Server
     # needs to properly communicate with Clients.
     class Server
+      include Celluloid
 
       #
       # +listener+ must respond to the #receive_message method
@@ -15,24 +16,18 @@ module Pantry
       # Start up the networking layer, opening up sockets and getting
       # ready for client communication.
       def run
-        @publish_socket = Communication::PublishSocket.new(
+        @publish_socket = Communication::PublishSocket.new_link(
           Pantry.config.server_host,
           Pantry.config.pub_sub_port
         )
         @publish_socket.open
 
-        @receive_socket = Communication::ReceiveSocket.new(
+        @receive_socket = Communication::ReceiveSocket.new_link(
           Pantry.config.server_host,
           Pantry.config.receive_port
         )
         @receive_socket.add_listener(self)
         @receive_socket.open
-      end
-
-      # Close down all networking and clean up resources
-      def shutdown
-        @publish_socket.close if @publish_socket
-        @receive_socket.close if @receive_socket
       end
 
       # Send a request to all clients, expecting a result. Returns a Future
