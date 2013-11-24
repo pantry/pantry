@@ -25,8 +25,8 @@ module Pantry
       end
 
       def shutdown
-        @subscribe_socket.close
-        @send_socket.close
+        @subscribe_socket.close if @subscribe_socket
+        @send_socket.close      if @send_socket
       end
 
       # Receive a message from the server

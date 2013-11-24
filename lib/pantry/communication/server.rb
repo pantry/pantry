@@ -31,8 +31,8 @@ module Pantry
 
       # Close down all networking and clean up resources
       def shutdown
-        @publish_socket.close
-        @receive_socket.close
+        @publish_socket.close if @publish_socket
+        @receive_socket.close if @receive_socket
       end
 
       # Send a request to all clients, expecting a result. Returns a Future
