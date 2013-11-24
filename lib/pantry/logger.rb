@@ -40,7 +40,7 @@ module Pantry
     protected
 
     def log_level(log_level_string)
-      case log_level_string
+      case log_level_string.to_s
       when "debug"
         ::Logger::DEBUG
       when "info"

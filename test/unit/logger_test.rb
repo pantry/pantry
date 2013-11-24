@@ -58,6 +58,15 @@ describe Pantry::Logger do
     assert_equal ::Logger::INFO, Celluloid.logger.level
   end
 
+  it "allows symbols when setting log level" do
+    config = Pantry::Config.new
+    config.log_level = :warn
+
+    logger = Pantry::Logger.new(config)
+
+    assert_equal ::Logger::WARN, Celluloid.logger.level
+  end
+
   it "forwards unknown messages to the celluloid logger" do
     logger = Pantry::Logger.new
 
