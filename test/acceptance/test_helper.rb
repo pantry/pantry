@@ -15,7 +15,7 @@ end
 Minitest.after_run do
   $all_exceptions.each do |exception|
     puts exception
-    puts exception.backtrace.reverse.join("\n")
+    puts exception.backtrace.join("\n")
     puts ""
   end
 end
