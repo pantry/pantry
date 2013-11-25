@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.authors  = ["Collective Idea", "Jason Roelofs"]
   s.email    = ["code@collectiveidea.com", "jasongroelofs@gmail.com"]
-  s.license  = "BSD"
+  s.license  = "MIT"
   s.homepage = ""
 
   s.summary     = ""
