@@ -46,7 +46,7 @@ module Pantry
     protected
 
     def select_clients_matching
-      selected_records = @clients.select do |identity, record|
+      selected_records = @clients.clone.select do |identity, record|
         yield(record.client)
       end
 
