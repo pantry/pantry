@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   s.bindir       = "bin"
 
-  s.executables  = %w(pantry-client pantry-server)
+  s.executables  = %w(pantry-client pantry-server pantry)
 
   s.add_runtime_dependency "celluloid",     "~> 0.15.0"
   s.add_runtime_dependency "celluloid-zmq", "~> 0.15.0"
