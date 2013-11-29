@@ -5,7 +5,7 @@
 # - stdout / nil -- Send to STDOUT
 # - syslog       -- Send to the local syslog daemon. Program name is "pantry"
 # - [file path]  -- Write logs to the given file
-# log_to: stdout
+log_to: /var/log/pantry-server.log
 
 # Minimum log output.
 # Levels are defined as:
