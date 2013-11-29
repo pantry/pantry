@@ -58,6 +58,8 @@ Vagrant::Config.run("2") do |config|
       fi
 
       # Install latest version of the gem
+      cd /vagrant
+      gem build pantry.gemspec
       gem install /vagrant/pantry*.gem
 
       # Copy configs in place
