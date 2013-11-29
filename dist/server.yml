@@ -26,7 +26,7 @@ log_to: /var/log/pantry-server.log
 
 networking:
   # IP address or Domain the Pantry Server binds to
-  # server_host: 127.0.0.1
+  server_host: 0.0.0.0
 
   # Port over which this Server publishes messages to Clients
   # pub_sub_port: 23001
