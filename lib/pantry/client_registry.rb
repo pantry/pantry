@@ -29,32 +29,52 @@ module Pantry
     end
 
     # Find and return all clients who will receive messages
-    # on the given stream or ClientFilter
+    # on the given stream or ClientFilter.
+    #
+    # If this method is given a block, the block will be processed as
+    # a #map of the list of clients and records. Block expected to be
+    # of the form:
+    #
+    #   all_matching(filter) do |client, record|
+    #     ...
+    #   end
+    #
+    # The `record` contains internal knowledge of the Client's activity.
+    # See ClientRecord for what's contained.
     def all_matching(stream_or_filter)
-      case stream_or_filter
-      when String
-        select_clients_matching do |client|
-          client.filter.matches?(stream_or_filter)
+      found_client_records =
+        case stream_or_filter
+        when String
+          select_records_matching do |record|
+            record.client.filter.matches?(stream_or_filter)
+          end
+        else
+          select_records_matching do |record|
+            stream_or_filter.includes?(record.client.filter)
+          end
+        end
+
+      if block_given?
+        found_client_records.map do |record|
+          yield(record.client, record)
         end
       else
-        select_clients_matching do |client|
-          stream_or_filter.includes?(client.filter)
-        end
+        found_client_records.map(&:client)
       end
     end
 
     protected
 
-    def select_clients_matching
+    def select_records_matching
       selected_records = @clients.clone.select do |identity, record|
-        yield(record.client)
+        yield(record)
       end
 
-      selected_records.values.map(&:client)
+      selected_records.values
     end
 
     class ClientRecord
-      attr_reader :client
+      attr_reader :client, :last_checked_in_at
 
       def initialize
         @client = nil

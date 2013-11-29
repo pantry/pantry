@@ -41,6 +41,14 @@ describe Pantry::ClientRegistry do
     assert_equal [@c2], @registry.all_matching(filter)
   end
 
+  it "processes each found client via the block if given" do
+    found = @registry.all_matching(Pantry::Communication::ClientFilter.new) do |client, record|
+      client.identity
+    end
+
+    assert_equal [@c1.identity, @c2.identity], found
+  end
+
   it "can return all known clients" do
     assert_equal [@c1, @c2], @registry.all
   end
