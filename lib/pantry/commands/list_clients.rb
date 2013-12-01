@@ -10,7 +10,10 @@ module Pantry
       # Return information about all connected Clients that match the given filter
       def perform
         self.server.client_registry.all_matching(@client_filter) do |client, record|
-          client.identity
+          {
+            identity:        client.identity,
+            last_checked_in: record.last_checked_in_at
+          }
         end
       end
 

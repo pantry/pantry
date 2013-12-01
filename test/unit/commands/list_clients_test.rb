@@ -15,7 +15,7 @@ describe Pantry::Commands::ListClients do
 
     response = command.perform
 
-    assert_equal ["client1", "client2", "client3"], response
+    assert_equal ["client1", "client2", "client3"], response.map {|entry| entry[:identity] }
   end
 
   it "only counts clients that match the given filters" do
@@ -32,7 +32,7 @@ describe Pantry::Commands::ListClients do
 
     response = command.perform
 
-    assert_equal ["client1", "client2"], response
+    assert_equal ["client1", "client2"], response.map {|entry| entry[:identity] }
   end
 
   it "generates a message with the given client filter" do

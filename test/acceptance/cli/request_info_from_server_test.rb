@@ -17,10 +17,12 @@ describe "CLI can ask Server for information" do
     response = cli.request(filter, "status")
     message = response.message
 
+    identities = message.body.map {|e| e[:identity] }
+
     # May find any number of clients, including the CLI client, so just look
     # for a few we know should be there
-    assert message.body.include?(@client1.identity), "Response did not include the identity of Client 1"
-    assert message.body.include?(@client2.identity), "Response did not include the identity of Client 2"
+    assert identities.include?(@client1.identity), "Response did not include the identity of Client 1"
+    assert identities.include?(@client2.identity), "Response did not include the identity of Client 2"
   end
 
   it "can limit the query to a subset of clients" do
@@ -39,8 +41,8 @@ describe "CLI can ask Server for information" do
     message = response.message
 
     assert_equal 2, message.body.length
-    assert_equal "client3", message.body[0]
-    assert_equal "client4", message.body[1]
+    assert_equal "client3", message.body[0][:identity]
+    assert_equal "client4", message.body[1][:identity]
 
     client3.shutdown
     client4.shutdown
