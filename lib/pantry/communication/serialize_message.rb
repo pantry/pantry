@@ -43,32 +43,32 @@ module Pantry
           end
         end
       end
-    end
 
-    class FromZeromq
-      def initialize(parts)
-        @parts = parts
-      end
-
-      def perform
-        Pantry::Message.new.tap do |message|
-          message.metadata = JSON.parse(@parts[1], symbolize_names: true)
-          message.to       = @parts[0]
-          message.body     = parse_body_parts(@parts[2..-1])
+      class FromZeromq
+        def initialize(parts)
+          @parts = parts
         end
-      end
 
-      protected
+        def perform
+          Pantry::Message.new.tap do |message|
+            message.metadata = JSON.parse(@parts[1], symbolize_names: true)
+            message.to       = @parts[0]
+            message.body     = parse_body_parts(@parts[2..-1])
+          end
+        end
 
-      def parse_body_parts(body_parts)
-        body_parts.map do |part|
-          # This may not be the best way but want to guess at a string being
-          # JSON without actually parsing it. I don't think this will be
-          # much of a problem as we have full control over message encoding.
-          if part.start_with?('{', '[')
-            JSON.parse(part, symbolize_names: true)
-          else
-            part
+        protected
+
+        def parse_body_parts(body_parts)
+          body_parts.map do |part|
+            # This may not be the best way but want to guess at a string being
+            # JSON without actually parsing it. I don't think this will be
+            # much of a problem as we have full control over message encoding.
+            if part.start_with?('{', '[')
+              JSON.parse(part, symbolize_names: true)
+            else
+              part
+            end
           end
         end
       end
