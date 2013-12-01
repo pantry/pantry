@@ -10,6 +10,7 @@ require 'yaml'
 
 require 'pantry/config'
 require 'pantry/logger'
+require 'pantry/message'
 
 require 'pantry/command'
 require 'pantry/command_handler'
@@ -24,7 +25,6 @@ require 'pantry/communication'
 require 'pantry/communication/server'
 require 'pantry/communication/client'
 require 'pantry/communication/client_filter'
-require 'pantry/communication/message'
 require 'pantry/communication/wait_list'
 
 require 'pantry/communication/reading_socket'

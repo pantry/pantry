@@ -1,66 +1,41 @@
 require 'unit/test_helper'
 
-describe Pantry::Communication::Message do
+describe Pantry::Message do
 
   it "takes a message type in constructor" do
-    message = Pantry::Communication::Message.new("message_type")
+    message = Pantry::Message.new("message_type")
     assert_equal "message_type", message.type
   end
 
   it "generates a UUID on construction" do
-    message = Pantry::Communication::Message.new("message_type")
+    message = Pantry::Message.new("message_type")
     assert_not_nil message.uuid
     assert message.uuid.length > 10
   end
 
   it "knows who the message is meant for" do
-    message = Pantry::Communication::Message.new("")
+    message = Pantry::Message.new("")
     message.to = "stream"
     assert_equal "stream", message.to
   end
 
   it "can be given strings for the body parts" do
-    message = Pantry::Communication::Message.new("type")
+    message = Pantry::Message.new("type")
     message << "Part 1"
     message << "Part 2"
 
     assert_equal ["Part 1", "Part 2"], message.body
   end
 
-  it "ensures the body is always a flattened array" do
-    message = Pantry::Communication::Message.new("type")
-    message << ["Part 1"]
-    message << [[[[["Part 2"]]]]]
-
-    assert_equal ["Part 1", "Part 2"], message.body
-  end
-
-  it "ensures all parts of a Message are strings" do
-    message = Pantry::Communication::Message.new("type")
-    message << 1
-    message << 2
-
-    assert_equal ["1", "2"], message.body
-  end
-
-  it "turns nil entries into the empty string" do
-    message = Pantry::Communication::Message.new("type")
-    message << 1
-    message << nil
-    message << 2
-
-    assert_equal ["1", "", "2"], message.body
-  end
-
   it "can be given the identity of the sending party" do
-    message = Pantry::Communication::Message.new("type")
+    message = Pantry::Message.new("type")
     message.from = "server1"
 
     assert_equal "server1", message.from
   end
 
   it "can pull the identity string from an object that responds to identity" do
-    message = Pantry::Communication::Message.new("type")
+    message = Pantry::Message.new("type")
     client = Pantry::Client.new identity: "johnsonville"
     message.from = client
 
@@ -68,14 +43,14 @@ describe Pantry::Communication::Message do
   end
 
   it "can be flagged to require a response" do
-    message = Pantry::Communication::Message.new("type")
+    message = Pantry::Message.new("type")
     message.requires_response!
 
     assert message.requires_response?
   end
 
   it "can build a response version of itself" do
-    message = Pantry::Communication::Message.new("type")
+    message = Pantry::Message.new("type")
     message << "Body part 1"
     message << "Body part 2"
     message.to = "server"
@@ -96,7 +71,7 @@ describe Pantry::Communication::Message do
   end
 
   it "can be flagged as being forwarded" do
-    message = Pantry::Communication::Message.new("type")
+    message = Pantry::Message.new("type")
     assert_false message.forwarded?
 
     message.forwarded!
@@ -104,7 +79,7 @@ describe Pantry::Communication::Message do
   end
 
   it "has a hash of metadata" do
-    message = Pantry::Communication::Message.new
+    message = Pantry::Message.new
     message.type = "read_stuff"
     message.requires_response!
     message.forwarded!
@@ -120,12 +95,12 @@ describe Pantry::Communication::Message do
   end
 
   it "ensures the #to field is always a string when writing metadata" do
-    message = Pantry::Communication::Message.new
+    message = Pantry::Message.new
     assert_equal "", message.metadata[:to]
   end
 
   it "takes a hash of metadata and parses out approriate values" do
-    message = Pantry::Communication::Message.new
+    message = Pantry::Message.new
     message.metadata = {
       type: "read_stuff",
       requires_response: true,
@@ -144,7 +119,7 @@ describe Pantry::Communication::Message do
   end
 
   it "ensures the #to field is always a string when reading metadata" do
-    message = Pantry::Communication::Message.new
+    message = Pantry::Message.new
     message.metadata = {
       to: nil,
     }
