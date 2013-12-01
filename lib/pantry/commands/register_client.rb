@@ -14,13 +14,13 @@ module Pantry
       end
 
       def self.from_message(message)
-        details = JSON.parse(message.body[0])
+        details = message.body[0]
 
         self.new(Pantry::Client.new(
           identity:    message.from,
-          application: details["application"],
-          environment: details["environment"],
-          roles:       details["roles"]
+          application: details[:application],
+          environment: details[:environment],
+          roles:       details[:roles]
         ))
       end
 
@@ -30,7 +30,7 @@ module Pantry
           application: @client.application,
           environment: @client.environment,
           roles:       @client.roles
-        }.to_json
+        }
         message
       end
 

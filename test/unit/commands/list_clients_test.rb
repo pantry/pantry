@@ -25,7 +25,7 @@ describe Pantry::Commands::ListClients do
     server.register_client(Pantry::Client.new(identity: "client3"))
 
     message = Pantry::Message.new("ListClients")
-    message << Pantry::Communication::ClientFilter.new(application: "pantry").to_hash.to_json
+    message << Pantry::Communication::ClientFilter.new(application: "pantry").to_hash
 
     command = Pantry::Commands::ListClients.from_message(message)
     command.server_or_client = server
@@ -42,7 +42,7 @@ describe Pantry::Commands::ListClients do
     message = command.to_message
 
     assert_equal "ListClients", message.type
-    assert_equal filter.to_hash.to_json, message.body[0]
+    assert_equal filter.to_hash, message.body[0]
   end
 
 end

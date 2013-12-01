@@ -16,15 +16,13 @@ module Pantry
 
       def self.from_message(message)
         self.new(
-          Pantry::Communication::ClientFilter.new(
-            JSON.parse(message.body[0] || "{}", {symbolize_names: true})
-          )
+          Pantry::Communication::ClientFilter.new(**(message.body[0] || {}))
         )
       end
 
       def to_message
         message = super
-        message << @client_filter.to_hash.to_json
+        message << @client_filter.to_hash
         message
       end
 

@@ -33,6 +33,9 @@ module Pantry
         @running = false
       end
 
+      # Some ZMQ socket types include the source as the first packet of a message.
+      # We need to know if the socket in question does this so we can properly
+      # build the Message coming in.
       def has_source_header?
         false
       end

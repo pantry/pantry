@@ -7,7 +7,7 @@ describe Pantry::Commands::RegisterClient do
     message.from = "client 427"
     message << {
       :environment => "test", :application => "pantry", :roles => %w(app db)
-    }.to_json
+    }
 
     server = Pantry::Server.new
 
@@ -33,7 +33,7 @@ describe Pantry::Commands::RegisterClient do
     message = command.to_message
 
     assert_equal(
-      {:application => "pantry", :environment => "test", :roles => %w(app db)}.to_json,
+      {:application => "pantry", :environment => "test", :roles => %w(app db)},
       message.body[0]
     )
   end
