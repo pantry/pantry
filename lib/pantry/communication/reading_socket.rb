@@ -48,20 +48,22 @@ module Pantry
       end
 
       def process_next_message
-        message = Message.new
+        next_message = []
 
+        # Drop the ZMQ given source packet, it's extraneous for our purposes
         if has_source_header?
-          message.from = @socket.read
+          @socket.read
         end
 
-        message.to = @socket.read
-        message.metadata = JSON.parse(@socket.read, symbolize_names: true)
+        next_message << @socket.read
 
         while @socket.more_parts?
-          message << @socket.read
+          next_message << @socket.read
         end
 
-        async.handle_message(message)
+        async.handle_message(
+          SerializeMessage.from_zeromq(next_message)
+        )
       end
 
       def handle_message(message)

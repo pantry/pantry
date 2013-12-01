@@ -77,4 +77,42 @@ describe Pantry::Communication::SerializeMessage do
 
   end
 
+  describe ".from_zeromq" do
+
+    it "takes an array and builds a Message from the parts" do
+      parts = [ "source", {}.to_json, "body1" ]
+
+      message = Pantry::Communication::SerializeMessage.from_zeromq(parts)
+
+      assert_equal "source", message.to
+      assert_equal ["body1"], message.body
+    end
+
+    it "parses out JSON into a Hash" do
+      parts = [ "source", {:type => "command"}.to_json, "body1" ]
+
+      message = Pantry::Communication::SerializeMessage.from_zeromq(parts)
+
+      assert_equal "command", message.type
+    end
+
+    it "handles JSON based body entries" do
+      parts = [ "source", {}.to_json, {:key => "value"}.to_json ]
+
+      message = Pantry::Communication::SerializeMessage.from_zeromq(parts)
+
+      assert_equal "value", message.body[0][:key]
+    end
+
+    it "handles Array based body entries" do
+      parts = [ "source", {}.to_json, [1, 2, 3, "go"].to_json ]
+
+      message = Pantry::Communication::SerializeMessage.from_zeromq(parts)
+
+      assert_equal [1, 2, 3, "go"], message.body[0]
+    end
+
+
+  end
+
 end

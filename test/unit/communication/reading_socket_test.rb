@@ -37,7 +37,7 @@ describe Pantry::Communication::ReadingSocket do
       end
 
       def more_parts?
-        @responses ||= [true, true, false]
+        @responses ||= [true, true, true, false]
         @responses.shift
       end
     end.new
@@ -77,7 +77,7 @@ describe Pantry::Communication::ReadingSocket do
       end
 
       def more_parts?
-        @responses ||= [true, true, false]
+        @responses ||= [true, true, true, false]
         @responses.shift
       end
     end.new
