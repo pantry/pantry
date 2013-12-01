@@ -22,6 +22,7 @@ require 'pantry/commands/register_client'
 require 'pantry/commands/run_chef_solo'
 
 require 'pantry/communication'
+require 'pantry/communication/serialize_message'
 require 'pantry/communication/server'
 require 'pantry/communication/client'
 require 'pantry/communication/client_filter'
