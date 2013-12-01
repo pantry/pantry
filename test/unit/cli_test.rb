@@ -50,7 +50,7 @@ describe Pantry::CLI do
   it "treats all received messages as responses (does not execute commands)" do
     cli = Pantry::CLI.new
 
-    message = Pantry::Communication::Message.new("Echo")
+    message = Pantry::Message.new("Echo")
     message << "johnson"
 
     cli.receive_message(message)

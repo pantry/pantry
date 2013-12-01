@@ -50,7 +50,7 @@ describe Pantry::Communication::Client do
   it "sends messages through the Send socket back to the server" do
     pantry_client = Pantry::Client.new
     client = Pantry::Communication::Client.new(pantry_client)
-    message = Pantry::Communication::Message.new("message")
+    message = Pantry::Message.new("message")
 
     Pantry::Communication::SendSocket.any_instance.expects(:send_message).with(message)
 
@@ -61,7 +61,7 @@ describe Pantry::Communication::Client do
   it "sets the source of the message to the current listener" do
     pantry_client = Pantry::Client.new
     client = Pantry::Communication::Client.new(pantry_client)
-    message = Pantry::Communication::Message.new("message")
+    message = Pantry::Message.new("message")
 
     Pantry::Communication::SendSocket.any_instance.expects(:send_message).with do |message|
       message.from == pantry_client.identity
@@ -76,7 +76,7 @@ describe Pantry::Communication::Client do
     client = Pantry::Communication::Client.new(pantry_client)
     client.run
 
-    message = Pantry::Communication::Message.new("message")
+    message = Pantry::Message.new("message")
     Pantry::Communication::SendSocket.any_instance.expects(:send_message).with(message)
 
     future = client.send_request(message)

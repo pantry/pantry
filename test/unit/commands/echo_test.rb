@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Commands::Echo do
 
   it "returns the body of the message received" do
-    message = Pantry::Communication::Message.new("Echo")
+    message = Pantry::Message.new("Echo")
     message << "This is a body"
 
     command = Pantry::Commands::Echo.from_message(message)

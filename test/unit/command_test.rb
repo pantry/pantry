@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Command do
 
   it "creates itself from a message" do
-    message = Pantry::Communication::Message.new("Command")
+    message = Pantry::Message.new("Command")
     command = Pantry::Command.from_message(message)
 
     assert_nil command.perform
@@ -25,7 +25,7 @@ describe Pantry::Command do
   end
 
   it "has a link back to the message that triggered the command" do
-    message = Pantry::Communication::Message.new
+    message = Pantry::Message.new
     command = Pantry::Command.new
     command.message = message
 

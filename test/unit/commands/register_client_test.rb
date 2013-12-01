@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Commands::RegisterClient do
 
   it "builds a client and notifies server of the new client" do
-    message = Pantry::Communication::Message.new("RegisterClient")
+    message = Pantry::Message.new("RegisterClient")
     message.from = "client 427"
     message << {
       :environment => "test", :application => "pantry", :roles => %w(app db)

@@ -7,7 +7,7 @@ describe "Pub/Sub Communication" do
       set_up_environment(pub_sub_port: 10400, receive_port: 10401)
 
       @server.publish_message(
-        Pantry::Communication::Message.new("test_message"),
+        Pantry::Message.new("test_message"),
         Pantry::Communication::ClientFilter.new(application: "pantry")
       )
 
@@ -29,7 +29,7 @@ describe "Pub/Sub Communication" do
 
       sleep 1
 
-      @server.publish_message(Pantry::Communication::Message.new("to_databases"),
+      @server.publish_message(Pantry::Message.new("to_databases"),
                               Pantry::Communication::ClientFilter.new(roles: %w(database)))
 
       # Give communication time to happen
@@ -38,7 +38,7 @@ describe "Pub/Sub Communication" do
       assert_equal "to_databases", client3.last_received_message.type
       assert_equal "to_databases", client4.last_received_message.type
 
-      @server.publish_message(Pantry::Communication::Message.new("to_tasks"),
+      @server.publish_message(Pantry::Message.new("to_tasks"),
                               Pantry::Communication::ClientFilter.new(roles: %w(task)))
 
       # Give communication time to happen

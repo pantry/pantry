@@ -6,7 +6,7 @@ describe Pantry::Communication::WaitList do
     Celluloid.init
 
     @wait_list = Pantry::Communication::WaitList.new
-    @message = Pantry::Communication::Message.new("do_something")
+    @message = Pantry::Message.new("do_something")
 
     @future = @wait_list.wait_for(@message)
   end
@@ -33,13 +33,13 @@ describe Pantry::Communication::WaitList do
   it "allows multiple entries for a given identity and message type" do
     wait_list = Pantry::Communication::WaitList.new
 
-    m1 = Pantry::Communication::Message.new("do_something")
+    m1 = Pantry::Message.new("do_something")
     m1.from = "client"
 
-    m2 = Pantry::Communication::Message.new("do_something")
+    m2 = Pantry::Message.new("do_something")
     m2.from = "client"
 
-    m3 = Pantry::Communication::Message.new("do_something")
+    m3 = Pantry::Message.new("do_something")
     m3.from = "client"
 
     future1 = wait_list.wait_for(m1)

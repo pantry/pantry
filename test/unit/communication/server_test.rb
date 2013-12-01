@@ -27,7 +27,7 @@ describe Pantry::Communication::Server do
 
   describe "#publish_message" do
     let(:listener) { Pantry::Server.new }
-    let(:message) { Pantry::Communication::Message.new }
+    let(:message) { Pantry::Message.new }
     let(:server)  { Pantry::Communication::Server.new(listener) }
 
     before do
@@ -52,7 +52,7 @@ describe Pantry::Communication::Server do
   describe "Message forwarding" do
     let(:listener) { Pantry::Server.new }
     let(:message) {
-      message = Pantry::Communication::Message.new
+      message = Pantry::Message.new
       message.from = "client427"
       message
     }
@@ -84,7 +84,7 @@ describe Pantry::Communication::Server do
     server = Pantry::Communication::Server.new(nil)
     server.run
 
-    message = Pantry::Communication::Message.new("message")
+    message = Pantry::Message.new("message")
     Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
 
     future = server.send_request(message)

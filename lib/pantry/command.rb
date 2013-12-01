@@ -23,7 +23,7 @@ module Pantry
 
     # Create a new Message from the information in the current Command
     def to_message
-      Pantry::Communication::Message.new(self.class.command_type)
+      Pantry::Message.new(self.class.command_type)
     end
 
     # The Type of this command, used to differentiate Messages.

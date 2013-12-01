@@ -33,7 +33,7 @@ describe Pantry::Server do
 
   it "can publish messages to all clients" do
     server = Pantry::Server.new(FakeNetworkStack)
-    message = Pantry::Communication::Message.new("test message")
+    message = Pantry::Message.new("test message")
 
     FakeNetworkStack.any_instance.expects(:publish_message).with do |message|
       message.to == ""
@@ -44,7 +44,7 @@ describe Pantry::Server do
 
   it "can publish messages to a filtered set of clients" do
     server = Pantry::Server.new(FakeNetworkStack)
-    message = Pantry::Communication::Message.new("test message")
+    message = Pantry::Message.new("test message")
     filter = Pantry::Communication::ClientFilter.new(roles: %w(db))
 
     FakeNetworkStack.any_instance.expects(:publish_message).with do |message|
@@ -57,7 +57,7 @@ describe Pantry::Server do
   it "can request info of a specific client" do
     server = Pantry::Server.new(FakeNetworkStack)
     client = Pantry::Client.new(identity: "client1")
-    message = Pantry::Communication::Message.new("test message")
+    message = Pantry::Message.new("test message")
 
     FakeNetworkStack.any_instance.expects(:send_request).with do |message|
       assert_equal "client1", message.to
@@ -76,13 +76,13 @@ describe Pantry::Server do
       message.type == "test_message"
     end
 
-    server.receive_message(Pantry::Communication::Message.new("test_message"))
+    server.receive_message(Pantry::Message.new("test_message"))
   end
 
   it "builds and sends a response message if message flagged as needing one" do
     server = Pantry::Server.new(FakeNetworkStack)
 
-    message = Pantry::Communication::Message.new("test_message")
+    message = Pantry::Message.new("test_message")
     message.from = "client1"
     message.requires_response!
 
@@ -105,7 +105,7 @@ describe Pantry::Server do
     Pantry.add_client_command(ClientOnlyCommand)
     server = Pantry::Server.new(FakeNetworkStack)
 
-    message = Pantry::Communication::Message.new("ClientOnlyCommand")
+    message = Pantry::Message.new("ClientOnlyCommand")
     message.from = "client1"
     message.requires_response!
 

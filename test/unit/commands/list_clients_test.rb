@@ -8,7 +8,7 @@ describe Pantry::Commands::ListClients do
     server.register_client(Pantry::Client.new(identity: "client2"))
     server.register_client(Pantry::Client.new(identity: "client3"))
 
-    message = Pantry::Communication::Message.new("ListClients")
+    message = Pantry::Message.new("ListClients")
 
     command = Pantry::Commands::ListClients.from_message(message)
     command.server_or_client = server
@@ -24,7 +24,7 @@ describe Pantry::Commands::ListClients do
     server.register_client(Pantry::Client.new(identity: "client2", application: "pantry", environment: "testing"))
     server.register_client(Pantry::Client.new(identity: "client3"))
 
-    message = Pantry::Communication::Message.new("ListClients")
+    message = Pantry::Message.new("ListClients")
     message << Pantry::Communication::ClientFilter.new(application: "pantry").to_hash.to_json
 
     command = Pantry::Commands::ListClients.from_message(message)

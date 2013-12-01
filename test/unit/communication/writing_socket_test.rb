@@ -27,7 +27,7 @@ describe Pantry::Communication::WritingSocket do
   end
 
   it "serializes a message and sends it down the pipe" do
-    message = Pantry::Communication::Message.new("message_type")
+    message = Pantry::Message.new("message_type")
     message.to = "stream"
     message << "message_body_1"
     message << "message_body_2"
@@ -41,7 +41,7 @@ describe Pantry::Communication::WritingSocket do
   end
 
   it "ensures there's always something for the stream value" do
-    message = Pantry::Communication::Message.new("message_type")
+    message = Pantry::Message.new("message_type")
     message.to = nil
     message << "message_body_1"
     message << "message_body_2"

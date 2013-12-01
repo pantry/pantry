@@ -82,7 +82,7 @@ describe Pantry::Client do
       message.type == "test_message"
     end
 
-    client.receive_message(Pantry::Communication::Message.new("test_message"))
+    client.receive_message(Pantry::Message.new("test_message"))
   end
 
   it "builds and sends a response message if message flagged as needing one" do
@@ -91,7 +91,7 @@ describe Pantry::Client do
     Pantry::CommandHandler.any_instance.stubs(:can_handle?).returns(true)
     Pantry::CommandHandler.any_instance.expects(:process).returns("A response message")
 
-    message = Pantry::Communication::Message.new("test_message")
+    message = Pantry::Message.new("test_message")
     message.requires_response!
 
     FakeNetworkStack.any_instance.expects(:send_message).with do |response_message|
@@ -104,7 +104,7 @@ describe Pantry::Client do
 
   it "can request info of a the server" do
     client = Pantry::Client.new(network_stack_class: FakeNetworkStack)
-    message = Pantry::Communication::Message.new("test message")
+    message = Pantry::Message.new("test message")
 
     FakeNetworkStack.any_instance.expects(:send_request).with(message)
 

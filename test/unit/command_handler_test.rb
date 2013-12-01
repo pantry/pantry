@@ -16,7 +16,7 @@ describe Pantry::CommandHandler do
   end
 
   it "executes commands that match the message type" do
-    message = Pantry::Communication::Message.new("TestMessage")
+    message = Pantry::Message.new("TestMessage")
 
     command_handler.add_command(TestMessage)
     output = command_handler.process(message)
@@ -25,17 +25,17 @@ describe Pantry::CommandHandler do
   end
 
   it "ignores messages that don't match any command" do
-    message = Pantry::Communication::Message.new("message_type")
+    message = Pantry::Message.new("message_type")
     assert_nil command_handler.process(message)
   end
 
   it "knows if it can process a given command or not" do
     command_handler.add_command(TestMessage)
 
-    message = Pantry::Communication::Message.new("unknown_type")
+    message = Pantry::Message.new("unknown_type")
     assert_false command_handler.can_handle?(message), "Should not be able to handle unknown_type"
 
-    message = Pantry::Communication::Message.new("TestMessage")
+    message = Pantry::Message.new("TestMessage")
     assert command_handler.can_handle?(message), "Should be able to handle TestMessage"
   end
 
@@ -50,7 +50,7 @@ describe Pantry::CommandHandler do
   end
 
   it "sets the server or client on the command before it's performed" do
-    message = Pantry::Communication::Message.new("ReturnClientIdentity")
+    message = Pantry::Message.new("ReturnClientIdentity")
 
     command_handler.add_command(ReturnClientIdentity)
     response = command_handler.process(message)
@@ -69,7 +69,7 @@ describe Pantry::CommandHandler do
   end
 
   it "sets the server or client on the command before it's performed" do
-    message = Pantry::Communication::Message.new("ReturnMessageIdentity")
+    message = Pantry::Message.new("ReturnMessageIdentity")
 
     command_handler.add_command(ReturnMessageIdentity)
     response = command_handler.process(message)
@@ -81,11 +81,11 @@ describe Pantry::CommandHandler do
     handler = Pantry::CommandHandler.new(
       client, [TestMessage, ReturnClientIdentity, ReturnMessageIdentity])
 
-    assert handler.can_handle?(Pantry::Communication::Message.new("TestMessage")),
+    assert handler.can_handle?(Pantry::Message.new("TestMessage")),
       "Did not register TestMessage"
-    assert handler.can_handle?(Pantry::Communication::Message.new("ReturnClientIdentity")),
+    assert handler.can_handle?(Pantry::Message.new("ReturnClientIdentity")),
       "Did not register ReturnClientIdentity"
-    assert handler.can_handle?(Pantry::Communication::Message.new("ReturnMessageIdentity")),
+    assert handler.can_handle?(Pantry::Message.new("ReturnMessageIdentity")),
       "Did not register ReturnMessageIdentity"
   end
 end
