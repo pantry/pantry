@@ -8,8 +8,9 @@ module Pantry
     # or a Proc/Lambda that knows how to build the command object, if the default doesn't
     # work (e.g ListClients).
     COMMAND_MAP = {
-      "echo"   => Pantry::Commands::Echo,
-      "status" => lambda {|filter, command, arguments|
+      "echo"      => Pantry::Commands::Echo,
+      "chef-solo" => Pantry::Commands::RunChefSolo,
+      "status"    => lambda {|filter, command, arguments|
         Pantry::Commands::ListClients.new(filter)
       }
     }
