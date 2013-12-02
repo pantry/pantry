@@ -2,6 +2,11 @@ require 'unit/test_helper'
 
 describe Pantry::Communication::ClientFilter do
 
+  it "ensures roles is always an array" do
+    filter = Pantry::Communication::ClientFilter.new(roles: nil)
+    assert_equal [], filter.roles
+  end
+
   describe "#streams" do
     it "returns empty string if no filters given" do
       filter = Pantry::Communication::ClientFilter.new({})

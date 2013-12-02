@@ -34,7 +34,7 @@ module Pantry
       def initialize(application: nil, environment: nil, roles: [], identity: nil)
         @application = application
         @environment = environment
-        @roles       = roles
+        @roles       = roles || []
         @identity    = identity
       end
 
