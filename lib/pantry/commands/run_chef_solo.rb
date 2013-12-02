@@ -9,8 +9,13 @@ module Pantry
       end
 
       def perform
-        stdout, stderr, status = Open3.capture3("chef-solo")
-        [stdout, stderr, status.to_i]
+        begin
+          stdout, stderr, status = Open3.capture3("chef-solo")
+          [stdout, stderr, status.to_i]
+        rescue Exception => e
+          # Could not find the chef-solo binary
+          ["", e.message, 1]
+        end
       end
 
     end
