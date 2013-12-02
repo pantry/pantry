@@ -64,8 +64,15 @@ Vagrant::Config.run("2") do |config|
 
       # Copy configs in place
       mkdir -p /etc/pantry
-      cp /vagrant/dist/client.yml /etc/pantry/client.yml
-      cp /vagrant/dist/server.yml /etc/pantry/server.yml
+
+      if [ ! -f /etc/pantry/client.yml ]; then
+        cp /vagrant/dist/client.yml /etc/pantry/client.yml
+      fi
+
+      if [ ! -f /etc/pantry/server.yml ]; then
+        cp /vagrant/dist/server.yml /etc/pantry/server.yml
+      fi
+
       cp /vagrant/dist/upstart/pantry-client.conf /etc/init/pantry-client.conf
       cp /vagrant/dist/upstart/pantry-server.conf /etc/init/pantry-server.conf
 
