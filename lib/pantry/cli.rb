@@ -128,6 +128,7 @@ module Pantry
       def ensure_server_response
         begin
           @server_response = @server_future.value(SERVER_RESPONSE_TIMEOUT)
+          Pantry.logger.debug("[CLI] Server Response #{@server_response.inspect}")
         rescue Celluloid::TimeoutError
           Pantry.logger.error("[CLI] Did not receive response from Server in time.")
         end
