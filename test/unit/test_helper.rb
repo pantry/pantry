@@ -13,11 +13,4 @@ class Minitest::Test
     Celluloid.init
   end
 
-  def with_custom_config
-    old_config = Pantry.config.clone
-    yield
-  ensure
-    Pantry.class_variable_set("@@config", old_config)
-  end
-
 end

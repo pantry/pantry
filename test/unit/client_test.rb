@@ -30,22 +30,6 @@ describe Pantry::Client do
     assert_equal "production", client.environment
   end
 
-  it "configures the client from Pantry.config if no options given" do
-    with_custom_config do
-      Pantry.config.client_identity = "identity"
-      Pantry.config.client_application = "pantry"
-      Pantry.config.client_environment = "test"
-      Pantry.config.client_roles = ["app", "breaker"]
-
-      client = Pantry::Client.new
-
-      assert_equal "identity", client.identity
-      assert_equal "pantry", client.application
-      assert_equal "test", client.environment
-      assert_equal ["app", "breaker"], client.roles
-    end
-  end
-
   it "packages up all filter information into a Filter object" do
     client = Pantry::Client.new environment: "production", application: "pantry"
 

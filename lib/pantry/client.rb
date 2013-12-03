@@ -27,10 +27,10 @@ module Pantry
     attr_reader :last_received_message
 
     def initialize(application: nil, environment: nil, roles: [], identity: nil, network_stack_class: Communication::Client)
-      @application = application || Pantry.config.client_application
-      @environment = environment || Pantry.config.client_environment
-      @identity    = identity    || Pantry.config.client_identity    || current_hostname
-      @roles       = (roles && !roles.empty?) ? roles : Pantry.config.client_roles
+      @application = application
+      @environment = environment
+      @identity    = identity    || current_hostname
+      @roles       = roles       || []
 
       @filter      = Pantry::Communication::ClientFilter.new(
         application: @application,

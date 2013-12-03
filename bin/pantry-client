@@ -26,7 +26,12 @@ if options[:config_file]
   Pantry.config.load_file(options[:config_file])
 end
 
-client_supervisor = Pantry::Client.supervise
+client_supervisor = Pantry::Client.supervise(
+  identity:    Pantry.config.client_identity,
+  application: Pantry.config.client_application,
+  environment: Pantry.config.client_environment,
+  roles:       Pantry.config.client_roles
+)
 client = client_supervisor.actors.first
 client.run
 
