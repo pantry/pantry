@@ -14,6 +14,7 @@ module Pantry
     attr_reader :uuid
 
     # Where or who is this message intended for (Can be an identity or a stream)
+    # Defaults to the catch-all stream `""`
     attr_accessor :to
 
     # Who is this message coming from (Should be an identity)
@@ -30,6 +31,7 @@ module Pantry
     def initialize(message_type = nil)
       @type = message_type
       @body = []
+      @to   = ""
 
       @requires_response = false
       @forwarded         = false

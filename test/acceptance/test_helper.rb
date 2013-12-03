@@ -50,10 +50,10 @@ class Minitest::Test
     @server.identity = "Test Server"
     @server.run
 
-    @client1 = Pantry::Client.new identity: "client1", application: "pantry"
+    @client1 = Pantry::Client.new identity: "client1", application: "pantry", environment: "test", roles: ["app1"]
     @client1.run
 
-    @client2 = Pantry::Client.new identity: "client2", application: "pantry"
+    @client2 = Pantry::Client.new identity: "client2", application: "pantry", environment: "test", roles: ["app2"]
     @client2.run
   end
 

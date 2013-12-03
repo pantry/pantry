@@ -62,12 +62,17 @@ module Pantry
     def receive_message(message)
       Pantry.logger.debug("[#{@identity}] Received message #{message.inspect}")
 
-      @last_received_message = message
-      results = @commands.process(message)
+      if message_meant_for_us?(message)
+        @last_received_message = message
+        results = @commands.process(message)
 
-      if message.requires_response?
-        Pantry.logger.debug("[#{@identity}] Responding with #{results.inspect}")
-        send_results_back_to_requester(message, results)
+        if message.requires_response?
+          Pantry.logger.debug("[#{@identity}] Responding with #{results.inspect}")
+          send_results_back_to_requester(message, results)
+        end
+      else
+        Pantry.logger.debug("[#{@identity}] Message discarded, not for us")
+        return
       end
     end
 
@@ -99,6 +104,22 @@ module Pantry
       response_message << results
 
       @networking.send_message(response_message)
+    end
+
+    # ZeroMQ's Pub/Sub topic matching is too simplistic to catch all the cases we
+    # need to handle. Given that if *any* topic matches the incoming message, we get
+    # the message even if it wasn't exactly meant for us. For example, if this client
+    # subscribes to the following topics:
+    #
+    #   * pantry
+    #   * pantry.test
+    #   * pantry.test.app
+    #
+    # This client will receive messages sent to "pantry.test.web" because "pantry" and
+    # "pantry.test" both match (string start_with? check) the message. Thus, we add our
+    # own handling to the message check as a protective stop gap.
+    def message_meant_for_us?(message)
+      @filter.matches?(message.to)
     end
   end
 end

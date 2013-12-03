@@ -20,4 +20,21 @@ describe "CLI requests information from individual clients" do
     assert_equal ["This is Neat"],  all[1].body
   end
 
+  it "can target specific clients for the commands sent" do
+    set_up_environment(pub_sub_port: 10102, receive_port: 10103)
+
+    cli = Pantry::CLI.new(identity: "cli1")
+    cli.run
+
+    filter = Pantry::Communication::ClientFilter.new(application: "pantry", environment: "test", roles: ["app1"])
+
+    response = cli.request(filter, "echo", "This is Neat")
+    all = response.messages.sort {|a, b| a.from <=> b.from }
+
+    assert_equal 1, all.length
+
+    assert_equal @client1.identity, all[0].from
+    assert_equal ["This is Neat"],  all[0].body
+  end
+
 end

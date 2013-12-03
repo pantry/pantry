@@ -19,6 +19,11 @@ describe Pantry::Message do
     assert_equal "stream", message.to
   end
 
+  it "defaults the #to value to all (the empty string)" do
+    message = Pantry::Message.new("")
+    assert_equal "", message.to
+  end
+
   it "can be given strings for the body parts" do
     message = Pantry::Message.new("type")
     message << "Part 1"
