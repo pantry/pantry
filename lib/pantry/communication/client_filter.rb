@@ -39,11 +39,11 @@ module Pantry
       end
 
       # List out all communication streams this ClientFilter is configured to know about.
-      def streams(skip_identity = false)
+      def streams
         list = []
         base_stream = []
 
-        if @identity && !skip_identity
+        if @identity
           list << @identity
         end
 
@@ -97,8 +97,8 @@ module Pantry
         return true if self == filter
         return true if streams == [""]
 
-        my_stream =    Set.new(streams(:skip_identity))
-        other_stream = Set.new(filter.streams(:skip_identity))
+        my_stream =    Set.new(streams)
+        other_stream = Set.new(filter.streams)
 
         my_stream.subset?(other_stream)
       end

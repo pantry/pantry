@@ -69,6 +69,14 @@ describe Pantry::Communication::ClientFilter do
 
       assert_equal ["db", "app"], filter.streams
     end
+
+    it "uses the identity of no other values set" do
+      filter = Pantry::Communication::ClientFilter.new(
+        identity: "tester.client"
+      )
+
+      assert_equal ["tester.client"], filter.streams
+    end
   end
 
   describe "#stream" do
@@ -148,6 +156,16 @@ describe Pantry::Communication::ClientFilter do
       assert_false filter.matches?("db")
       assert_false filter.matches?("test")
     end
+
+    it "tries to match against an identity filter" do
+      filter = Pantry::Communication::ClientFilter.new(identity: "test-client")
+
+      assert filter.matches?("")
+      assert filter.matches?("test-client")
+
+      assert_false filter.matches?("app")
+      assert_false filter.matches?("pantry.test")
+    end
   end
 
   describe "#includes?" do
@@ -218,6 +236,13 @@ describe Pantry::Communication::ClientFilter do
       f2 = Pantry::Communication::ClientFilter.new()
 
       assert f2.includes?(f1), "f1 was not included in f2's all client match"
+    end
+
+    it "returns false if identity is the only value set and doesn't match" do
+      f1 = Pantry::Communication::ClientFilter.new(identity: "test-client")
+      f2 = Pantry::Communication::ClientFilter.new(application: "pantry")
+
+      assert_false f2.includes?(f1), "f1 was not included in f2's all client match"
     end
   end
 
