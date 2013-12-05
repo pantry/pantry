@@ -28,6 +28,10 @@ module Pantry
     # Defaults to "pantry"
     attr_accessor :syslog_program_name
 
+    # Location on the file system Pantry will store any persistent data
+    # Default: /var/lib/pantry
+    attr_accessor :data_dir
+
     ##
     # Communication Configuration
     ##
@@ -65,6 +69,7 @@ module Pantry
       # Logging defaults
       @log_level = "info"
       @syslog_program_name = "pantry"
+      @data_dir = "/var/lib/pantry"
 
       # Default connectivity settings
       @server_host = "127.0.0.1"
@@ -102,6 +107,10 @@ module Pantry
 
       if configs["syslog_program_name"]
         @syslog_program_name = configs["syslog_program_name"]
+      end
+
+      if configs["data_dir"]
+        @data_dir = configs["data_dir"]
       end
     end
 

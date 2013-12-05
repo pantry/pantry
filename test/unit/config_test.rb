@@ -29,6 +29,13 @@ describe Pantry::Config do
       assert_equal "client", pantry_config.syslog_program_name
     end
 
+    it "has an entry for the data dir" do
+      assert_equal "/var/lib/pantry", pantry_config.data_dir
+
+      pantry_config.data_dir = "dir"
+      assert_equal "dir", pantry_config.data_dir
+    end
+
     it "can load values from a given YAML file" do
       config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
       pantry_config.load_file(config_file)
@@ -36,6 +43,7 @@ describe Pantry::Config do
       assert_equal "/var/log/pantry.log", pantry_config.log_to
       assert_equal "warn", pantry_config.log_level
       assert_equal "testing", pantry_config.syslog_program_name
+      assert_equal "/tmp/data", pantry_config.data_dir
     end
 
     it "does not set values to nil if not in the config" do
@@ -44,6 +52,7 @@ describe Pantry::Config do
 
       assert_equal "info", pantry_config.log_level
       assert_equal "pantry", pantry_config.syslog_program_name
+      assert_equal "/var/lib/pantry", pantry_config.data_dir
     end
   end
 

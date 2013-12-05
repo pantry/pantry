@@ -39,6 +39,7 @@ class Minitest::Test
     Pantry.config.pub_sub_port = pub_sub_port
     Pantry.config.receive_port = receive_port
     Pantry.config.client_heartbeat_interval = heartbeat
+    Pantry.config.data_dir = File.join(%w(.. data_dir), __FILE__)
 
     begin
       Pantry.add_server_command(ServerEchoCommand)

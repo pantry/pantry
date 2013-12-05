@@ -2,6 +2,7 @@
 log_to: /var/log/pantry.log
 log_level: warn
 syslog_program_name: testing
+data_dir: /tmp/data
 
 networking:
   server_host: 10.0.0.1
