@@ -47,14 +47,16 @@ describe Pantry::CLI do
     cli.request(filter, "echo", "Hello World")
   end
 
-  it "treats all received messages as responses (does not execute commands)" do
-    cli = Pantry::CLI.new
+  it "forwards other messages recieved to a responder if one exists"
 
-    message = Pantry::Message.new("Echo")
-    message << "johnson"
-
-    cli.receive_message(message)
-    # Does not explode.
-  end
+#  it "treats all received messages as responses (does not execute commands)" do
+#    cli = Pantry::CLI.new
+#
+#    message = Pantry::Message.new("Echo")
+#    message << "johnson"
+#
+#    cli.receive_message(message)
+#    # Does not explode.
+#  end
 
 end

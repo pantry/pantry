@@ -14,6 +14,7 @@ require 'pantry/message'
 
 require 'pantry/command'
 require 'pantry/command_handler'
+require 'pantry/commands/multi_response_handler'
 
 require 'pantry/commands/echo'
 require 'pantry/commands/list_clients'

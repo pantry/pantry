@@ -67,6 +67,4 @@ message_filter = Pantry::Communication::ClientFilter.new(
 )
 
 response = cli.request(message_filter, *ARGV)
-
-puts response.messages.inspect
-
+puts response.inspect

@@ -3,8 +3,13 @@ module Pantry
 
     class ListClients < Command
 
-      def initialize(client_filter)
-        @client_filter = client_filter
+      attr_accessor :client_filter
+
+#      cli "status"
+
+      def prepare_message(filter, *arguments)
+        @client_filter = filter
+        to_message
       end
 
       # Return information about all connected Clients that match the given filter
@@ -18,9 +23,9 @@ module Pantry
       end
 
       def self.from_message(message)
-        self.new(
-          Pantry::Communication::ClientFilter.new(**(message.body[0] || {}))
-        )
+        command = super
+        command.client_filter = Pantry::Communication::ClientFilter.new(**(message.body[0] || {}))
+        command
       end
 
       def to_message

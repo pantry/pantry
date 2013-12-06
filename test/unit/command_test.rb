@@ -32,6 +32,24 @@ describe Pantry::Command do
     assert_equal message, command.message
   end
 
+  it "can prepare itself as a Message to be sent down the pipe" do
+    command = Pantry::Command.new
+    filter = Pantry::Communication::ClientFilter.new
+    message = command.prepare_message(filter)
+
+    assert message.is_a?(Pantry::Message),
+      "prepare_message returned the wrong value"
+    assert_equal filter.stream, message.to
+  end
+
+  it "can continue processing any responses from #perform" do
+    command = Pantry::Command.new
+    fake_future = stub
+    fake_future.stubs(:value).returns("a value")
+
+    assert_equal "a value", command.handle_response(fake_future)
+  end
+
   class SubCommand < Pantry::Command
   end
 

@@ -12,6 +12,12 @@ module Pantry
         @string_to_echo
       end
 
+      def handle_response(request_future)
+        handler = Pantry::Commands::MultiResponseHandler.new(request_future)
+        handler.wait_for_response
+        handler
+      end
+
       def self.from_message(message)
         self.new(message.body[0])
       end

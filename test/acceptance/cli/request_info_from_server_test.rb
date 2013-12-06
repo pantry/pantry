@@ -14,8 +14,7 @@ describe "CLI can ask Server for information" do
     filter = Pantry::Communication::ClientFilter.new
 
     # `pantry status`
-    response = cli.request(filter, "status")
-    message = response.message
+    message = cli.request(filter, "status")
 
     identities = message.body.map {|e| e[:identity] }
 
@@ -37,8 +36,7 @@ describe "CLI can ask Server for information" do
     filter = Pantry::Communication::ClientFilter.new(application: "chatbot")
 
     # `pantry chatbot status`
-    response = cli.request(filter, "status")
-    message = response.message
+    message = cli.request(filter, "status")
 
     assert_equal 2, message.body.length
     assert_equal "client3", message.body[0][:identity]
