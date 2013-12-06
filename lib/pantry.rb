@@ -41,15 +41,7 @@ require 'pantry/client'
 require 'pantry/server'
 require 'pantry/cli'
 
-
 module Pantry
-
-  # Register a command object class for the commands system.
-  # This will register the command object as handleable by both the Server and a Client.
-  def add_command(command_class)
-    add_client_command(command_class)
-    add_server_command(command_class)
-  end
 
   # Register a command object class to be handled only by Clients
   def add_client_command(command_class)

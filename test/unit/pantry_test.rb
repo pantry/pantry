@@ -11,32 +11,6 @@ describe Pantry do
   end
 
   describe "#add_command" do
-    it "registers a command class for client and server to handle" do
-      Pantry.add_command(TestCommand)
-
-      assert_equal [TestCommand], Pantry.client_commands
-      assert_equal [TestCommand], Pantry.server_commands
-    end
-
-    it "errors if the given class is not a Pantry::Command" do
-      assert_raises(Pantry::InvalidCommandError) do
-        Pantry.add_command(Object)
-      end
-    end
-
-    it "errors if was given an object that isn't a Class" do
-      assert_raises(Pantry::InvalidCommandError) do
-        Pantry.add_command(Object.new)
-      end
-    end
-
-    it "warns if the given Command conflicts name-wise with an already registered command" do
-      Pantry.add_command(TestCommand)
-
-      assert_raises(Pantry::DuplicateCommandError) do
-        Pantry.add_command(TestCommand)
-      end
-    end
   end
 
   describe "#add_client_command" do
@@ -46,6 +20,26 @@ describe Pantry do
       assert_equal [TestCommand], Pantry.client_commands
       assert_equal [], Pantry.server_commands
     end
+
+    it "errors if the given class is not a Pantry::Command" do
+      assert_raises(Pantry::InvalidCommandError) do
+        Pantry.add_client_command(Object)
+      end
+    end
+
+    it "errors if was given an object that isn't a Class" do
+      assert_raises(Pantry::InvalidCommandError) do
+        Pantry.add_client_command(Object.new)
+      end
+    end
+
+    it "warns if the given Command conflicts name-wise with an already registered command" do
+      Pantry.add_client_command(TestCommand)
+
+      assert_raises(Pantry::DuplicateCommandError) do
+        Pantry.add_client_command(TestCommand)
+      end
+    end
   end
 
   describe "#add_server_command" do
@@ -54,6 +48,26 @@ describe Pantry do
 
       assert_equal [], Pantry.client_commands
       assert_equal [TestCommand], Pantry.server_commands
+    end
+
+    it "errors if the given class is not a Pantry::Command" do
+      assert_raises(Pantry::InvalidCommandError) do
+        Pantry.add_server_command(Object)
+      end
+    end
+
+    it "errors if was given an object that isn't a Class" do
+      assert_raises(Pantry::InvalidCommandError) do
+        Pantry.add_server_command(Object.new)
+      end
+    end
+
+    it "warns if the given Command conflicts name-wise with an already registered command" do
+      Pantry.add_server_command(TestCommand)
+
+      assert_raises(Pantry::DuplicateCommandError) do
+        Pantry.add_server_command(TestCommand)
+      end
     end
   end
 
