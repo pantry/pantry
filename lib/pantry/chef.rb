@@ -1,4 +1,5 @@
 require 'digest'
+require 'fileutils'
 require 'tempfile'
 
 require 'pantry/chef/upload_cookbook'

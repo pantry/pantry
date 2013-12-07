@@ -47,39 +47,25 @@ module Pantry
         message
       end
 
-#      def prepare(filter, *arguments)
-#        metadata = "#{cookbook_path}/metadata.rb"
-#        raise "Metadata file not found for cookbook" unless File.exists?(metadata)
-#
-#        # Pull these from the metadata
-#        # Put these values in the message metadata
-#        cookbook_name    = "name"
-#        cookbook_version = "1.0"
-#
-#        cookbook_bundle_path = tar_cookbook_files
-#
-#        timeout = 5
-#
-#        # Ask for a new upload
-#        # This checks that the file we're about to upload is kosher
-#        to_server = UploadCookbook::Server.new.to_message
-#        to_server[:cookbook_name] = cookbook_name
-#        to_server[:cookbook_version] = cookbook_version
-#
-#        # Size
-#        # Checksum
-#
-#        server_response = client.send_request(to_server).value(timeout)
-#
-#        # Upload is go! Time to trigger our upload actor and let it sort things out
-#        # for itself.
-#        uploader = client.upload_file(cookbook_bundle_path, server_response.uuid)
-#        uploader.join
-#
-#        # Done uploading!
-#      end
-#
-#
+      def perform
+        cookbook_name     = message[:cookbook_name]
+        cookbook_version  = message[:cookbook_version]
+        cookbook_size     = message[:cookbook_size]
+        cookbook_checksum = message[:cookbook_checksum]
+
+        cookbook_home = File.join(Pantry.config.data_dir, "chef", "cookbooks", cookbook_name)
+        FileUtils.mkdir_p(cookbook_home)
+
+        version_path = File.join(cookbook_home, "#{cookbook_version}.tgz")
+
+        if !message[:cookbook_force_upload] && File.exists?(version_path)
+          [false, "Version #{cookbook_version} of cookbook #{cookbook_name} already exists"]
+        else
+          uploader_uuid = server.receive_file(version_path, cookbook_size, cookbook_checksum)
+          [true, uploader_uuid]
+        end
+      end
+
 #      def perform(message)
 #        cookbook_name    = message[:cookbook_name]
 #        cookbook_version = message[:cookbook_version]
@@ -98,11 +84,6 @@ module Pantry
 #          [true]
 #        end
 #      end
-#
-#      def self.from_message(message)
-#
-#      end
-#
 
     end
 
