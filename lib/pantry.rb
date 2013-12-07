@@ -20,8 +20,6 @@ require 'pantry/commands/echo'
 require 'pantry/commands/list_clients'
 require 'pantry/commands/register_client'
 
-require 'pantry/commands/run_chef_solo'
-
 require 'pantry/communication'
 require 'pantry/communication/serialize_message'
 require 'pantry/communication/server'

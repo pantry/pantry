@@ -1,15 +1,15 @@
 require 'unit/test_helper'
 
-describe Pantry::Commands::RunChefSolo do
+describe Pantry::Chef::RunChefSolo do
 
   it "has a custom type" do
-    assert_equal "Chef::ChefSolo", Pantry::Commands::RunChefSolo.command_type
+    assert_equal "Chef::ChefSolo", Pantry::Chef::RunChefSolo.command_type
   end
 
   it "executes the chef-solo command, returning outputs" do
     Open3.expects(:capture3).with("chef-solo").returns(["chef ran", "error", 0])
 
-    command = Pantry::Commands::RunChefSolo.new
+    command = Pantry::Chef::RunChefSolo.new
     stdout, stderr, status = command.perform
 
     assert_equal "chef ran", stdout
@@ -20,7 +20,7 @@ describe Pantry::Commands::RunChefSolo do
   it "returns error message if chef-solo not found on the system" do
     Open3.expects(:capture3).with("chef-solo").raises(Errno::ENOENT, "Can't find LOLZ")
 
-    command = Pantry::Commands::RunChefSolo.new
+    command = Pantry::Chef::RunChefSolo.new
     stdout, stderr, status = command.perform
 
     assert_equal "", stdout
