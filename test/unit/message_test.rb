@@ -131,4 +131,33 @@ describe Pantry::Message do
     assert_equal "", message.to
   end
 
+  it "allows custom metadata entries" do
+    message = Pantry::Message.new
+    message[:metadata_1] = "my metadata"
+    message[:some_name] = "johnson"
+
+    assert_equal "my metadata", message[:metadata_1]
+    assert_equal "johnson", message[:some_name]
+
+    assert_equal "my metadata", message.metadata[:metadata_1]
+    assert_equal "johnson", message.metadata[:some_name]
+  end
+
+  it "loads unknown metadata keys into the custom metadata" do
+    message = Pantry::Message.new
+    message.metadata = {
+      metadata_1: "my metadata",
+      some_name:  "johnson"
+    }
+
+    assert_equal "my metadata", message[:metadata_1]
+    assert_equal "johnson", message[:some_name]
+  end
+
+  it "errors if attempting to add metadata key that's used internally" do
+    assert_raises Pantry::Message::ReservedMetadataKeyError do
+      message = Pantry::Message.new
+      message[:to] = "my metadata"
+    end
+  end
 end
