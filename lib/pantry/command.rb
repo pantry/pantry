@@ -19,6 +19,12 @@ module Pantry
   #                      the message built in `prepare_message`. By default this just
   #                      returns the received Message but can be overridden to perform
   #                      any post-operation commands.
+  #
+  # Note: In normal CLI execution, #prepare_message and #handle_response are called
+  # on the same object, but #prepare is called by another Actor elsewhere in the network.
+  # Thus, if information needs to be made available to all three, #prepare_message can set
+  # instance variables that #handle_response can read, but #perform must pull all information
+  # out of the Message.
   class Command
 
     # The Message that triggered this Command
