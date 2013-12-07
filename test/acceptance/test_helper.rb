@@ -63,6 +63,10 @@ class Minitest::Test
     @client1.shutdown if @client1
     @client2.shutdown if @client2
     @server.shutdown  if @server
+
+    Dir["#{Pantry.config.data_dir}/*"].each do |file|
+      FileUtils.rm_rf file
+    end
   end
 
 end
