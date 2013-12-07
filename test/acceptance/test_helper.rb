@@ -6,6 +6,7 @@ require 'mocha/setup'
 require 'pantry'
 
 Pantry.logger.disable!
+#Pantry.config.log_level = :debug
 
 $all_exceptions = []
 Celluloid.exception_handler do |exception|
