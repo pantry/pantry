@@ -7,7 +7,7 @@ module Pantry
 
 #      cli "status"
 
-      def prepare_message(filter, *arguments)
+      def prepare_message(filter, arguments = [])
         @client_filter = filter
         to_message
       end
