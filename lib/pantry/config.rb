@@ -64,6 +64,14 @@ module Pantry
     # Roles this Client serves
     attr_accessor :client_roles
 
+    ##
+    # Testing configuration helpers
+    ##
+
+    # Time in seconds the CLI will wait for a response from the server
+    # By default this is nil, meaning unlimited timeout. Used mainly in tests.
+    attr_accessor :response_timeout
+
     def initialize
 
       # Logging defaults

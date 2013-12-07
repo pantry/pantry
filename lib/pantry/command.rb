@@ -65,7 +65,7 @@ module Pantry
     # any further messages received by the CLI. See the Pantry::Commands::Echo and the MultiResponseHandler
     # for an example of how this works. TODO Is there a cleaner way of doing this?
     def handle_response(request_future)
-      request_future.value
+      request_future.value(Pantry.config.response_timeout)
     end
 
     # Create a new Command from the given Message

@@ -41,6 +41,7 @@ class Minitest::Test
     Pantry.config.receive_port = receive_port
     Pantry.config.client_heartbeat_interval = heartbeat
     Pantry.config.data_dir = File.expand_path("../../data_dir", __FILE__)
+    Pantry.config.response_timeout = 5
 
     begin
       Pantry.add_server_command(ServerEchoCommand)
