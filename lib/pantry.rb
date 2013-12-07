@@ -110,4 +110,4 @@ Pantry.add_server_command(Pantry::Commands::RegisterClient)
 
 ## Chef
 
-Pantry.add_client_command(Pantry::Commands::RunChefSolo)
+require 'pantry/chef'

@@ -9,8 +9,7 @@ module Pantry
     # work (e.g ListClients).
     COMMAND_MAP = {
       "echo"      => Pantry::Commands::Echo,
-      "chef-solo" => Pantry::Commands::RunChefSolo,
-      "status"    => Pantry::Commands::ListClients
+      "status"    => Pantry::Commands::ListClients,
     }
 
     def initialize(**args)
