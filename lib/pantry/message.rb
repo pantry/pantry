@@ -10,11 +10,6 @@ module Pantry
   # request message itself.
   class Message
 
-    # Raised if attempts made to set an internal metadata key in the custom metadata
-    class ReservedMetadataKeyError < Exception; end
-
-    RESERVED_METADATA_KEYS = %i{to from type uuid requires_response forwarded}
-
     # Unique identifier for this Message. Automatically generated
     attr_reader :uuid
 
@@ -78,14 +73,7 @@ module Pantry
     end
 
     # Set custom metadata on this message.
-    # Metadata can be anything that shouldn't go into a proper message body entry.
-    # Will raise ReservedMetadataKeyError if trying to set a metadata key that's used
-    # internally. See RESERVED_METADATA_KEYS
     def []=(key, val)
-      if RESERVED_METADATA_KEYS.include?(key)
-        raise ReservedMetadataKeyError, "Trying to use reserved metadata key #{key}"
-      end
-
       @custom_metadata[key] = val
     end
 
@@ -118,22 +106,20 @@ module Pantry
         :from              => self.from,
         :to                => self.to || "",
         :requires_response => self.requires_response?,
-        :forwarded         => self.forwarded?
-      }.merge(@custom_metadata)
+        :forwarded         => self.forwarded?,
+        :custom            => @custom_metadata
+      }
     end
 
     # Given a hash, pull out the parts into local variables
     def metadata=(hash)
-      metadata_hash = hash.clone
-
-      @uuid              = metadata_hash.delete(:uuid)
-      @type              = metadata_hash.delete(:type)
-      @from              = metadata_hash.delete(:from)
-      @to                = metadata_hash.delete(:to) || ""
-      @requires_response = metadata_hash.delete(:requires_response)
-      @forwarded         = metadata_hash.delete(:forwarded)
-
-      @custom_metadata   = metadata_hash
+      @uuid              = hash[:uuid]
+      @type              = hash[:type]
+      @from              = hash[:from]
+      @to                = hash[:to] || ""
+      @requires_response = hash[:requires_response]
+      @forwarded         = hash[:forwarded]
+      @custom_metadata   = hash[:custom]
     end
 
   end
