@@ -12,6 +12,8 @@ module Pantry
 
     class MissingMetadata < Exception; end
 
+    class UploadError < Exception; end
+
   end
 end
 

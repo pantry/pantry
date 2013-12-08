@@ -18,7 +18,7 @@ describe "Uploading cookbooks to the server" do
 #    cli.request(filter, "chef:upload:cookbook", File.expand_path("../../../fixtures/cookbooks/mini", __FILE__))
 #
 #    assert File.exists?(File.join(Pantry.config.data_dir, "mini", "1.0.0.tgz")),
-#      "The simple cookbook was not uploaded to the server properly"
+#      "The mini cookbook was not uploaded to the server properly"
 #  end
 #
 #  it "allows forcing a cookbook version up if the version already exists on the server"

@@ -124,9 +124,32 @@ describe Pantry::Chef::UploadCookbook do
 
   describe "#handle_response" do
 
-    it "triggers a file upload actor with the cookbook tarball and message UUID"
+    it "triggers a file upload actor with the cookbook tarball and message UUID" do
+      client = mock
+      client.expects(:send_file).with do |file, uuid|
+        uuid == "abc123" && File.exists?(file)
+      end
 
-    it "fails out with a message and cleans up if the server response with an error"
+      command.server_or_client = client
+      command.prepare_message(
+        filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
+      )
+      command.handle_response(mock(:value => [true, "abc123"]))
+    end
+
+    it "fails out with a message and cleans up if the server response with an error" do
+      client = mock
+      client.expects(:send_file).never
+
+      command.server_or_client = client
+      command.prepare_message(
+        filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
+      )
+
+      assert_raises Pantry::Chef::UploadError do
+        command.handle_response(mock(:value => [false, "Unable to Upload Reason"]))
+      end
+    end
 
   end
 

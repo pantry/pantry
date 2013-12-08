@@ -47,6 +47,9 @@ module Pantry
         message
       end
 
+      # Server receives request message for a new Cookbook Upload.
+      # Checks that the upload is valid
+      # Fires off an upload receiver and returns the UUID for the client to use
       def perform
         cookbook_name     = message[:cookbook_name]
         cookbook_version  = message[:cookbook_version]
@@ -66,24 +69,19 @@ module Pantry
         end
       end
 
-#      def perform(message)
-#        cookbook_name    = message[:cookbook_name]
-#        cookbook_version = message[:cookbook_version]
-#
-#        cookbooks_base = File.join(Pantry.config.data_dir, "chef", "cookbooks")
-#
-#        cookbook_final_upload_path =
-#          File.join(cookbooks_base, cookbook_name, "#{cookbook_version}.tar.gz")
-#
-#        if File.exists?(cookbook_final_upload_path)
-#          [false, "Cookbook #{cookbook_name} already has a version #{cookbook_version}"]
-#        else
-#          @server.receive_file(cookbook_final_upload_path,
-#                               message[:upload_size],
-#                               message[:upload_checksum])
-#          [true]
-#        end
-#      end
+      # CLI has received a response from the server, handle the response and set up
+      # the file transfer.
+      def handle_response(response_future)
+        response_message = super
+        upload_allowed          = response_message[0]
+        upload_uuid_or_response = response_message[1]
+
+        if upload_allowed
+          client.send_file(@cookbook_tarball, upload_uuid_or_response)
+        else
+          raise Pantry::Chef::UploadError, upload_uuid_or_response
+        end
+      end
 
     end
 
