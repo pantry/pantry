@@ -30,6 +30,9 @@ module Pantry
     # The Message that triggered this Command
     attr_accessor :message
 
+    def initialize(*args)
+    end
+
     # Set up the Message that needs to be created to send this Command
     # to the server to be processed. Used by the CLI. This method is given
     # the ClientFilter of which clients should respond to this message (if any) and

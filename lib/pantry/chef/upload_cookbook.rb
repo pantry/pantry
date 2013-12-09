@@ -8,9 +8,6 @@ module Pantry
 
       attr_reader :cookbook_tarball
 
-      def initialize(*args)
-      end
-
       # Multi-step prepratory step here:
       #
       # * Find the cookbook in question
