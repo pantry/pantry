@@ -92,4 +92,14 @@ describe Pantry::Communication::Server do
     assert_not_nil future
     assert_not future.ready?
   end
+
+  describe "Receiving Files" do
+    it "triggers a receiver actor and returns the UUID" do
+      server = Pantry::Communication::Server.new(nil)
+
+      uuid = server.receive_file("/tmp/path", 100, "abc123")
+
+      assert_not_nil uuid
+    end
+  end
 end

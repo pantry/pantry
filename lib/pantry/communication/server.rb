@@ -64,6 +64,12 @@ module Pantry
         end
       end
 
+      def receive_file(save_path, file_size, file_checksum)
+        uploader = Pantry::Communication::ReceiveFile.new(self, save_path, file_size, file_checksum)
+        @response_wait_list.wait_for_persistent(uploader)
+        uploader.uuid
+      end
+
     end
 
   end

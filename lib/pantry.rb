@@ -33,6 +33,7 @@ require 'pantry/communication/publish_socket'
 require 'pantry/communication/subscribe_socket'
 require 'pantry/communication/receive_socket'
 require 'pantry/communication/send_socket'
+require 'pantry/communication/receive_file'
 
 require 'pantry/client_registry'
 
