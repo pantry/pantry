@@ -12,15 +12,32 @@ describe Pantry::Communication::ReceiveFile do
     end
   end
 
-  let(:networking) do
-    FakeNetwork.new
-  end
+  let(:chunk_size) { Pantry::Communication::ReceiveFile::CHUNK_SIZE }
+
+  let(:networking) { FakeNetwork.new }
 
   let(:receiver) do
     Pantry::Communication::ReceiveFile.new(
       networking,
-      "/path", 100, "abc123"
+      "/path", 5_000_000, "abc123"
     )
+  end
+
+  let(:start_message) do
+    Pantry::Message.new.tap do |msg|
+      msg.from = "client1"
+      msg << "START"
+    end
+  end
+
+  let(:chunk_message) do
+    Pantry::Message.new.tap do |msg|
+      msg.from = "client1"
+      msg[:chunk_offset] = 0
+      msg[:chunk_size] = 1_000
+      msg << "CHUNK"
+      msg << "binary data"
+    end
   end
 
   it "generates a UUID to be used in all messages for this actor" do
@@ -29,13 +46,9 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   it "waits for a start message from the sender then sends initial chunk requests" do
-    message = Pantry::Message.new
-    message << "START"
-
-    receiver.receive_message(message)
+    receiver.receive_message(start_message)
 
     pipeline_size = Pantry::Communication::ReceiveFile::PIPELINE_SIZE
-    chunk_size    = Pantry::Communication::ReceiveFile::CHUNK_SIZE
 
     assert_equal pipeline_size, networking.published.length
 
@@ -45,10 +58,7 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   it "ensures UUID is the same for all messages sent" do
-    message = Pantry::Message.new
-    message << "START"
-
-    receiver.receive_message(message)
+    receiver.receive_message(start_message)
 
     networking.published.each do |msg|
       assert_equal receiver.uuid, msg.uuid
@@ -56,23 +66,49 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   it "picks up the client sending the files and ensures all messages are meant for that client" do
-    message = Pantry::Message.new
-    message.from = "client1"
-    message << "START"
-
-    receiver.receive_message(message)
+    receiver.receive_message(start_message)
 
     networking.published.each do |msg|
       assert_equal "client1", msg.to
     end
   end
 
-  it "asks for file chunks from the sender"
+  it "keeps a certain number of chunk requests in the pipeline" do
+    receiver.receive_message(start_message)
+    networking.published = []
 
-  it "keeps a certain number of chunk requests in the pipeline"
+    receiver.receive_message(chunk_message)
 
-  it "is finished when it's received all expected file chunks"
+    # We've already requested 10 chunks. Having received one chunk we request the 11th (0-based)
+    assert_equal 1, networking.published.length
+    assert_equal ["FETCH", chunk_size * 10, chunk_size], networking.published[0].body
+  end
+
+  it "doesn't add to the pipeline when the last chunk has been requested" do
+    sized_receiver = Pantry::Communication::ReceiveFile.new(networking, "/path", 500_000, "abc123")
+
+    sized_receiver.receive_message(start_message)
+
+    # Assuming CHUNK_SIZE of 250,000
+    assert_equal 2, networking.published.length
+  end
+
+  it "is finished when it's received all expected file chunks" do
+    sized_receiver = Pantry::Communication::ReceiveFile.new(networking, "/path", 500_000, "abc123")
+    sized_receiver.receive_message(start_message)
+
+    assert_false sized_receiver.finished?, "Receiver should not be finished, no chunks received"
+
+    sized_receiver.receive_message(chunk_message)
+    sized_receiver.receive_message(chunk_message)
+
+    assert sized_receiver.finished?, "Receiver was not finished after receiving all chunks"
+  end
 
   it "writes out received chunks to the given save file path"
+
+  it "supports receiving file data chunks out-of-order"
+
+  it "drops file system chunks if received before a START message?"
 
 end
