@@ -35,7 +35,7 @@ module Pantry
       def receive_message(message)
         if message.body[0] == "START"
           Pantry.logger.debug("[Receive File] (#{@save_path}) Received START message #{message.inspect}")
-          @client_identity = message.from
+          prepare_file(message)
           fill_the_pipeline
         elsif message.body[0] == "CHUNK"
           Pantry.logger.debug("[Receive File] (#{@save_path}) Received CHUNK message #{message.metadata}")
@@ -51,6 +51,11 @@ module Pantry
 
       protected
 
+      def prepare_file(message)
+        @client_identity = message.from
+        @file = File.open(@save_path, "w+")
+      end
+
       def fill_the_pipeline
         chunks_to_fill_pipeline = [
           (PIPELINE_SIZE - @current_pipeline_size),
@@ -63,21 +68,12 @@ module Pantry
       end
 
       def fetch_next_chunk
-        message = Pantry::Message.new
-        message.uuid = @uuid
-        message.to   = @client_identity
-
-        message << "FETCH"
-        message << @next_requested_file_offset
-        message << CHUNK_SIZE
+        Pantry.logger.debug("[Receive File] (#{@save_path}) Requesting #{@next_requested_file_offset} x #{CHUNK_SIZE}")
+        send_message("FETCH", @next_requested_file_offset, CHUNK_SIZE)
 
         @next_requested_file_offset += CHUNK_SIZE
         @current_pipeline_size += 1
         @requested_chunks      += 1
-
-        Pantry.logger.debug("[Receive File] (#{@save_path}) Requesting #{message.inspect}")
-
-        @networking.publish_message(message)
       end
 
       def process_chunk(message)
@@ -87,7 +83,33 @@ module Pantry
         @current_pipeline_size -= 1
         @received_chunks       += 1
 
-        fill_the_pipeline
+        @file.write(message.body[1])
+
+        if finished?
+          finalize_file
+        else
+          fill_the_pipeline
+        end
+      end
+
+      def finalize_file
+        @file.close
+        file_checksum = Digest::SHA256.file(@file.path).hexdigest
+
+        if file_checksum != @file_checksum
+          File.unlink(@file.path)
+          send_message("ERROR", "Checksum did not match the uploaded file")
+        end
+      end
+
+      def send_message(*body)
+        message = Pantry::Message.new
+        message.uuid = @uuid
+        message.to   = @client_identity
+
+        body.each {|part| message << part }
+
+        @networking.publish_message(message)
       end
 
     end

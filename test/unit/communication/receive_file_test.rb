@@ -13,13 +13,15 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   let(:chunk_size) { Pantry::Communication::ReceiveFile::CHUNK_SIZE }
-
   let(:networking) { FakeNetwork.new }
+  let(:save_path)  { File.join(Pantry.config.data_dir, "uploaded_file") }
 
   let(:receiver) do
     Pantry::Communication::ReceiveFile.new(
       networking,
-      "/path", 5_000_000, "abc123"
+      save_path,
+      5_000_000,
+      "abc123"
     )
   end
 
@@ -41,7 +43,7 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   it "generates a UUID to be used in all messages for this actor" do
-    actor = Pantry::Communication::ReceiveFile.new(nil, "/path", 100, "abc123")
+    actor = Pantry::Communication::ReceiveFile.new(nil, save_path, 100, "abc123")
     assert_equal 36, actor.uuid.length
   end
 
@@ -85,7 +87,7 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   it "doesn't add to the pipeline when the last chunk has been requested" do
-    sized_receiver = Pantry::Communication::ReceiveFile.new(networking, "/path", 500_000, "abc123")
+    sized_receiver = Pantry::Communication::ReceiveFile.new(networking, save_path, 500_000, "abc123")
 
     sized_receiver.receive_message(start_message)
 
@@ -94,7 +96,7 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   it "is finished when it's received all expected file chunks" do
-    sized_receiver = Pantry::Communication::ReceiveFile.new(networking, "/path", 500_000, "abc123")
+    sized_receiver = Pantry::Communication::ReceiveFile.new(networking, save_path, 500_000, "abc123")
     sized_receiver.receive_message(start_message)
 
     assert_false sized_receiver.finished?, "Receiver should not be finished, no chunks received"
@@ -105,7 +107,31 @@ describe Pantry::Communication::ReceiveFile do
     assert sized_receiver.finished?, "Receiver was not finished after receiving all chunks"
   end
 
-  it "writes out received chunks to the given save file path"
+  it "writes out received chunks to the given save file path" do
+    real_receiver = Pantry::Communication::ReceiveFile.new(
+      networking, save_path, 11, "9cb63cb779e8c571db3199b783a36cc43cd9e7c076beeb496c39e9cc06196dc5")
+
+    real_receiver.receive_message(start_message)
+    real_receiver.receive_message(chunk_message)
+
+    assert_equal "binary data", File.read(save_path)
+  end
+
+  it "fails and deletes the file if the checksum does not match after upload complete" do
+    real_receiver = Pantry::Communication::ReceiveFile.new(networking, save_path, 11, "invalid_checksum")
+
+    real_receiver.receive_message(start_message)
+    networking.published = []
+
+    real_receiver.receive_message(chunk_message)
+
+    assert_false File.exists?(save_path)
+
+    error_message = networking.published[0]
+    assert_not_nil error_message
+    assert_equal "ERROR", error_message.body[0]
+    assert_equal "Checksum did not match the uploaded file", error_message.body[1]
+  end
 
   it "supports receiving file data chunks out-of-order"
 
