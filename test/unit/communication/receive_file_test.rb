@@ -147,8 +147,44 @@ describe Pantry::Communication::ReceiveFile do
     assert_equal "Checksum did not match the uploaded file", error_message.body[1]
   end
 
-  it "supports receiving file data chunks out-of-order"
+  it "supports receiving file data chunks out-of-order" do
+    real_receiver = Pantry::Communication::ReceiveFile.new(
+      networking, save_path, 13, "c30facc0146cfaf7e64fea5399ccb2707a060c2d739218a1f3b20b15b8d6e89d",
+      chunk_size: 5)
 
-  it "drops file system chunks if received before a START message?"
+    real_receiver.receive_message(start_message)
+    networking.published = []
+
+    chunk1 = Pantry::Message.new
+    chunk1.from = "client1"
+    chunk1[:chunk_offset] = 0
+    chunk1[:chunk_size] = 5
+    chunk1 << "CHUNK"
+    chunk1 << "Hello"
+
+    chunk2 = Pantry::Message.new
+    chunk2.from = "client1"
+    chunk2[:chunk_offset] = 1
+    chunk2[:chunk_size] = 5
+    chunk2 << "CHUNK"
+    chunk2 << " Pant"
+
+    chunk3 = Pantry::Message.new
+    chunk3.from = "client1"
+    chunk3[:chunk_offset] = 2
+    chunk3[:chunk_size] = 3
+    chunk3 << "CHUNK"
+    chunk3 << "ry!"
+
+    real_receiver.receive_message(chunk2)
+    real_receiver.receive_message(chunk3)
+    real_receiver.receive_message(chunk1)
+
+    success_message = networking.published[0]
+    assert_equal "FINISHED", success_message.body[0]
+
+    assert File.exists?(save_path), "File was baleted"
+    assert_equal "Hello Pantry!", File.read(save_path)
+  end
 
 end

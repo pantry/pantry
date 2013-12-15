@@ -86,6 +86,7 @@ module Pantry
         @current_pipeline_size -= 1
         @received_chunks       += 1
 
+        @file.seek(chunk_offset * @chunk_size)
         @file.write(message.body[1])
 
         if finished?
@@ -102,6 +103,8 @@ module Pantry
         if file_checksum != @file_checksum
           File.unlink(@file.path)
           send_message("ERROR", "Checksum did not match the uploaded file")
+        else
+          send_message("FINISHED")
         end
       end
 
