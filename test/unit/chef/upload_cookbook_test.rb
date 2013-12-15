@@ -134,7 +134,12 @@ describe Pantry::Chef::UploadCookbook do
       command.prepare_message(
         filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
       )
-      command.handle_response(mock(:value => [true, "abc123"]))
+
+      response_message = Pantry::Message.new
+      response_message.body << "true"
+      response_message.body << "abc123"
+
+      command.handle_response(mock(:value => response_message))
     end
 
     it "fails out with a message and cleans up if the server response with an error" do
@@ -146,8 +151,12 @@ describe Pantry::Chef::UploadCookbook do
         filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
       )
 
+      response_message = Pantry::Message.new
+      response_message.body << "false"
+      response_message.body << "Unable to Upload Reason"
+
       assert_raises Pantry::Chef::UploadError do
-        command.handle_response(mock(:value => [false, "Unable to Upload Reason"]))
+        command.handle_response(mock(:value => response_message))
       end
     end
 

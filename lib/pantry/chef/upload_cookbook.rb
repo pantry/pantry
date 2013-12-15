@@ -70,10 +70,12 @@ module Pantry
       # the file transfer.
       def handle_response(response_future)
         response_message = super
-        upload_allowed          = response_message[0]
-        upload_uuid_or_response = response_message[1]
+        upload_allowed          = response_message.body[0]
+        upload_uuid_or_response = response_message.body[1]
 
-        if upload_allowed
+        Pantry.logger.debug("[Upload Cookbook] #{response_message.inspect}")
+
+        if upload_allowed == "true"
           client.send_file(@cookbook_tarball, upload_uuid_or_response)
         else
           raise Pantry::Chef::UploadError, upload_uuid_or_response
