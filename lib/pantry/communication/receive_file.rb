@@ -86,7 +86,7 @@ module Pantry
         @current_pipeline_size -= 1
         @received_chunks       += 1
 
-        @file.seek(chunk_offset * @chunk_size)
+        @file.seek(chunk_offset)
         @file.write(message.body[1])
 
         if finished?

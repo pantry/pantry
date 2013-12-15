@@ -164,14 +164,14 @@ describe Pantry::Communication::ReceiveFile do
 
     chunk2 = Pantry::Message.new
     chunk2.from = "client1"
-    chunk2[:chunk_offset] = 1
+    chunk2[:chunk_offset] = 5
     chunk2[:chunk_size] = 5
     chunk2 << "CHUNK"
     chunk2 << " Pant"
 
     chunk3 = Pantry::Message.new
     chunk3.from = "client1"
-    chunk3[:chunk_offset] = 2
+    chunk3[:chunk_offset] = 10
     chunk3[:chunk_size] = 3
     chunk3 << "CHUNK"
     chunk3 << "ry!"
