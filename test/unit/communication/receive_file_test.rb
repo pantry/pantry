@@ -12,7 +12,6 @@ describe Pantry::Communication::ReceiveFile do
     end
   end
 
-  let(:chunk_size) { Pantry::Communication::ReceiveFile::CHUNK_SIZE }
   let(:networking) { FakeNetwork.new }
   let(:save_path)  { File.join(Pantry.config.data_dir, "uploaded_file") }
 
@@ -50,7 +49,8 @@ describe Pantry::Communication::ReceiveFile do
   it "waits for a start message from the sender then sends initial chunk requests" do
     receiver.receive_message(start_message)
 
-    pipeline_size = Pantry::Communication::ReceiveFile::PIPELINE_SIZE
+    pipeline_size = receiver.pipeline_size
+    chunk_size    = receiver.chunk_size
 
     assert_equal pipeline_size, networking.published.length
 
@@ -83,7 +83,8 @@ describe Pantry::Communication::ReceiveFile do
 
     # We've already requested 10 chunks. Having received one chunk we request the 11th (0-based)
     assert_equal 1, networking.published.length
-    assert_equal ["FETCH", chunk_size * 10, chunk_size], networking.published[0].body
+    assert_equal ["FETCH", receiver.chunk_size * 10, receiver.chunk_size],
+      networking.published[0].body
   end
 
   it "doesn't add to the pipeline when the last chunk has been requested" do
@@ -91,8 +92,18 @@ describe Pantry::Communication::ReceiveFile do
 
     sized_receiver.receive_message(start_message)
 
-    # Assuming CHUNK_SIZE of 250,000
+    # Default CHUNK_SIZE of 250,000
     assert_equal 2, networking.published.length
+  end
+
+  it "writes out received chunks to the given save file path" do
+    real_receiver = Pantry::Communication::ReceiveFile.new(
+      networking, save_path, 11, "9cb63cb779e8c571db3199b783a36cc43cd9e7c076beeb496c39e9cc06196dc5")
+
+    real_receiver.receive_message(start_message)
+    real_receiver.receive_message(chunk_message)
+
+    assert_equal "binary data", File.read(save_path)
   end
 
   it "is finished when it's received all expected file chunks" do
@@ -107,18 +118,21 @@ describe Pantry::Communication::ReceiveFile do
     assert sized_receiver.finished?, "Receiver was not finished after receiving all chunks"
   end
 
-  it "writes out received chunks to the given save file path" do
+  it "sends the finished message to the client when the file upload is successful" do
     real_receiver = Pantry::Communication::ReceiveFile.new(
       networking, save_path, 11, "9cb63cb779e8c571db3199b783a36cc43cd9e7c076beeb496c39e9cc06196dc5")
-
     real_receiver.receive_message(start_message)
+    networking.published = []
+
     real_receiver.receive_message(chunk_message)
 
-    assert_equal "binary data", File.read(save_path)
+    success_message = networking.published[0]
+    assert_equal "FINISHED", success_message.body[0]
   end
 
   it "fails and deletes the file if the checksum does not match after upload complete" do
-    real_receiver = Pantry::Communication::ReceiveFile.new(networking, save_path, 11, "invalid_checksum")
+    real_receiver = Pantry::Communication::ReceiveFile.new(
+      networking, save_path, 11, "invalid_checksum")
 
     real_receiver.receive_message(start_message)
     networking.published = []

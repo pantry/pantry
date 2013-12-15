@@ -13,10 +13,10 @@ module Pantry
       # the file transfer process
       attr_reader :uuid
 
-      PIPELINE_SIZE = 10
-      CHUNK_SIZE    = 250_000
+      attr_reader :pipeline_size, :chunk_size
 
-      def initialize(networking, save_path, file_size, file_checksum)
+      def initialize(networking, save_path, file_size, file_checksum,
+                     chunk_size: 250_000, pipeline_size: 10)
         @uuid          = SecureRandom.uuid
 
         @networking    = networking
@@ -24,10 +24,13 @@ module Pantry
         @file_size     = file_size
         @file_checksum = file_checksum
 
+        @chunk_size    = chunk_size
+        @pipeline_size = pipeline_size
+
         @next_requested_file_offset = 0
         @current_pipeline_size      = 0
 
-        @chunk_count      = (file_size.to_f / CHUNK_SIZE.to_f).ceil
+        @chunk_count      = (file_size.to_f / @chunk_size.to_f).ceil
         @requested_chunks = 0
         @received_chunks  = 0
       end
@@ -58,7 +61,7 @@ module Pantry
 
       def fill_the_pipeline
         chunks_to_fill_pipeline = [
-          (PIPELINE_SIZE - @current_pipeline_size),
+          (@pipeline_size - @current_pipeline_size),
           @chunk_count - @requested_chunks
         ].min
 
@@ -68,10 +71,10 @@ module Pantry
       end
 
       def fetch_next_chunk
-        Pantry.logger.debug("[Receive File] (#{@save_path}) Requesting #{@next_requested_file_offset} x #{CHUNK_SIZE}")
-        send_message("FETCH", @next_requested_file_offset, CHUNK_SIZE)
+        Pantry.logger.debug("[Receive File] (#{@save_path}) Requesting #{@next_requested_file_offset} x #{@chunk_size}")
+        send_message("FETCH", @next_requested_file_offset, @chunk_size)
 
-        @next_requested_file_offset += CHUNK_SIZE
+        @next_requested_file_offset += @chunk_size
         @current_pipeline_size += 1
         @requested_chunks      += 1
       end
