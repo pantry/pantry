@@ -15,6 +15,12 @@ describe Pantry::Communication::SendFile do
   let(:networking) { FakeSendNetwork.new }
   let(:file_path)  { File.expand_path("../../../fixtures/file_to_upload", __FILE__) }
 
+  it "exposes the given UUID for the wait list" do
+    sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
+
+    assert_equal "receiver-uuid", sender.uuid
+  end
+
   it "opens the file and sends the receiver the START command" do
     sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
 
@@ -50,10 +56,13 @@ describe Pantry::Communication::SendFile do
     sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
     networking.sent = []
 
+    assert_false sender.finished?
+
     finished = Pantry::Message.new
     finished << "FINISH"
 
     sender.receive_message(finished)
+    assert sender.finished?
   end
 
   it "does something on ERROR" do

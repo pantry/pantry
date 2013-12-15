@@ -26,6 +26,7 @@ module Pantry
     def request(filter, command, *arguments)
       if command_class = COMMAND_MAP[command]
         command = command_class.new(*arguments)
+        command.server_or_client = self
 
         @responder = command.handle_response(
           send_request(

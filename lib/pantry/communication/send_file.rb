@@ -19,13 +19,24 @@ module Pantry
         send_message("START")
       end
 
+      def uuid
+        @receiver_uuid
+      end
+
+      def finished?
+        @file.closed?
+      end
+
       def receive_message(message)
         case message.body[0]
         when "FETCH"
+          Pantry.logger.debug("[Send File] (#{@file_path}) FETCH requested #{message.inspect}")
           fetch_and_return_chunk(message)
         when "FINISH"
+          Pantry.logger.debug("[Send File] (#{@file_path}) FINISHED")
           clean_up_and_shut_down
         when "ERROR"
+          Pantry.logger.debug("[Send File] (#{@file_path}) ERROR #{message.inspect}")
           notify_error(message)
         end
       end
@@ -57,7 +68,6 @@ module Pantry
 
       def clean_up_and_shut_down
         @file.close
-        self.terminate
       end
 
       def notify_error(message)
