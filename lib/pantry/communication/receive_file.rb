@@ -104,7 +104,7 @@ module Pantry
           File.unlink(@file.path)
           send_message("ERROR", "Checksum did not match the uploaded file")
         else
-          send_message("FINISHED")
+          send_message("FINISH")
         end
       end
 

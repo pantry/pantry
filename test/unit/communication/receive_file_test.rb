@@ -127,7 +127,7 @@ describe Pantry::Communication::ReceiveFile do
     real_receiver.receive_message(chunk_message)
 
     success_message = networking.published[0]
-    assert_equal "FINISHED", success_message.body[0]
+    assert_equal "FINISH", success_message.body[0]
   end
 
   it "fails and deletes the file if the checksum does not match after upload complete" do
@@ -181,7 +181,7 @@ describe Pantry::Communication::ReceiveFile do
     real_receiver.receive_message(chunk1)
 
     success_message = networking.published[0]
-    assert_equal "FINISHED", success_message.body[0]
+    assert_equal "FINISH", success_message.body[0]
 
     assert File.exists?(save_path), "File was baleted"
     assert_equal "Hello Pantry!", File.read(save_path)
