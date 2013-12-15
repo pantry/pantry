@@ -48,6 +48,13 @@ module Pantry
         @send_socket.send_message(message)
       end
 
+      # Send a file up to the Server.
+      def send_file(file_path, receiver_uuid)
+        uploader = Pantry::Communication::SendFile.new(self, file_path, receiver_uuid)
+        @response_wait_list.wait_for_persistent(uploader)
+        uploader.uuid
+      end
+
     end
 
   end

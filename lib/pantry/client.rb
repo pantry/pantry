@@ -85,6 +85,12 @@ module Pantry
       @networking.send_request(message)
     end
 
+    # Start uploading a file on the current file system to the server using
+    # the given receiver UUID.
+    def send_file(file_path, receiver_uuid)
+      @networking.send_file(file_path, receiver_uuid)
+    end
+
     protected
 
     def current_hostname

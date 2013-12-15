@@ -2,7 +2,7 @@ require 'unit/test_helper'
 
 describe Pantry::Communication::ReceiveFile do
 
-  class FakeNetwork
+  class FakeReceiveNetwork
     attr_accessor :published
     def initialize
       @published = []
@@ -12,7 +12,7 @@ describe Pantry::Communication::ReceiveFile do
     end
   end
 
-  let(:networking) { FakeNetwork.new }
+  let(:networking) { FakeReceiveNetwork.new }
   let(:save_path)  { File.join(Pantry.config.data_dir, "uploaded_file") }
 
   let(:receiver) do
