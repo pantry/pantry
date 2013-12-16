@@ -24,6 +24,10 @@ log_to: /var/log/pantry-server.log
 # for filtering messages.
 # syslog_program_name: pantry
 
+# Location on the file system where all persistent files are stored.
+# Must be read and writable by the user running pantry-server
+# data_dir: /var/lib/pantry
+
 networking:
   # IP address or Domain the Pantry Server binds to
   server_host: 0.0.0.0
