@@ -6,7 +6,7 @@ describe Pantry::Command do
     message = Pantry::Message.new("Command")
     command = Pantry::Command.from_message(message)
 
-    assert_nil command.perform
+    assert_nil command.perform(message)
   end
 
   it "creates a message from itself" do
@@ -22,14 +22,6 @@ describe Pantry::Command do
 
     assert_equal "client", command.server
     assert_equal "client", command.client
-  end
-
-  it "has a link back to the message that triggered the command" do
-    message = Pantry::Message.new
-    command = Pantry::Command.new
-    command.message = message
-
-    assert_equal message, command.message
   end
 
   it "can prepare itself as a Message to be sent down the pipe" do

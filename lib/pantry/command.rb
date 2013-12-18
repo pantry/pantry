@@ -27,9 +27,6 @@ module Pantry
   # out of the Message.
   class Command
 
-    # The Message that triggered this Command
-    attr_accessor :message
-
     def initialize(*args)
     end
 
@@ -53,8 +50,8 @@ module Pantry
     # Run whatever this command needs to do.
     # All Command subclasses must implement this method.
     # If the message triggering this Command expects a response, the return
-    # value of this method should be that response.
-    def perform
+    # value of this method will be that response.
+    def perform(message)
     end
 
     # The original requester of this command can further handle any response messages

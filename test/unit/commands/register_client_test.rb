@@ -13,7 +13,7 @@ describe Pantry::Commands::RegisterClient do
 
     command = Pantry::Commands::RegisterClient.from_message(message)
     command.server_or_client = server
-    command.perform
+    command.perform(message)
 
     clients = server.client_registry.all
 

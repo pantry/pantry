@@ -13,7 +13,7 @@ describe Pantry::Commands::ListClients do
     command = Pantry::Commands::ListClients.from_message(message)
     command.server_or_client = server
 
-    response = command.perform
+    response = command.perform(message)
 
     assert_equal ["client1", "client2", "client3"], response.map {|entry| entry[:identity] }
   end
@@ -30,7 +30,7 @@ describe Pantry::Commands::ListClients do
     command = Pantry::Commands::ListClients.from_message(message)
     command.server_or_client = server
 
-    response = command.perform
+    response = command.perform(message)
 
     assert_equal ["client1", "client2"], response.map {|entry| entry[:identity] }
   end

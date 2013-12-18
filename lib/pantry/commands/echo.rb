@@ -4,11 +4,13 @@ module Pantry
     # Simple Echo command, returns the body of the Message given.
     class Echo < Command
 
+#      cli "echo"
+
       def initialize(string_to_echo = "")
         @string_to_echo = string_to_echo
       end
 
-      def perform
+      def perform(message)
         @string_to_echo
       end
 

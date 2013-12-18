@@ -13,7 +13,7 @@ module Pantry
       end
 
       # Return information about all connected Clients that match the given filter
-      def perform
+      def perform(message)
         self.server.client_registry.all_matching(@client_filter) do |client, record|
           {
             identity:        client.identity,

@@ -47,7 +47,7 @@ module Pantry
       # Server receives request message for a new Cookbook Upload.
       # Checks that the upload is valid
       # Fires off an upload receiver and returns the UUID for the client to use
-      def perform
+      def perform(message)
         cookbook_name     = message[:cookbook_name]
         cookbook_version  = message[:cookbook_version]
         cookbook_size     = message[:cookbook_size]

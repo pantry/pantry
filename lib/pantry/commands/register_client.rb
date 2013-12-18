@@ -9,7 +9,7 @@ module Pantry
 
       # Take note that a Client has connected and registered itself
       # with this Server.
-      def perform
+      def perform(message)
         self.server.register_client(@client)
       end
 

@@ -44,8 +44,7 @@ module Pantry
       proc do |message|
         command_obj = command_class.from_message(message)
         command_obj.server_or_client = @server_or_client
-        command_obj.message          = message
-        command_obj.perform
+        command_obj.perform(message)
       end
     end
   end

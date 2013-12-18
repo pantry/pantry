@@ -8,7 +8,7 @@ module Pantry
         "Chef::ChefSolo"
       end
 
-      def perform
+      def perform(message)
         begin
           stdout, stderr, status = Open3.capture3("chef-solo")
           [stdout, stderr, status.to_i]

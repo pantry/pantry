@@ -69,8 +69,7 @@ describe Pantry::Chef::UploadCookbook do
 
     it "ensures a place exists for the uploaded cookbook to go" do
       command.server_or_client = stub_everything
-      command.message = incoming_message
-      response = command.perform
+      response = command.perform(incoming_message)
 
       assert File.directory?(File.join(Pantry.config.data_dir, "chef", "cookbooks", "testing")),
         "Did not create directory for the testing cookbook"
@@ -84,9 +83,8 @@ describe Pantry::Chef::UploadCookbook do
       ).returns("abc123")
 
       command.server_or_client = server_mock
-      command.message = incoming_message
 
-      response = command.perform
+      response = command.perform(incoming_message)
 
       assert_equal [true, "abc123"], response
     end
@@ -99,8 +97,7 @@ describe Pantry::Chef::UploadCookbook do
       server.expects(:receive_file).never
 
       command.server_or_client = server
-      command.message = incoming_message
-      response = command.perform
+      response = command.perform(incoming_message)
 
       assert_equal [false, "Version 1.0.0 of cookbook testing already exists"], response
     end
@@ -114,8 +111,7 @@ describe Pantry::Chef::UploadCookbook do
       incoming_message[:cookbook_force_upload] = true
 
       command.server_or_client = server
-      command.message = incoming_message
-      response = command.perform
+      response = command.perform(incoming_message)
 
       assert_equal [true, "a1b2c3"], response
     end

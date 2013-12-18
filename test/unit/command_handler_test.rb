@@ -6,8 +6,8 @@ describe Pantry::CommandHandler do
   let(:command_handler) { Pantry::CommandHandler.new(client) }
 
   class TestMessage < Pantry::Command
-    def perform
-      "Test message ran"
+    def perform(message)
+      "Test message ran #{message.uuid}"
     end
 
     def self.from_message(message)
@@ -21,7 +21,7 @@ describe Pantry::CommandHandler do
     command_handler.add_command(TestMessage)
     output = command_handler.process(message)
 
-    assert_equal "Test message ran", output
+    assert_equal "Test message ran #{message.uuid}", output
   end
 
   it "ignores messages that don't match any command" do
@@ -40,7 +40,7 @@ describe Pantry::CommandHandler do
   end
 
   class ReturnClientIdentity < Pantry::Command
-    def perform
+    def perform(message)
       self.client.identity
     end
 
@@ -59,8 +59,8 @@ describe Pantry::CommandHandler do
   end
 
   class ReturnMessageIdentity < Pantry::Command
-    def perform
-      self.message
+    def perform(message)
+      message
     end
 
     def self.from_message(message)

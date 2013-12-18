@@ -10,7 +10,7 @@ describe Pantry::Chef::RunChefSolo do
     Open3.expects(:capture3).with("chef-solo").returns(["chef ran", "error", 0])
 
     command = Pantry::Chef::RunChefSolo.new
-    stdout, stderr, status = command.perform
+    stdout, stderr, status = command.perform(Pantry::Message.new)
 
     assert_equal "chef ran", stdout
     assert_equal "error", stderr
@@ -21,7 +21,7 @@ describe Pantry::Chef::RunChefSolo do
     Open3.expects(:capture3).with("chef-solo").raises(Errno::ENOENT, "Can't find LOLZ")
 
     command = Pantry::Chef::RunChefSolo.new
-    stdout, stderr, status = command.perform
+    stdout, stderr, status = command.perform(Pantry::Message.new)
 
     assert_equal "", stdout
     assert_equal "No such file or directory - Can't find LOLZ", stderr
