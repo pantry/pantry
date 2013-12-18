@@ -65,15 +65,67 @@ describe Pantry::Communication::SendFile do
     assert sender.finished?
   end
 
-  it "does something on ERROR" do
-    sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
-    networking.sent = []
+  describe "progress listeners" do
 
-    errored = Pantry::Message.new
-    errored << "ERROR"
-    errored << "This is an error message"
+    class TestSendFileListener
+      attr_reader :progress_size, :steps, :error_message, :finished
 
-    sender.receive_message(errored)
+      def start_progress(progress_size)
+        @progress_size = progress_size
+      end
+
+      def step_progress(step_amount)
+        @steps ||= []
+        @steps << step_amount
+      end
+
+      def error(message)
+        @error_message = message
+      end
+
+      def finished
+        @finished = true
+      end
+    end
+
+    let(:listener) { TestSendFileListener.new }
+    let(:sender) {
+      Pantry::Communication::SendFile.new(
+        networking, file_path, "receiver-uuid", listener: listener
+      )
+    }
+
+    it "triggers progress callbacks on file transfer" do
+      chunk1 = Pantry::Message.new
+      chunk1 << "FETCH"
+      chunk1 << "0"
+      chunk1 << "5"
+
+      sender.receive_message(chunk1)
+
+      assert_equal 15, listener.progress_size
+      assert_equal [5], listener.steps
+    end
+
+    it "notifies on errors" do
+      errored = Pantry::Message.new
+      errored << "ERROR"
+      errored << "This is an error message"
+
+      sender.receive_message(errored)
+
+      assert_equal "This is an error message", listener.error_message
+    end
+
+    it "notifies on completion" do
+      finished = Pantry::Message.new
+      finished << "FINISH"
+
+      sender.receive_message(finished)
+
+      assert listener.finished, "Listener was not told that we were done"
+    end
+
   end
 
 end
