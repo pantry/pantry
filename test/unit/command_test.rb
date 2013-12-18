@@ -42,6 +42,18 @@ describe Pantry::Command do
     assert_equal "a value", command.handle_response(fake_future)
   end
 
+  it "builds a default progress listener if one isn't given" do
+    command = Pantry::Command.new
+    assert command.progress_listener.is_a?(Pantry::ProgressListener),
+      "Default progress listener wasn't created"
+  end
+
+  it "can be given a specific progress listener" do
+    command = Pantry::Command.new
+    command.progress_listener = "listener!"
+    assert_equal "listener!", command.progress_listener
+  end
+
   class SubCommand < Pantry::Command
   end
 

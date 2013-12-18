@@ -85,6 +85,16 @@ module Pantry
       self.name.split("::").last
     end
 
+    # Set a specific Progress Listener object on this Command
+    def progress_listener=(listener)
+      @progress_listener = listener
+    end
+
+    # Retrieve the current progress listener
+    def progress_listener
+      @progress_listener ||= ProgressListener.new
+    end
+
     # Set a link back to the Server or Client that's handling
     # this command. This will be set by the CommandHandler before calling
     # #perform.
