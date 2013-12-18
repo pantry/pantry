@@ -77,7 +77,7 @@ module Pantry
         if upload_allowed == "true"
           client.send_file(@cookbook_tarball, response_message.body[1], listener: progress_listener)
         else
-          raise Pantry::Chef::UploadError, response_message.body[1]
+          progress_listener.error(response_message.body[1])
         end
       end
 
