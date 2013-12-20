@@ -34,12 +34,12 @@ describe Pantry::Command do
     assert_equal filter.stream, message.to
   end
 
-  it "can continue processing any responses from #perform" do
+  it "passes received message to the current listener and shuts down on received message" do
     command = Pantry::Command.new
-    fake_future = stub
-    fake_future.stubs(:value).returns("a value")
+    command.progress_listener.expects(:say)
+    command.progress_listener.expects(:finished)
 
-    assert_equal "a value", command.handle_response(fake_future)
+    command.receive_response(Pantry::Message.new)
   end
 
   it "builds a default progress listener if one isn't given" do

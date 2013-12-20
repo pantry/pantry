@@ -66,5 +66,4 @@ message_filter = Pantry::Communication::ClientFilter.new(
   roles:       options[:roles]
 )
 
-response = cli.request(message_filter, *ARGV)
-puts response.inspect
+cli.request(message_filter, *ARGV)

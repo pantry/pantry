@@ -13,6 +13,8 @@ module Pantry
     }
 
     def initialize(**args)
+      @progress_listener = args.delete(:progress_listener) || Pantry::CLIProgressListener.new
+
       args[:identity] ||= ENV["USER"]
       super(**args)
     end
@@ -25,15 +27,23 @@ module Pantry
     # from the Server and/or Clients.
     def request(filter, command, *arguments)
       if command_class = COMMAND_MAP[command]
-        command = command_class.new(*arguments)
-        command.server_or_client = self
-        command.progress_listener = Pantry::CLIProgressListener.new
+        @command = command_class.new(*arguments)
+        @command.server_or_client  = self
+        @command.progress_listener = @progress_listener
 
-        @responder = command.handle_response(
-          send_request(
-            command.prepare_message(filter, arguments)
-          )
-        )
+        # We don't use send_request here because we don't want to deal with the
+        # wait-list future system. This lets command objects handle responses
+        # as they come back to the CLI as the command sees fit.
+        # If the command isn't meant directly for the Server, the Server will always
+        # respond first with the list of clients who will be executing the command
+        # and responding with the results. See Pantry::Commands::Echo for an example of how
+        # to work with this flow.
+        message = @command.prepare_message(filter, arguments)
+        message.requires_response!
+
+        send_message(message)
+
+        @command.progress_listener.wait_for_finish
       else
         Pantry.logger.error("[CLI] I don't know the #{command.inspect} command")
       end
@@ -42,8 +52,8 @@ module Pantry
     # All messages received by this client are assumed to be responses
     # from previous commands.
     def receive_message(message)
-      if @responder && @responder.respond_to?(:receive_message)
-        @responder.receive_message(message)
+      if @command
+        @command.receive_response(message)
       end
     end
 

@@ -26,6 +26,21 @@ end
 class ServerEchoCommand < Pantry::Commands::Echo
 end
 
+class SaveInfoProgressListener < Pantry::CLIProgressListener
+
+  attr_accessor :said
+
+  def initialize
+    @said = []
+    super
+  end
+
+  def say(message)
+    @said << message
+  end
+
+end
+
 class Minitest::Test
 
   # Set up a fully functional Server + 2 Client environment on the given ports

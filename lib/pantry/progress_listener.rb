@@ -16,12 +16,20 @@ module Pantry
     def step_progress(step_amount)
     end
 
+    # Do something with the given message, normally a String.
+    # Basically a way to notify that something is happening.
+    def say(message)
+    end
+
     # Notify that an error occurred in the process.
     def error(message)
     end
 
     # Notify that the process is finished.
     def finished
+    end
+
+    def wait_for_finish
     end
 
   end

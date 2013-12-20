@@ -68,9 +68,8 @@ module Pantry
 
       # CLI has received a response from the server, handle the response and set up
       # the file transfer.
-      def handle_response(response_future)
-        response_message        = super
-        upload_allowed          = response_message.body[0]
+      def receive_response(response_message)
+        upload_allowed = response_message.body[0]
 
         Pantry.logger.debug("[Upload Cookbook] #{response_message.inspect}")
 
@@ -78,6 +77,7 @@ module Pantry
           client.send_file(@cookbook_tarball, response_message.body[1], listener: progress_listener)
         else
           progress_listener.error(response_message.body[1])
+          progress_listener.finished
         end
       end
 

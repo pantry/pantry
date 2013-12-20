@@ -8,22 +8,20 @@ module Pantry
   # Command objects are responsible for the entire communication flow from the CLI
   # to the Server / Clients and back. This is managed through three methods:
   #
-  #   prepare_message :: Builds the Message to send and can be used for any preparation
-  #                      required before sending a Message
+  #   prepare_message  :: Builds the Message to send and can be used for any preparation
+  #                       required before sending a Message
   #
-  #   perform         :: The actual action of the given Command on the Recipient.
-  #                      Any values returned from this function are packaged up and
-  #                      sent back to the sender.
+  #   perform          :: The actual action of the given Command on the Recipient.
+  #                       Any values returned from this function are packaged up and
+  #                       sent back to the sender.
   #
-  #   handle_response :: This method is given the response future object from sending
-  #                      the message built in `prepare_message`. By default this just
-  #                      returns the received Message but can be overridden to perform
-  #                      any post-operation commands.
+  #   receive_response :: All received responses due to the Command in question are sent
+  #                       back into the command object on the CLI through this method.
   #
-  # Note: In normal CLI execution, #prepare_message and #handle_response are called
+  # Note: In normal CLI execution, #prepare_message and #receive_response are called
   # on the same object, but #prepare is called by another Actor elsewhere in the network.
   # Thus, if information needs to be made available to all three, #prepare_message can set
-  # instance variables that #handle_response can read, but #perform must pull all information
+  # instance variables that #receive_response can read, but #perform must pull all information
   # out of the Message.
   class Command
 
@@ -54,18 +52,13 @@ module Pantry
     def perform(message)
     end
 
-    # The original requester of this command can further handle any response messages
-    # triggered by #perform with this message. This method is given the reqeust future which
-    # will be filled by the Message from #perform.
-    #
-    # By default, this method simply returns the value the future is eventually filled with.
-    # This currently has no timeout.
-    #
-    # HACK? If this method returns an object that responds to `receive_message`, it will be given
-    # any further messages received by the CLI. See the Pantry::Commands::Echo and the MultiResponseHandler
-    # for an example of how this works. TODO Is there a cleaner way of doing this?
-    def handle_response(request_future)
-      request_future.value(Pantry.config.response_timeout)
+    # When a message comes back from the server as a response to or because of
+    # this command's #perform, the command object on the CLI will receive that
+    # message here. By default we just pass the message to the current listener
+    # and makr ourselves finished.
+    def receive_response(message)
+      progress_listener.say(message)
+      progress_listener.finished
     end
 
     # Create a new Command from the given Message

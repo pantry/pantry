@@ -76,6 +76,10 @@ module Pantry
       end
     end
 
+    def send_message(message)
+      @networking.send_message(message)
+    end
+
     # Send a message to the Server
     def send_request(message)
       message.requires_response!

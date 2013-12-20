@@ -118,7 +118,7 @@ describe Pantry::Chef::UploadCookbook do
 
   end
 
-  describe "#handle_response" do
+  describe "#receive_response" do
 
     it "triggers a file upload actor with the cookbook tarball and message UUID" do
       client = mock
@@ -135,7 +135,7 @@ describe Pantry::Chef::UploadCookbook do
       response_message.body << "true"
       response_message.body << "abc123"
 
-      command.handle_response(mock(:value => response_message))
+      command.receive_response(response_message)
     end
 
     it "fails out with a message and cleans up if the server response with an error" do
@@ -153,8 +153,9 @@ describe Pantry::Chef::UploadCookbook do
 
       command.progress_listener = mock
       command.progress_listener.expects(:error).with("Unable to Upload Reason")
+      command.progress_listener.expects(:finished)
 
-      command.handle_response(mock(:value => response_message))
+      command.receive_response(response_message)
     end
 
   end

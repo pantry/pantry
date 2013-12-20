@@ -5,36 +5,34 @@ describe "CLI requests information from individual clients" do
   it "receives responses from each client asked" do
     set_up_environment(pub_sub_port: 10100, receive_port: 10101)
 
-    cli = Pantry::CLI.new(identity: "cli1")
+    listener = SaveInfoProgressListener.new
+    cli = Pantry::CLI.new(identity: "cli1", progress_listener: listener)
     cli.run
 
     filter = Pantry::Communication::ClientFilter.new(application: "pantry")
 
-    response = cli.request(filter, "echo", "This is Neat")
-    all = response.messages.sort {|a, b| a.from <=> b.from }
+    cli.request(filter, "echo", "This is Neat")
 
-    assert_equal @client1.identity, all[0].from
-    assert_equal ["This is Neat"],  all[0].body
-
-    assert_equal @client2.identity, all[1].from
-    assert_equal ["This is Neat"],  all[1].body
+    assert_equal [
+      "#{@client1.identity} echo's \"This is Neat\"",
+      "#{@client2.identity} echo's \"This is Neat\""
+    ], listener.said.sort
   end
 
   it "can target specific clients for the commands sent" do
     set_up_environment(pub_sub_port: 10102, receive_port: 10103)
 
-    cli = Pantry::CLI.new(identity: "cli1")
+    listener = SaveInfoProgressListener.new
+    cli = Pantry::CLI.new(identity: "cli1", progress_listener: listener)
     cli.run
 
     filter = Pantry::Communication::ClientFilter.new(application: "pantry", environment: "test", roles: ["app1"])
 
-    response = cli.request(filter, "echo", "This is Neat")
-    all = response.messages.sort {|a, b| a.from <=> b.from }
+    cli.request(filter, "echo", "This is Neat")
 
-    assert_equal 1, all.length
-
-    assert_equal @client1.identity, all[0].from
-    assert_equal ["This is Neat"],  all[0].body
+    assert_equal [
+      "#{@client1.identity} echo's \"This is Neat\""
+    ], listener.said
   end
 
 end

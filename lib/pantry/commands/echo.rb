@@ -8,16 +8,26 @@ module Pantry
 
       def initialize(string_to_echo = "")
         @string_to_echo = string_to_echo
+
+        @received = []
+        @expected_clients  = []
       end
 
       def perform(message)
         @string_to_echo
       end
 
-      def handle_response(request_future)
-        handler = Pantry::Commands::MultiResponseHandler.new(request_future)
-        handler.wait_for_response
-        handler
+      def receive_response(message)
+        if message.from_server?
+          @expected_clients = message.body
+        else
+          @received << message
+          progress_listener.say("#{message.from} echo's #{message.body[0].inspect}")
+        end
+
+        if !@expected_clients.empty? && @received.length >= @expected_clients.length
+          progress_listener.finished
+        end
       end
 
       def self.from_message(message)
@@ -31,5 +41,6 @@ module Pantry
       end
 
     end
+
   end
 end
