@@ -23,6 +23,13 @@ module Pantry
         end
       end
 
+      def receive_response(message)
+        message.body.each do |entry|
+          progress_listener.say("#{entry[:identity]} -- #{entry[:last_checked_in]}")
+        end
+        progress_listener.finished
+      end
+
       def to_message
         message = super
         message << @client_filter.to_hash

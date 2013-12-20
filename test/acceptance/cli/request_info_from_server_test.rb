@@ -14,12 +14,10 @@ describe "CLI can ask Server for information" do
     # `pantry status`
     cli.request(filter, "status")
 
-    identities = listener.said[0].body.map {|e| e[:identity] }
+    entries = listener.said.sort
 
-    # May find any number of clients, including the CLI client, so just look
-    # for a few we know should be there
-    assert identities.include?(@client1.identity), "Response did not include the identity of Client 1"
-    assert identities.include?(@client2.identity), "Response did not include the identity of Client 2"
+    assert entries[0] =~ /#{@client1.identity}/, "Did not contain line for client1"
+    assert entries[1] =~ /#{@client2.identity}/, "Did not contain line for client2"
   end
 
   it "can limit the query to a subset of clients" do
@@ -42,11 +40,11 @@ describe "CLI can ask Server for information" do
     # `pantry chatbot status`
     cli.request(filter, "status")
 
-    message = listener.said[0]
+    entries = listener.said.sort
 
-    assert_equal 2, message.body.length
-    assert_equal "client3", message.body[0][:identity]
-    assert_equal "client4", message.body[1][:identity]
+    assert_equal 2, entries.length
+    assert entries[0] =~ /client3/, "Did not contain line for client3"
+    assert entries[1] =~ /client4/, "Did not contain line for client4"
 
     client3.shutdown
     client4.shutdown
