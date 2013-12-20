@@ -65,7 +65,7 @@ module Pantry
       end
 
       def receive_file(save_path, file_size, file_checksum)
-        receiver = Pantry::Communication::ReceiveFile.new(self, save_path, file_size, file_checksum)
+        receiver = Pantry::Communication::ReceiveFile.new_link(self, save_path, file_size, file_checksum)
         @response_wait_list.wait_for_persistent(receiver)
         receiver.uuid
       end
