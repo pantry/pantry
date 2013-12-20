@@ -14,7 +14,7 @@ module Pantry
       end
 
       def perform(message)
-        @string_to_echo
+        message.body[0]
       end
 
       def receive_response(message)
@@ -28,10 +28,6 @@ module Pantry
         if !@expected_clients.empty? && @received.length >= @expected_clients.length
           progress_listener.finished
         end
-      end
-
-      def self.from_message(message)
-        self.new(message.body[0])
       end
 
       def to_message

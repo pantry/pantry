@@ -14,18 +14,13 @@ module Pantry
 
       # Return information about all connected Clients that match the given filter
       def perform(message)
+        @client_filter = Pantry::Communication::ClientFilter.new(**(message.body[0] || {}))
         self.server.client_registry.all_matching(@client_filter) do |client, record|
           {
             identity:        client.identity,
             last_checked_in: record.last_checked_in_at
           }
         end
-      end
-
-      def self.from_message(message)
-        command = super
-        command.client_filter = Pantry::Communication::ClientFilter.new(**(message.body[0] || {}))
-        command
       end
 
       def to_message

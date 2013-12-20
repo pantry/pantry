@@ -42,7 +42,7 @@ module Pantry
 
     def build_command_proc(command_class)
       proc do |message|
-        command_obj = command_class.from_message(message)
+        command_obj = command_class.new
         command_obj.server_or_client = @server_or_client
         command_obj.perform(message)
       end

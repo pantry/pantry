@@ -6,7 +6,7 @@ describe Pantry::Commands::Echo do
     message = Pantry::Message.new("Echo")
     message << "This is a body"
 
-    command = Pantry::Commands::Echo.from_message(message)
+    command = Pantry::Commands::Echo.new
     results = command.perform(message)
 
     assert_equal "This is a body", results

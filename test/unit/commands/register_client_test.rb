@@ -11,7 +11,7 @@ describe Pantry::Commands::RegisterClient do
 
     server = Pantry::Server.new
 
-    command = Pantry::Commands::RegisterClient.from_message(message)
+    command = Pantry::Commands::RegisterClient.new
     command.server_or_client = server
     command.perform(message)
 

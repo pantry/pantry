@@ -9,10 +9,6 @@ describe Pantry::CommandHandler do
     def perform(message)
       "Test message ran #{message.uuid}"
     end
-
-    def self.from_message(message)
-      self.new
-    end
   end
 
   it "executes commands that match the message type" do
@@ -43,10 +39,6 @@ describe Pantry::CommandHandler do
     def perform(message)
       self.client.identity
     end
-
-    def self.from_message(message)
-      self.new
-    end
   end
 
   it "sets the server or client on the command before it's performed" do
@@ -61,10 +53,6 @@ describe Pantry::CommandHandler do
   class ReturnMessageIdentity < Pantry::Command
     def perform(message)
       message
-    end
-
-    def self.from_message(message)
-      self.new
     end
   end
 

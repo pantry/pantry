@@ -3,25 +3,23 @@ module Pantry
 
     class RegisterClient < Command
 
-      def initialize(client)
+      def initialize(client = nil)
         @client = client
       end
 
       # Take note that a Client has connected and registered itself
       # with this Server.
       def perform(message)
-        self.server.register_client(@client)
-      end
-
-      def self.from_message(message)
         details = message.body[0]
 
-        self.new(Pantry::Client.new(
+        @client = Pantry::Client.new(
           identity:    message.from,
           application: details[:application],
           environment: details[:environment],
           roles:       details[:roles]
-        ))
+        )
+
+        self.server.register_client(@client)
       end
 
       def to_message

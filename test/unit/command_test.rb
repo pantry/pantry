@@ -2,13 +2,6 @@ require 'unit/test_helper'
 
 describe Pantry::Command do
 
-  it "creates itself from a message" do
-    message = Pantry::Message.new("Command")
-    command = Pantry::Command.from_message(message)
-
-    assert_nil command.perform(message)
-  end
-
   it "creates a message from itself" do
     command = Pantry::Command.new
     message = command.to_message

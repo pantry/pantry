@@ -10,7 +10,7 @@ describe Pantry::Commands::ListClients do
 
     message = Pantry::Message.new("ListClients")
 
-    command = Pantry::Commands::ListClients.from_message(message)
+    command = Pantry::Commands::ListClients.new
     command.server_or_client = server
 
     response = command.perform(message)
@@ -27,7 +27,7 @@ describe Pantry::Commands::ListClients do
     message = Pantry::Message.new("ListClients")
     message << Pantry::Communication::ClientFilter.new(application: "pantry").to_hash
 
-    command = Pantry::Commands::ListClients.from_message(message)
+    command = Pantry::Commands::ListClients.new
     command.server_or_client = server
 
     response = command.perform(message)

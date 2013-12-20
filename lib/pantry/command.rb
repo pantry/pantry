@@ -61,11 +61,6 @@ module Pantry
       progress_listener.finished
     end
 
-    # Create a new Command from the given Message
-    def self.from_message(message)
-      self.new
-    end
-
     # Create a new Message from the information in the current Command
     def to_message
       Pantry::Message.new(self.class.command_type)
