@@ -91,6 +91,7 @@ module Pantry
 
     def send_results_back_to_requester(message, results)
       response_message = message.build_response
+      response_message.from = Pantry::SERVER_IDENTITY
 
       [results].flatten.each do |entry|
         response_message << entry

@@ -51,6 +51,10 @@ module Pantry
       end
     end
 
+    def from_server?
+      @from == Pantry::SERVER_IDENTITY
+    end
+
     # Flag this message as requiring a response
     def requires_response!
       @requires_response = true

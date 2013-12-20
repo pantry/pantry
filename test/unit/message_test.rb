@@ -104,6 +104,13 @@ describe Pantry::Message do
     assert_equal "", message.metadata[:to]
   end
 
+  it "knows if it came from the server or a client" do
+    message = Pantry::Message.new
+    message.from = Pantry::SERVER_IDENTITY
+
+    assert message.from_server?
+  end
+
   it "takes a hash of metadata and parses out approriate values" do
     message = Pantry::Message.new
     message.metadata = {

@@ -46,6 +46,10 @@ require 'pantry/cli'
 
 module Pantry
 
+  # Default identity of a Server, so as to help differentiate where
+  # messages are coming from.
+  SERVER_IDENTITY = ""
+
   # Register a command object class to be handled only by Clients
   def add_client_command(command_class)
     ensure_proper_command_class(command_class)
