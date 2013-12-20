@@ -5,38 +5,22 @@ module Pantry
   # be further configured to manage an application, for a given environment,
   # and across any number of roles.
   class Client
+    extend Forwardable
     include Celluloid
     finalizer :shutdown
 
-    attr_reader :application
-
-    attr_reader :environment
-
-    attr_reader :roles
-
-    # The above gets packaged into a ClientFilter for use elsewhere
-    attr_reader :filter
-
-    # This client's current identity. By default a client's identity is it's `hostname`,
-    # but a specific one can be given. These identities should be unique across the set
-    # of clients connecting to a single Pantry Server, behavior of multiple clients with
-    # the same identity is currently undefined.
-    attr_reader :identity
+    # See Pantry::ClientInfo
+    def_delegators :@info, :identity, :application, :environment, :roles, :filter
 
     # For testing / debugging purposes, keep hold of the last message this client received
     attr_reader :last_received_message
 
     def initialize(application: nil, environment: nil, roles: [], identity: nil, network_stack_class: Communication::Client)
-      @application = application
-      @environment = environment
-      @identity    = identity    || current_hostname
-      @roles       = roles       || []
-
-      @filter      = Pantry::Communication::ClientFilter.new(
-        application: @application,
-        environment: @environment,
-        roles:       @roles,
-        identity:    @identity
+      @info      = Pantry::ClientInfo.new(
+        application: application,
+        environment: environment,
+        roles:       roles       || [],
+        identity:    identity    || current_hostname
       )
 
       @commands   = CommandHandler.new(self, Pantry.client_commands)
@@ -50,28 +34,28 @@ module Pantry
     def run
       @networking.run
       send_registration_message
-      Pantry.logger.info("[#{@identity}] Client registered and waiting for commands")
+      Pantry.logger.info("[#{identity}] Client registered and waiting for commands")
     end
 
     def shutdown
-      Pantry.logger.info("[#{@identity}] Client Shutting down")
+      Pantry.logger.info("[#{identity}] Client Shutting down")
       @registration_timer.cancel if @registration_timer
     end
 
     # Callback from SubscribeSocket when a message is received
     def receive_message(message)
-      Pantry.logger.debug("[#{@identity}] Received message #{message.inspect}")
+      Pantry.logger.debug("[#{identity}] Received message #{message.inspect}")
 
       if message_meant_for_us?(message)
         @last_received_message = message
         results = @commands.process(message)
 
         if message.requires_response?
-          Pantry.logger.debug("[#{@identity}] Responding with #{results.inspect}")
+          Pantry.logger.debug("[#{identity}] Responding with #{results.inspect}")
           send_results_back_to_requester(message, results)
         end
       else
-        Pantry.logger.debug("[#{@identity}] Message discarded, not for us")
+        Pantry.logger.debug("[#{identity}] Message discarded, not for us")
         return
       end
     end
@@ -84,7 +68,7 @@ module Pantry
     def send_request(message)
       message.requires_response!
 
-      Pantry.logger.debug("[#{@identity}] Sending request #{message.inspect}")
+      Pantry.logger.debug("[#{identity}] Sending request #{message.inspect}")
 
       @networking.send_request(message)
     end
@@ -129,7 +113,7 @@ module Pantry
     # "pantry.test" both match (string start_with? check) the message. Thus, we add our
     # own handling to the message check as a protective stop gap.
     def message_meant_for_us?(message)
-      @filter.matches?(message.to)
+      filter.matches?(message.to)
     end
   end
 end

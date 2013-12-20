@@ -3,8 +3,8 @@ module Pantry
 
     class RegisterClient < Command
 
-      def initialize(client = nil)
-        @client = client
+      def initialize(client_info = nil)
+        @client_info = client_info
       end
 
       # Take note that a Client has connected and registered itself
@@ -12,22 +12,22 @@ module Pantry
       def perform(message)
         details = message.body[0]
 
-        @client = Pantry::Client.new(
+        @client_info = Pantry::ClientInfo.new(
           identity:    message.from,
           application: details[:application],
           environment: details[:environment],
           roles:       details[:roles]
         )
 
-        self.server.register_client(@client)
+        self.server.register_client(@client_info)
       end
 
       def to_message
         message = super
         message << {
-          application: @client.application,
-          environment: @client.environment,
-          roles:       @client.roles
+          application: @client_info.application,
+          environment: @client_info.environment,
+          roles:       @client_info.roles
         }
         message
       end

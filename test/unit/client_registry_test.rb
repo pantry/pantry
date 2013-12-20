@@ -3,8 +3,8 @@ require 'unit/test_helper'
 describe Pantry::ClientRegistry do
 
   before do
-    @c1 = Pantry::Client.new identity: "client1", application: "pantry", environment: "test"
-    @c2 = Pantry::Client.new identity: "client2", environment: "test"
+    @c1 = Pantry::ClientInfo.new identity: "client1", application: "pantry", environment: "test"
+    @c2 = Pantry::ClientInfo.new identity: "client2", environment: "test"
 
     @registry = Pantry::ClientRegistry.new
     @registry.check_in(@c1)

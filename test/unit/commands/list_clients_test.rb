@@ -4,9 +4,9 @@ describe Pantry::Commands::ListClients do
 
   it "asks server for known clients and returns the info as a list" do
     server = Pantry::Server.new
-    server.register_client(Pantry::Client.new(identity: "client1"))
-    server.register_client(Pantry::Client.new(identity: "client2"))
-    server.register_client(Pantry::Client.new(identity: "client3"))
+    server.register_client(Pantry::ClientInfo.new(identity: "client1"))
+    server.register_client(Pantry::ClientInfo.new(identity: "client2"))
+    server.register_client(Pantry::ClientInfo.new(identity: "client3"))
 
     message = Pantry::Message.new("ListClients")
 
@@ -20,9 +20,9 @@ describe Pantry::Commands::ListClients do
 
   it "only counts clients that match the given filters" do
     server = Pantry::Server.new
-    server.register_client(Pantry::Client.new(identity: "client1", application: "pantry"))
-    server.register_client(Pantry::Client.new(identity: "client2", application: "pantry", environment: "testing"))
-    server.register_client(Pantry::Client.new(identity: "client3"))
+    server.register_client(Pantry::ClientInfo.new(identity: "client1", application: "pantry"))
+    server.register_client(Pantry::ClientInfo.new(identity: "client2", application: "pantry", environment: "testing"))
+    server.register_client(Pantry::ClientInfo.new(identity: "client3"))
 
     message = Pantry::Message.new("ListClients")
     message << Pantry::Communication::ClientFilter.new(application: "pantry").to_hash

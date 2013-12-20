@@ -37,6 +37,7 @@ require 'pantry/communication/send_socket'
 require 'pantry/communication/receive_file'
 require 'pantry/communication/send_file'
 
+require 'pantry/client_info'
 require 'pantry/client_registry'
 
 require 'pantry/client'

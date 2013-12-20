@@ -25,7 +25,7 @@ describe Pantry::Commands::RegisterClient do
   end
 
   it "builds message including the Client's information for registration" do
-    command = Pantry::Commands::RegisterClient.new(Pantry::Client.new(
+    command = Pantry::Commands::RegisterClient.new(Pantry::ClientInfo.new(
       identity: "Test123", application: "pantry", environment: "test",
       roles: %w(app db)
     ))
