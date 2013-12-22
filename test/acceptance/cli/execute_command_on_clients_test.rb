@@ -6,12 +6,11 @@ describe "CLI requests information from individual clients" do
     set_up_environment(pub_sub_port: 10100, receive_port: 10101)
 
     listener = SaveInfoProgressListener.new
-    cli = Pantry::CLI.new(identity: "cli1", progress_listener: listener)
+    cli = Pantry::CLI.new(
+      ["-a", "pantry", "echo", "This is Neat"],
+      identity: "cli1", progress_listener: listener
+    )
     cli.run
-
-    filter = Pantry::Communication::ClientFilter.new(application: "pantry")
-
-    cli.request(filter, "echo", "This is Neat")
 
     assert_equal [
       "#{@client1.identity} echo's \"This is Neat\"",
@@ -23,12 +22,11 @@ describe "CLI requests information from individual clients" do
     set_up_environment(pub_sub_port: 10102, receive_port: 10103)
 
     listener = SaveInfoProgressListener.new
-    cli = Pantry::CLI.new(identity: "cli1", progress_listener: listener)
+    cli = Pantry::CLI.new(
+      ["-a", "pantry", "-e", "test", "-r", "app1", "echo", "This is Neat"],
+      identity: "cli1", progress_listener: listener
+    )
     cli.run
-
-    filter = Pantry::Communication::ClientFilter.new(application: "pantry", environment: "test", roles: ["app1"])
-
-    cli.request(filter, "echo", "This is Neat")
 
     assert_equal [
       "#{@client1.identity} echo's \"This is Neat\""

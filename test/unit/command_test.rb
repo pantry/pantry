@@ -20,7 +20,7 @@ describe Pantry::Command do
   it "can prepare itself as a Message to be sent down the pipe" do
     command = Pantry::Command.new
     filter = Pantry::Communication::ClientFilter.new
-    message = command.prepare_message(filter)
+    message = command.prepare_message(filter, {})
 
     assert message.is_a?(Pantry::Message),
       "prepare_message returned the wrong value"
@@ -84,4 +84,19 @@ describe Pantry::Command do
     assert_equal "Gir::WantsWaffles", message.type
   end
 
+  describe "CLI" do
+
+    class CLICommand < Pantry::Command
+      command "cli" do
+        banner      "testing:command"
+        description "Sloppy"
+      end
+    end
+
+    it "can configure CLI options and information" do
+      assert_equal "cli", CLICommand.command_name
+      assert_not_nil CLICommand.command_config, "No command config found"
+    end
+
+  end
 end

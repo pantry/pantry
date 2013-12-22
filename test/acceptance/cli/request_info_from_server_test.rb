@@ -6,13 +6,11 @@ describe "CLI can ask Server for information" do
     set_up_environment(pub_sub_port: 10200, receive_port: 10201)
 
     listener = SaveInfoProgressListener.new
-    cli = Pantry::CLI.new(identity: "test_client", progress_listener: listener)
+    cli = Pantry::CLI.new(
+      ["status"],
+      identity: "test_client", progress_listener: listener
+    )
     cli.run
-
-    filter = Pantry::Communication::ClientFilter.new
-
-    # `pantry status`
-    cli.request(filter, "status")
 
     entries = listener.said.sort
 
@@ -24,8 +22,10 @@ describe "CLI can ask Server for information" do
     set_up_environment(pub_sub_port: 10202, receive_port: 10203)
 
     listener = SaveInfoProgressListener.new
-    cli = Pantry::CLI.new(identity: "test_client", progress_listener: listener)
-    cli.run
+    cli = Pantry::CLI.new(
+      ["-a", "chatbot", "status"],
+      identity: "test_client", progress_listener: listener
+    )
 
     client3 = Pantry::Client.new(application: "chatbot", identity: "client3")
     client3.run
@@ -33,15 +33,9 @@ describe "CLI can ask Server for information" do
     client4 = Pantry::Client.new(application: "chatbot", identity: "client4")
     client4.run
 
-    filter = Pantry::Communication::ClientFilter.new(application: "chatbot")
-
-    sleep 1
-
-    # `pantry chatbot status`
-    cli.request(filter, "status")
+    cli.run
 
     entries = listener.said.sort
-
     assert_equal 2, entries.length
     assert entries[0] =~ /client3/, "Did not contain line for client3"
     assert entries[1] =~ /client4/, "Did not contain line for client4"

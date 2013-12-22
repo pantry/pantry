@@ -2,19 +2,24 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::UploadCookbook do
 
-  let(:command) { Pantry::Chef::UploadCookbook.new }
   let(:filter) { Pantry::Communication::ClientFilter.new }
+
+  def build_command(cookbook_name)
+    @command ||=
+      Pantry::Chef::UploadCookbook.new(
+        File.expand_path("../../../fixtures/cookbooks/#{cookbook_name}", __FILE__)
+      )
+  end
 
   describe "#prepare_message" do
 
     after do
-      File.unlink(command.cookbook_tarball) if command.cookbook_tarball
+      File.unlink(@command.cookbook_tarball) if @command && @command.cookbook_tarball
     end
 
     it "figures out name and version of the requested cookbook" do
-      message = command.prepare_message(
-        filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
-      )
+      command = build_command("mini")
+      message = command.prepare_message(filter, {})
 
       assert_not_nil message, "Did not return a message"
       assert_equal "mini", message[:cookbook_name]
@@ -22,9 +27,8 @@ describe Pantry::Chef::UploadCookbook do
     end
 
     it "tars up the cookbook, noting the size and a checksum of the file" do
-      message = command.prepare_message(
-        filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
-      )
+      command = build_command("mini")
+      message = command.prepare_message(filter, {})
 
       assert message[:cookbook_size] > 0, "Did not calculate a size of the tarball"
       assert_not_nil message[:cookbook_checksum], "Did not calculate a checksum"
@@ -35,17 +39,15 @@ describe Pantry::Chef::UploadCookbook do
 
     it "errors out if no metadata file" do
       assert_raises Pantry::Chef::MissingMetadata do
-        command.prepare_message(
-          filter, [File.expand_path("../../../fixtures/cookbooks/bad", __FILE__)]
-        )
+        command = build_command("bad")
+        command.prepare_message(filter, {})
       end
     end
 
     it "errors if it can't find the cookbook" do
       assert_raises Pantry::Chef::UnknownCookbook do
-        command.prepare_message(
-          filter, [File.expand_path("../../../fixtures/cookbooks/nonexist", __FILE__)]
-        )
+        command = build_command("nonexist")
+        command.prepare_message(filter, {})
       end
     end
 
@@ -66,6 +68,8 @@ describe Pantry::Chef::UploadCookbook do
       m[:cookbook_checksum] = "123abc"
       m
     end
+
+    let(:command) { build_command("mini") }
 
     it "ensures a place exists for the uploaded cookbook to go" do
       command.server_or_client = stub_everything
@@ -120,6 +124,8 @@ describe Pantry::Chef::UploadCookbook do
 
   describe "#receive_response" do
 
+    let(:command) { build_command("mini") }
+
     it "triggers a file upload actor with the cookbook tarball and message UUID" do
       client = mock
       client.expects(:send_file).with do |file, uuid|
@@ -127,9 +133,7 @@ describe Pantry::Chef::UploadCookbook do
       end
 
       command.server_or_client = client
-      command.prepare_message(
-        filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
-      )
+      command.prepare_message(filter, {})
 
       response_message = Pantry::Message.new
       response_message.body << "true"
@@ -143,9 +147,7 @@ describe Pantry::Chef::UploadCookbook do
       client.expects(:send_file).never
 
       command.server_or_client = client
-      command.prepare_message(
-        filter, [File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)]
-      )
+      command.prepare_message(filter, {})
 
       response_message = Pantry::Message.new
       response_message.body << "false"

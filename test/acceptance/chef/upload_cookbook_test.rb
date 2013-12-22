@@ -6,10 +6,11 @@ describe "Uploading cookbooks to the server" do
     set_up_environment(pub_sub_port: 11000, receive_port: 11001)
     filter = Pantry::Communication::ClientFilter.new
 
-    cli = Pantry::CLI.new(identity: "cli1")
+    cli = Pantry::CLI.new(
+      ["chef:cookbook:upload", File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)],
+      identity: "cli1"
+    )
     cli.run
-
-    cli.request(filter, "chef:upload:cookbook", File.expand_path("../../../fixtures/cookbooks/mini", __FILE__))
 
     sleep 1
 

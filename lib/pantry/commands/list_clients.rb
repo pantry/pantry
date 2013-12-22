@@ -3,9 +3,11 @@ module Pantry
 
     class ListClients < Command
 
-      attr_accessor :client_filter
+      command "status" do
+        description "List all Clients that match the options"
+      end
 
-#      cli "status"
+      attr_accessor :client_filter
 
       def prepare_message(filter, arguments = [])
         @client_filter = filter

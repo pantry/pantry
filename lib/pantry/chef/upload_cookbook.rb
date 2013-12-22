@@ -6,7 +6,17 @@ module Pantry
     # Given a cookbook, upload it to the server
     class UploadCookbook < Pantry::Command
 
+      command "chef:cookbook:upload" do
+        banner      "Usage: pantry [pantry options] chef:cookbook:upload [cookbook dir] [options]"
+        description "Upload a given cookbook to the server."
+        option      :f, :force, "Overwrite a previously uploaded version of this cookbook"
+      end
+
       attr_reader :cookbook_tarball
+
+      def initialize(cookbook_path = nil)
+        @cookbook_path = cookbook_path
+      end
 
       # Multi-step prepratory step here:
       #
@@ -16,16 +26,15 @@ module Pantry
       # * Figure out size and a checksum
       # * Package all this information into the message to send to the server
       #
-      def prepare_message(filter, arguments = [])
-        cookbook_path = arguments.first
-        cookbook_name = File.basename(cookbook_path)
-        cookbooks_dir = File.dirname(cookbook_path)
+      def prepare_message(filter, options)
+        cookbook_name = File.basename(@cookbook_path)
+        cookbooks_dir = File.dirname(@cookbook_path)
 
         loader   = ::Chef::CookbookLoader.new([cookbooks_dir])
         cookbook = loader.load_cookbooks[cookbook_name]
 
-        raise UnknownCookbook, "Unable to find cookbook at #{cookbook_path}" unless cookbook
-        raise MissingMetadata, "No metadata.rb found for cookbook at #{cookbook_path}" unless File.exist?(File.join(cookbook_path, "metadata.rb"))
+        raise UnknownCookbook, "Unable to find cookbook at #{@cookbook_path}" unless cookbook
+        raise MissingMetadata, "No metadata.rb found for cookbook at #{@cookbook_path}" unless File.exist?(File.join(@cookbook_path, "metadata.rb"))
 
         tempfile = Tempfile.new(cookbook_name)
         @cookbook_tarball = "#{tempfile.path}.tgz"

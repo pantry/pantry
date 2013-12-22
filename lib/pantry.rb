@@ -3,6 +3,7 @@ require 'celluloid/zmq'
 require 'json'
 require 'logger'
 require 'securerandom'
+require 'slop'
 require 'socket'
 require 'syslog/logger'
 require 'open3'
@@ -43,6 +44,16 @@ require 'pantry/client_registry'
 require 'pantry/client'
 require 'pantry/server'
 require 'pantry/cli'
+
+# Hack Slop to not call 'exit' on --help. I want the default --help
+# setup as that will recursively set up help info on all commands without
+# any extra effort on the command itself. Calling 'exit' while inside of a
+# Celluloid Actor scope, though, causes big explosions and nasty stack traces.
+class Slop
+  def exit
+    # no-op
+  end
+end
 
 module Pantry
 
