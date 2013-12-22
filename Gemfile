@@ -4,6 +4,8 @@ ruby "2.0.0"
 
 gemspec
 
+gem "slop", :github => "jasonroelofs/slop", :branch => "track-found-commands"
+
 group :development do
   gem "rake"
   gem "guard"
