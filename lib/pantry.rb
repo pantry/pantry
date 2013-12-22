@@ -76,6 +76,11 @@ module Pantry
     @server_commands ||= []
   end
 
+  # Return all known commands
+  def all_commands
+    [client_commands, server_commands].flatten
+  end
+
   def ensure_proper_command_class(command_class)
     unless command_class.is_a?(Class)
       raise Pantry::InvalidCommandError.new("Expected a Class, got an #{command_class.class}")

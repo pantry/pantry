@@ -10,15 +10,13 @@ describe Pantry do
     Pantry.server_commands.clear
   end
 
-  describe "#add_command" do
-  end
-
   describe "#add_client_command" do
     it "adds commands only for the client to handle" do
       Pantry.add_client_command(TestCommand)
 
       assert_equal [TestCommand], Pantry.client_commands
       assert_equal [], Pantry.server_commands
+      assert_equal [TestCommand], Pantry.all_commands
     end
 
     it "errors if the given class is not a Pantry::Command" do
@@ -48,6 +46,7 @@ describe Pantry do
 
       assert_equal [], Pantry.client_commands
       assert_equal [TestCommand], Pantry.server_commands
+      assert_equal [TestCommand], Pantry.all_commands
     end
 
     it "errors if the given class is not a Pantry::Command" do
