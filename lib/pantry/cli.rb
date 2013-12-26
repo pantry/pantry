@@ -31,7 +31,9 @@ module Pantry
       @known_commands = {}
       Pantry.all_commands.each do |command_class|
         if command_class.command_name
-          @known_commands[command_class.command_name] = command_class
+          # Hmm duplicated from OptParsePlus
+          base_command_name = command_class.command_name.split(/\s/).first
+          @known_commands[base_command_name] = command_class
         end
       end
     end
@@ -48,6 +50,7 @@ module Pantry
         options = parser.parse!(command_line)
 
         if options['help']
+          # Help printed already
           return [nil, nil]
         end
 
@@ -69,9 +72,9 @@ module Pantry
       triggered_command = options.command_found
       if command_class = @known_commands[triggered_command]
         client_filter = Pantry::Communication::ClientFilter.new(
-          application: options[:application],
-          environment: options[:environment],
-          roles:       options[:roles]
+          application: options['application'],
+          environment: options['environment'],
+          roles:       options['roles']
         )
 
         command = command_class.new(*arguments)
