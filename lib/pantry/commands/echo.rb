@@ -4,11 +4,8 @@ module Pantry
     # Simple Echo command, returns the body of the Message given.
     class Echo < Command
 
-      command "echo" do
-        banner      "Usage: pantry echo [message]"
+      command "echo MESSAGE" do
         description "Test Client communication with a simple Echo request"
-
-        on :v, :version, "Print version of Echo"
       end
 
       def initialize(string_to_echo = "")

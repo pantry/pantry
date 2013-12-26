@@ -5,9 +5,9 @@ module Pantry
 
     # The top-level set of CLI options and flags Pantry respects
     BASE_OPTIONS = proc {
-      on :a, :application=, "Filter Clients by a specific Application"
-      on :e, :environment=, "Filter Clients by a specific Environment"
-      on :r, :roles=, "Filter Clients by given Roles [ROLE1,ROLE2,...]", as: Array, delimiter: ','
+      option "-a", "--application APPLICATION", String, "Filter Clients by a specific APPLICATION"
+      option "-e", "--environment ENVIRONMENT", String, "Filter Clients by a specific ENVIRONMENT"
+      option "-r", "--roles ROLE1,ROLE2",       Array,  "Filter Clients by given ROLES"
     }
 
     def initialize(command_line, **args)
@@ -22,8 +22,8 @@ module Pantry
       super
 
       find_all_cli_commands
-      build_all_command_options
-      process_command
+      options, arguments = parse_command_line(@command_line)
+      process_command(options, arguments)
       terminate
     end
 
@@ -36,63 +36,49 @@ module Pantry
       end
     end
 
-    def build_all_command_options
-      command_list = @known_commands
+    def parse_command_line(command_line)
+      begin
+        parser = OptParsePlus.new
+        parser.add_options(&BASE_OPTIONS)
 
-      @command_options = proc {
-        instance_exec(&BASE_OPTIONS)
-
-        command_list.each do |name, command_class|
-          command name, &(command_class.command_config || proc {})
+        @known_commands.each do |command_name, command_class|
+          parser.add_command(command_name, &command_class.command_config)
         end
-      }
+
+        options = parser.parse!(command_line)
+
+        if options['help']
+          return [nil, nil]
+        end
+
+        [options, command_line]
+      rescue => ex
+        puts ex, ""
+        puts parser.help
+        [nil, nil]
+      end
     end
 
-    def process_command
-      options, rest_of_command_line = parse_command_line
-
+    def process_command(options, arguments)
       if options.nil?
         # Errored out =/
-        return
-      end
-
-      if options[:help]
-        # Printing already done by Slop itself
         terminate
         return
       end
 
-      if command_class = @known_commands[options.triggered_commands.first]
+      triggered_command = options.command_found
+      if command_class = @known_commands[triggered_command]
         client_filter = Pantry::Communication::ClientFilter.new(
           application: options[:application],
           environment: options[:environment],
           roles:       options[:roles]
         )
 
-        command = command_class.new(*rest_of_command_line)
+        command = command_class.new(*arguments)
 
-        request(client_filter, command, options)
+        request(client_filter, command, options[triggered_command])
       else
         Pantry.logger.error("[CLI] I don't know the #{command.inspect} command")
-      end
-    end
-
-    def parse_command_line
-      begin
-        slop = Slop.parse!(
-          @command_line,
-          help:              true,
-          multiple_switches: false,
-          strict:            true,
-          ignore_case:       true,
-          &@command_options
-        )
-        [slop, @command_line]
-      rescue Slop::InvalidOptionError, Slop::MissingArgumentError => ex
-        puts ex, ""
-        puts Slop.new(&@command_options)
-        terminate
-        [nil, nil]
       end
     end
 

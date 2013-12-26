@@ -88,7 +88,6 @@ describe Pantry::Command do
 
     class CLICommand < Pantry::Command
       command "cli" do
-        banner      "testing:command"
         description "Sloppy"
       end
     end

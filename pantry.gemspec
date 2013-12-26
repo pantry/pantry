@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "celluloid",     "~> 0.15.0"
   s.add_runtime_dependency "celluloid-zmq", "~> 0.15.0"
-#  s.add_runtime_dependency "slop",          "~> 3.4.0"
   s.add_runtime_dependency "json"
 
   # Chef stuff

@@ -29,7 +29,7 @@ module Pantry
       # Expose this Command to the CLI and configure the options and information
       # that this Command needs from the CLI to function.
       #
-      # Uses Slop for parsing: https://github.com/leejarvis/slop
+      # See OptParsePlus for documentation
       def command(name, &block)
         @command_name   = name
         @command_config = block
