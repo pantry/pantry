@@ -55,7 +55,12 @@ describe Pantry::Chef::UploadCookbook do
     # to run your cookbook if the metadata does not contain a name.
     it "errors if metadata does not contain name / version"
 
-    it "marks in the Message if we want to force upload the current cookbook version"
+    it "marks in the Message if we want to force upload the current cookbook version" do
+      command = build_command("mini")
+      message = command.prepare_message(filter, {'force' => true})
+
+      assert message[:cookbook_force_upload], "Did not mark as a force upload"
+    end
   end
 
   describe "#perform" do

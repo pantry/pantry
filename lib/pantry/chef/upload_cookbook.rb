@@ -49,6 +49,7 @@ module Pantry
         message[:cookbook_name]     = cookbook.metadata.name
         message[:cookbook_size]     = File.size(@cookbook_tarball)
         message[:cookbook_checksum] = Digest::SHA256.file(@cookbook_tarball).hexdigest
+        message[:cookbook_force_upload] = options['force']
         message
       end
 
