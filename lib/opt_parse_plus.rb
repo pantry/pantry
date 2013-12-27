@@ -2,7 +2,7 @@ require 'optparse'
 
 class OptParsePlus
 
-  attr_reader :options
+  attr_reader :options, :summary
 
   class OptionsFound < Hash
     attr_accessor :command_found
@@ -34,6 +34,7 @@ class OptParsePlus
   end
 
   def description(message)
+    @summary = message
     @parser.separator("")
     @parser.separator(message)
   end
@@ -58,14 +59,26 @@ class OptParsePlus
   end
 
   def help
-    @parser.to_s
+    help_parts = []
+    help_parts << @parser.to_s
+
+    if @commands.any?
+      help_parts << ["Known Commands", ""]
+      @commands.each do |command_name, parser|
+        help_parts << "#{command_name} \t #{parser.summary}"
+      end
+      help_parts << ""
+      help_parts << ""
+    end
+
+    help_parts.flatten.join("\n")
   end
 
   protected
 
   def add_default_help
     @parser.on_tail('-h', '--help', 'Show this help message') do
-      puts @parser
+      puts help
       @options['help'] = true
     end
   end

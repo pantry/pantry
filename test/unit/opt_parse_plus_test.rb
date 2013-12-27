@@ -109,4 +109,29 @@ describe OptParsePlus do
     assert_match /Show this help message/, help_text
   end
 
+  it "includes all known commands in the top-level help text" do
+    parser = OptParsePlus.new
+    parser.add_command("run") do
+      description "Run something"
+    end
+
+    parser.add_command("stop") do
+      description "Stop something from running"
+    end
+
+    parser.add_command("stock ITEM") do
+      description "Stock the item"
+    end
+
+    help_text = parser.help
+
+    assert_match /run\s+Run something/, help_text
+    assert_match /stop\s+Stop something/, help_text
+    assert_match /stock\s+Stock the item/, help_text
+  end
+
+  it "includes sub-command descriptions and banner strings in help text"
+
+  it "builds help banner from the full stack of commands and options"
+
 end
