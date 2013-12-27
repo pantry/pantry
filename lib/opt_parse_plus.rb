@@ -77,9 +77,9 @@ class OptParsePlus
         help_parts << "#{command_name} \t #{parser.summary}"
       end
       help_parts << ""
-      help_parts << ""
     end
 
+    help_parts << ""
     help_parts.flatten.join("\n")
   end
 
