@@ -2,6 +2,7 @@ require 'minitest/autorun'
 require 'support/matchers'
 require 'celluloid/test'
 require 'mocha/setup'
+require 'fakefs/safe'
 
 require 'pantry'
 
