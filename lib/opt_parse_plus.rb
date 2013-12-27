@@ -8,7 +8,8 @@ class OptParsePlus
     attr_accessor :command_found
   end
 
-  def initialize
+  def initialize(parent = nil)
+    @parent = parent || self
     @parser = OptionParser.new
     @options = OptionsFound.new
     @commands = {}
@@ -21,7 +22,7 @@ class OptParsePlus
   end
 
   def add_command(command_name, &block)
-    command_parser = OptParsePlus.new
+    command_parser = OptParsePlus.new(self)
     command_parser.add_options(&block) if block_given?
     @commands[base_command_name(command_name.to_s)] = command_parser
   end
@@ -41,6 +42,10 @@ class OptParsePlus
     @summary = message
     @parser.separator("")
     @parser.separator(message)
+  end
+
+  def set(key, value)
+    @options[key] = value
   end
 
   def parse!(command_line)
@@ -83,7 +88,7 @@ class OptParsePlus
   def add_default_help
     @parser.on_tail('-h', '--help', 'Show this help message') do
       puts help
-      @options['help'] = true
+      @parent.set('help', true)
     end
   end
 

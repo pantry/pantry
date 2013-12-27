@@ -107,7 +107,7 @@ describe OptParsePlus do
     end
 
     assert_match /Show this help message/, output
-    assert options['run']['help']
+    assert options['help']
   end
 
   it "allows explicitly getting the help text" do
