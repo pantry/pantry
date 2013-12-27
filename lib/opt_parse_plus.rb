@@ -33,6 +33,10 @@ class OptParsePlus
     end
   end
 
+  def banner(message)
+    @parser.banner = message
+  end
+
   def description(message)
     @summary = message
     @parser.separator("")

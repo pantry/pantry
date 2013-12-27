@@ -28,7 +28,15 @@ describe OptParsePlus do
     assert_equal [], command_line
   end
 
-  it "allows specifying a banner via description" do
+  it "allows setting an explicit banner" do
+    parser = OptParsePlus.new
+    parser.banner "pantry [command]"
+
+    help_text = parser.help
+    assert_match /pantry \[command\]/, help_text
+  end
+
+  it "allows specifying a description" do
     parser = OptParsePlus.new
     parser.add_options do
       description "This is interesting yes!"
