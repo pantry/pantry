@@ -16,6 +16,8 @@ module Pantry
         @etc_dir       = Pantry.root.join("etc", "chef")
         create_required_directories
         write_solo_rb
+        # TODO: Error handling response message?
+        true
       end
 
       protected
@@ -26,6 +28,7 @@ module Pantry
         FileUtils.mkdir_p(@etc_dir)
       end
 
+      # NOTE: Writes out the file every time this command is run.
       def write_solo_rb
         contents = []
         contents << %|file_cache_path "#{@base_chef_dir.join("cache")}"|
