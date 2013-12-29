@@ -12,7 +12,8 @@ module Pantry
       end
 
       def perform(message)
-        @base_chef_dir = File.join(Pantry.config.data_dir, "chef")
+        @base_chef_dir = Pantry.root.join("chef")
+        @etc_dir       = Pantry.root.join("etc", "chef")
         create_required_directories
         write_solo_rb
       end
@@ -20,21 +21,21 @@ module Pantry
       protected
 
       def create_required_directories
-        FileUtils.mkdir_p(File.join(@base_chef_dir, "cache"))
-        FileUtils.mkdir_p(File.join(@base_chef_dir, "cookbooks"))
-        FileUtils.mkdir_p(File.join(Pantry.config.data_dir, "etc", "chef"))
+        FileUtils.mkdir_p(@base_chef_dir.join("cache"))
+        FileUtils.mkdir_p(@base_chef_dir.join("cookbooks"))
+        FileUtils.mkdir_p(@etc_dir)
       end
 
       def write_solo_rb
         contents = []
-        contents << %|file_cache_path "#{File.join(@base_chef_dir, "cache")}"|
-        contents << %|cookbook_path "#{File.join(@base_chef_dir, "cookbooks")}"|
+        contents << %|file_cache_path "#{@base_chef_dir.join("cache")}"|
+        contents << %|cookbook_path "#{@base_chef_dir.join("cookbooks")}"|
 
         if client && client.environment
           contents << %|environment "#{client.environment}"|
         end
 
-        File.open(File.join(Pantry.config.data_dir, "etc", "chef", "solo.rb"), "w+") do |file|
+        File.open(@etc_dir.join("solo.rb"), "w+") do |file|
           file.write(contents.join("\n"))
         end
       end

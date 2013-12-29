@@ -19,10 +19,10 @@ describe Pantry::Chef::ConfigureChef do
     command = Pantry::Chef::ConfigureChef.new
     command.perform(Pantry::Message.new)
 
-    assert File.directory?(File.join(Pantry.config.data_dir, "chef", "cache")),
+    assert File.directory?(Pantry.root.join("chef", "cache")),
       "Did not create the chef file cache directory"
 
-    assert File.directory?(File.join(Pantry.config.data_dir, "chef", "cookbooks")),
+    assert File.directory?(Pantry.root.join("chef", "cookbooks")),
       "Did not create the chef cookbooks directory"
   end
 
@@ -30,14 +30,14 @@ describe Pantry::Chef::ConfigureChef do
     command = Pantry::Chef::ConfigureChef.new
     command.perform(Pantry::Message.new)
 
-    solo_rb = File.join(Pantry.config.data_dir, "etc", "chef", "solo.rb")
+    solo_rb = Pantry.root.join("etc", "chef", "solo.rb")
     assert File.exists?(solo_rb), "Did not write out a solo.rb file"
 
     solo_contents = File.read(solo_rb)
 
-    assert_match %|cookbook_path "#{File.join(Pantry.config.data_dir, "chef", "cookbooks")}|,
+    assert_match %|cookbook_path "#{Pantry.root.join("chef", "cookbooks")}|,
       solo_contents
-    assert_match %|file_cache_path "#{File.join(Pantry.config.data_dir, "chef", "cache")}|,
+    assert_match %|file_cache_path "#{Pantry.root.join("chef", "cache")}|,
       solo_contents
   end
 
@@ -48,7 +48,7 @@ describe Pantry::Chef::ConfigureChef do
     command.server_or_client = client
     command.perform(Pantry::Message.new)
 
-    solo_rb = File.join(Pantry.config.data_dir, "etc/chef/solo.rb")
+    solo_rb = Pantry.root.join("etc/chef/solo.rb")
     solo_contents = File.read(solo_rb)
 
     assert_match %|environment "staging"|, solo_contents

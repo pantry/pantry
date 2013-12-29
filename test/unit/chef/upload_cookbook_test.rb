@@ -80,14 +80,14 @@ describe Pantry::Chef::UploadCookbook do
       command.server_or_client = stub_everything
       response = command.perform(incoming_message)
 
-      assert File.directory?(File.join(Pantry.config.data_dir, "chef", "cookbooks", "testing")),
+      assert File.directory?(Pantry.root.join("chef", "cookbooks", "testing")),
         "Did not create directory for the testing cookbook"
     end
 
     it "responds successfully and fires off a file upload receiver" do
       server_mock = mock
       server_mock.expects(:receive_file).with(
-        File.join(Pantry.config.data_dir, "chef", "cookbooks", "testing", "1.0.0.tgz"),
+        Pantry.root.join("chef", "cookbooks", "testing", "1.0.0.tgz"),
         100, "123abc"
       ).returns("abc123")
 
@@ -99,8 +99,8 @@ describe Pantry::Chef::UploadCookbook do
     end
 
     it "response with an error if a cookbook upload exists with that version" do
-      FileUtils.mkdir_p File.join(Pantry.config.data_dir, "chef", "cookbooks", "testing")
-      FileUtils.touch File.join(Pantry.config.data_dir, "chef", "cookbooks", "testing", "1.0.0.tgz")
+      FileUtils.mkdir_p Pantry.root.join("chef", "cookbooks", "testing")
+      FileUtils.touch Pantry.root.join("chef", "cookbooks", "testing", "1.0.0.tgz")
 
       server = mock
       server.expects(:receive_file).never
@@ -112,8 +112,8 @@ describe Pantry::Chef::UploadCookbook do
     end
 
     it "allows overwriting an existing upload if forced" do
-      FileUtils.mkdir_p File.join(Pantry.config.data_dir, "chef", "cookbooks", "testing")
-      FileUtils.touch File.join(Pantry.config.data_dir, "chef", "cookbooks", "testing", "1.0.0.tgz")
+      FileUtils.mkdir_p Pantry.root.join("chef", "cookbooks", "testing")
+      FileUtils.touch Pantry.root.join("chef", "cookbooks", "testing", "1.0.0.tgz")
 
       server = mock(:receive_file => "a1b2c3")
 

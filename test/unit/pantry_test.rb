@@ -10,7 +10,16 @@ describe Pantry do
     Pantry.server_commands.clear
   end
 
-  describe "#add_client_command" do
+  describe ".root" do
+    it "wraps the data_dir in a Pathname" do
+      config = Pantry::Config.new
+      config.data_dir = "/path/start"
+
+      assert_equal Pathname.new("/path/start"), Pantry.root(config)
+    end
+  end
+
+  describe ".add_client_command" do
     it "adds commands only for the client to handle" do
       Pantry.add_client_command(TestCommand)
 
@@ -40,7 +49,7 @@ describe Pantry do
     end
   end
 
-  describe "#add_server_command" do
+  describe ".add_server_command" do
     it "adds commands only for the server to handle" do
       Pantry.add_server_command(TestCommand)
 

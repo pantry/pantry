@@ -16,7 +16,7 @@ class Minitest::Test
   end
 
   def teardown
-    Dir["#{Pantry.config.data_dir}/*"].each do |file|
+    Dir["#{Pantry.root}/*"].each do |file|
       FileUtils.rm_rf file
     end
   end

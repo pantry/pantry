@@ -62,10 +62,10 @@ module Pantry
         cookbook_size     = message[:cookbook_size]
         cookbook_checksum = message[:cookbook_checksum]
 
-        cookbook_home = File.join(Pantry.config.data_dir, "chef", "cookbooks", cookbook_name)
+        cookbook_home = Pantry.root.join("chef", "cookbooks", cookbook_name)
         FileUtils.mkdir_p(cookbook_home)
 
-        version_path = File.join(cookbook_home, "#{cookbook_version}.tgz")
+        version_path = cookbook_home.join("#{cookbook_version}.tgz")
 
         if !message[:cookbook_force_upload] && File.exists?(version_path)
           [false, "Version #{cookbook_version} of cookbook #{cookbook_name} already exists"]

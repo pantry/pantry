@@ -13,7 +13,7 @@ describe Pantry::Communication::ReceiveFile do
   end
 
   let(:networking) { FakeReceiveNetwork.new }
-  let(:save_path)  { File.join(Pantry.config.data_dir, "uploaded_file") }
+  let(:save_path)  { Pantry.root.join("uploaded_file") }
 
   let(:receiver) do
     Pantry::Communication::ReceiveFile.new(

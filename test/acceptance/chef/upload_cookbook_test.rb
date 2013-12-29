@@ -14,14 +14,14 @@ describe "Uploading cookbooks to the server" do
 
     sleep 1
 
-    assert File.exists?(File.join(Pantry.config.data_dir, "chef", "cookbooks", "mini", "1.0.0.tgz")),
+    assert File.exists?(Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz")),
       "The mini cookbook was not uploaded to the server properly"
   end
 
   it "allows forcing a cookbook version up if the version already exists on the server" do
     set_up_environment(pub_sub_port: 11010, receive_port: 11011)
 
-    chef_dir = File.join(Pantry.config.data_dir, "chef", "cookbooks", "mini")
+    chef_dir = Pantry.root.join("chef", "cookbooks", "mini")
     FileUtils.mkdir_p chef_dir
     system "touch #{File.join(chef_dir, "1.0.0.tgz")}"
 
@@ -33,7 +33,7 @@ describe "Uploading cookbooks to the server" do
 
     sleep 1
 
-    assert File.size(File.join(Pantry.config.data_dir, "chef", "cookbooks", "mini", "1.0.0.tgz")) > 0,
+    assert File.size(Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz")) > 0,
       "The mini cookbook was not properly forced into place"
   end
 

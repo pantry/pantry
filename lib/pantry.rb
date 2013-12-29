@@ -2,6 +2,7 @@ require 'celluloid'
 require 'celluloid/zmq'
 require 'json'
 require 'logger'
+require 'pathname'
 require 'securerandom'
 require 'socket'
 require 'syslog/logger'
@@ -51,6 +52,12 @@ module Pantry
   # Default identity of a Server, so as to help differentiate where
   # messages are coming from.
   SERVER_IDENTITY = ""
+
+  # The root of all stored Pantry data for this Server/Client
+  # Uses Pantry.config.data_dir
+  def root(config = Pantry.config)
+    Pathname.new(config.data_dir)
+  end
 
   # Register a command object class to be handled only by Clients
   def add_client_command(command_class)
