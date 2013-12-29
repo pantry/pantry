@@ -12,11 +12,9 @@ module Pantry
       end
 
       def perform(message)
-        unless File.exists?("/etc/chef/solo.rb")
-          @base_chef_dir = File.join(Pantry.config.data_dir, "chef")
-          create_required_directories
-          write_solo_rb
-        end
+        @base_chef_dir = File.join(Pantry.config.data_dir, "chef")
+        create_required_directories
+        write_solo_rb
       end
 
       protected
@@ -24,7 +22,7 @@ module Pantry
       def create_required_directories
         FileUtils.mkdir_p(File.join(@base_chef_dir, "cache"))
         FileUtils.mkdir_p(File.join(@base_chef_dir, "cookbooks"))
-        FileUtils.mkdir_p("/etc/chef")
+        FileUtils.mkdir_p(File.join(Pantry.config.data_dir, "etc", "chef"))
       end
 
       def write_solo_rb
@@ -36,7 +34,7 @@ module Pantry
           contents << %|environment "#{client.environment}"|
         end
 
-        File.open("/etc/chef/solo.rb", "w+") do |file|
+        File.open(File.join(Pantry.config.data_dir, "etc", "chef", "solo.rb"), "w+") do |file|
           file.write(contents.join("\n"))
         end
       end

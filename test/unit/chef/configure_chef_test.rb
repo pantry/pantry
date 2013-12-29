@@ -26,13 +26,14 @@ describe Pantry::Chef::ConfigureChef do
       "Did not create the chef cookbooks directory"
   end
 
-  it "writes out /etc/chef/solo.rb pointing chef to the right locations" do
+  it "writes out chef/solo.rb pointing chef to the right locations" do
     command = Pantry::Chef::ConfigureChef.new
     command.perform(Pantry::Message.new)
 
-    assert File.exists?("/etc/chef/solo.rb"), "Did not write out a solo.rb file"
+    solo_rb = File.join(Pantry.config.data_dir, "etc", "chef", "solo.rb")
+    assert File.exists?(solo_rb), "Did not write out a solo.rb file"
 
-    solo_contents = File.read("/etc/chef/solo.rb")
+    solo_contents = File.read(solo_rb)
 
     assert_match %|cookbook_path "#{File.join(Pantry.config.data_dir, "chef", "cookbooks")}|,
       solo_contents
@@ -47,7 +48,8 @@ describe Pantry::Chef::ConfigureChef do
     command.server_or_client = client
     command.perform(Pantry::Message.new)
 
-    solo_contents = File.read("/etc/chef/solo.rb")
+    solo_rb = File.join(Pantry.config.data_dir, "etc/chef/solo.rb")
+    solo_contents = File.read(solo_rb)
 
     assert_match %|environment "staging"|, solo_contents
   end
