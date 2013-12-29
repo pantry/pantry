@@ -7,7 +7,9 @@ describe Pantry::Chef::RunChefSolo do
   end
 
   it "executes the chef-solo command, returning outputs" do
-    Open3.expects(:capture3).with("chef-solo").returns(["chef ran", "error", 0])
+    config_file = Pantry.root.join(*%w(etc chef solo.rb))
+    Open3.expects(:capture3).with("chef-solo --config #{config_file}").
+      returns(["chef ran", "error", 0])
 
     command = Pantry::Chef::RunChefSolo.new
     stdout, stderr, status = command.perform(Pantry::Message.new)
@@ -18,7 +20,7 @@ describe Pantry::Chef::RunChefSolo do
   end
 
   it "returns error message if chef-solo not found on the system" do
-    Open3.expects(:capture3).with("chef-solo").raises(Errno::ENOENT, "Can't find LOLZ")
+    Open3.expects(:capture3).raises(Errno::ENOENT, "Can't find LOLZ")
 
     command = Pantry::Chef::RunChefSolo.new
     stdout, stderr, status = command.perform(Pantry::Message.new)
