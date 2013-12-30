@@ -9,17 +9,15 @@ module Pantry
     class SendFile
       include Celluloid
 
-      def initialize(networking, file_path, receiver_uuid, listener: nil)
+      attr_reader :uuid
+
+      def initialize(networking, file_path, receiver_uuid: nil, listener: nil)
         @networking    = networking
         @file_path     = file_path
-        @receiver_uuid = receiver_uuid
-        @listener      = listener || Pantry::ProgressListener.new
+        @uuid          = receiver_uuid || SecureRandom.uuid
+        @listener      = listener      || Pantry::ProgressListener.new
 
-        start_file_transfer
-      end
-
-      def uuid
-        @receiver_uuid
+        start_file_transfer(receiver_uuid)
       end
 
       def finished?
@@ -42,12 +40,12 @@ module Pantry
 
       protected
 
-      def start_file_transfer
+      def start_file_transfer(known_receiver)
         @file = File.open(@file_path, "r")
         @total_bytes_sent = 0
 
         @listener.start_progress(@file.size)
-        send_message("START")
+        send_message("START") if known_receiver
       end
 
       def fetch_and_return_chunk(message)
@@ -63,7 +61,7 @@ module Pantry
 
       def send_message(body, metadata = {})
         message = Pantry::Message.new
-        message.uuid = @receiver_uuid
+        message.uuid = @uuid
 
         [body].flatten.each {|part| message << part }
 
@@ -72,11 +70,6 @@ module Pantry
         end
 
         @networking.send_message(message)
-      end
-
-      def clean_up_and_shut_down
-        @file.close
-        @listener.finished
       end
 
       def notify_error(message)
@@ -88,6 +81,12 @@ module Pantry
         @total_bytes_sent += bytes_sent
         @listener.step_progress(@total_bytes_sent)
       end
+
+      def clean_up_and_shut_down
+        @file.close
+        @listener.finished
+      end
+
     end
 
   end

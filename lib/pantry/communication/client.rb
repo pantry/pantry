@@ -49,8 +49,8 @@ module Pantry
       end
 
       # Send a file up to the Server.
-      def send_file(file_path, receiver_uuid, options = {})
-        uploader = Pantry::Communication::SendFile.new_link(self, file_path, receiver_uuid, **options)
+      def send_file(file_path, options = {})
+        uploader = Pantry::Communication::SendFile.new_link(self, file_path, **options)
         @response_wait_list.wait_for_persistent(uploader)
         uploader.uuid
       end

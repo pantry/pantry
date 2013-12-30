@@ -16,13 +16,20 @@ describe Pantry::Communication::SendFile do
   let(:file_path)  { File.expand_path("../../../fixtures/file_to_upload", __FILE__) }
 
   it "exposes the given UUID for the wait list" do
-    sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
+    sender = Pantry::Communication::SendFile.new(networking, file_path, receiver_uuid: "receiver-uuid")
 
     assert_equal "receiver-uuid", sender.uuid
   end
 
+  it "generates its own UUID if none given (server-side sending). Doesn't send start message" do
+    sender = Pantry::Communication::SendFile.new(networking, file_path)
+
+    assert_equal 0, networking.sent.length
+    assert_not_nil sender.uuid
+  end
+
   it "opens the file and sends the receiver the START command" do
-    sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
+    sender = Pantry::Communication::SendFile.new(networking, file_path, receiver_uuid: "receiver-uuid")
 
     assert_equal 1, networking.sent.length
 
@@ -32,7 +39,7 @@ describe Pantry::Communication::SendFile do
   end
 
   it "reads the requested chunk of file and sends it along to the receiver" do
-    sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
+    sender = Pantry::Communication::SendFile.new(networking, file_path, receiver_uuid: "receiver-uuid")
     networking.sent = []
 
     chunk1 = Pantry::Message.new
@@ -53,7 +60,7 @@ describe Pantry::Communication::SendFile do
   end
 
   it "closes down on the FINISH command" do
-    sender = Pantry::Communication::SendFile.new(networking, file_path, "receiver-uuid")
+    sender = Pantry::Communication::SendFile.new(networking, file_path, receiver_uuid: "receiver-uuid")
     networking.sent = []
 
     assert_false sender.finished?
@@ -91,7 +98,7 @@ describe Pantry::Communication::SendFile do
     let(:listener) { TestSendFileListener.new }
     let(:sender) {
       Pantry::Communication::SendFile.new(
-        networking, file_path, "receiver-uuid", listener: listener
+        networking, file_path, receiver_uuid: "receiver-uuid", listener: listener
       )
     }
 

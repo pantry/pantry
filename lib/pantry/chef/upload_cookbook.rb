@@ -83,7 +83,9 @@ module Pantry
         Pantry.logger.debug("[Upload Cookbook] #{response_message.inspect}")
 
         if upload_allowed == "true"
-          client.send_file(@cookbook_tarball, response_message.body[1], listener: progress_listener)
+          client.send_file(@cookbook_tarball,
+                           receiver_uuid: response_message.body[1],
+                           listener: progress_listener)
         else
           progress_listener.error(response_message.body[1])
           progress_listener.finished

@@ -102,4 +102,14 @@ describe Pantry::Communication::Server do
       assert_not_nil uuid
     end
   end
+
+  describe "Sending Files" do
+    it "triggers a send actor and returns the UUID" do
+      server = Pantry::Communication::Server.new(nil)
+
+      uuid = server.send_file(File.expand_path(__FILE__))
+
+      assert_not_nil uuid
+    end
+  end
 end

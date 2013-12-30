@@ -133,8 +133,8 @@ describe Pantry::Chef::UploadCookbook do
 
     it "triggers a file upload actor with the cookbook tarball and message UUID" do
       client = mock
-      client.expects(:send_file).with do |file, uuid|
-        uuid == "abc123" && File.exists?(file)
+      client.expects(:send_file).with do |file, options|
+        options[:receiver_uuid] == "abc123" && File.exists?(file)
       end
 
       command.server_or_client = client
