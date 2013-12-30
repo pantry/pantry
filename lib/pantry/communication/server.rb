@@ -64,16 +64,12 @@ module Pantry
         end
       end
 
-      # Prepare to receive from a Client or CLI. Returns the UUID to be passed along
-      # to the appropriate Sender for proper hookup
       def receive_file(save_path, file_size, file_checksum)
         receiver = Pantry::Communication::ReceiveFile.new_link(self, save_path, file_size, file_checksum)
         @response_wait_list.wait_for_persistent(receiver)
         receiver.uuid
       end
 
-      # Prepare to send a file to whoever is listening. Returns the UUID to be passed
-      # along to Receivers waiting to download the given file
       def send_file(file_path)
         sender = Pantry::Communication::SendFile.new_link(self, file_path)
         @response_wait_list.wait_for_persistent(sender)

@@ -42,7 +42,7 @@ module Pantry
       @registration_timer.cancel if @registration_timer
     end
 
-    # Callback from SubscribeSocket when a message is received
+    # Callback from Networking when a message is received
     def receive_message(message)
       Pantry.logger.debug("[#{identity}] Received message #{message.inspect}")
 
@@ -56,7 +56,6 @@ module Pantry
         end
       else
         Pantry.logger.debug("[#{identity}] Message discarded, not for us")
-        return
       end
     end
 
@@ -64,7 +63,6 @@ module Pantry
       @networking.send_message(message)
     end
 
-    # Send a message to the Server
     def send_request(message)
       message.requires_response!
 
@@ -73,8 +71,6 @@ module Pantry
       @networking.send_request(message)
     end
 
-    # Start uploading a file on the current file system to the server using
-    # the given receiver UUID.
     def send_file(file_path, options = {})
       @networking.send_file(file_path, **options)
     end

@@ -2,14 +2,7 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::ConfigureChef do
 
-  before do
-    FakeFS.activate!
-  end
-
-  after do
-    FakeFS.deactivate!
-    FakeFS::FileSystem.clear
-  end
+  fake_fs!
 
   it "has a custom type" do
     assert_equal "Chef::Configure", Pantry::Chef::ConfigureChef.command_type

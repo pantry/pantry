@@ -82,12 +82,13 @@ module Pantry
       def process_chunk(message)
         chunk_offset = message[:chunk_offset]
         chunk_size   = message[:chunk_size]
+        chunk_data   = message.body[1]
 
         @current_pipeline_size -= 1
         @received_chunks       += 1
 
         @file.seek(chunk_offset)
-        @file.write(message.body[1])
+        @file.write(chunk_data)
 
         if finished?
           finalize_file
