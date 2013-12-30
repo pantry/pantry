@@ -21,4 +21,15 @@ class Minitest::Test
     end
   end
 
+  def self.fake_fs!
+    before do
+      FakeFS.activate!
+    end
+
+    after do
+      FakeFS.deactivate!
+      FakeFS::FileSystem.clear
+    end
+  end
+
 end
