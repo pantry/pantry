@@ -98,6 +98,25 @@ describe Pantry::Server do
     server.receive_message(message)
   end
 
+  it "keeps all object formatting of the response message" do
+    server = Pantry::Server.new(FakeNetworkStack)
+
+    message = Pantry::Message.new("test_message")
+    message.from = "client1"
+    message.requires_response!
+
+    Pantry::CommandHandler.any_instance.stubs(:can_handle?).returns(true)
+    Pantry::CommandHandler.any_instance.expects(:process).returns([%w(A response message)])
+
+    FakeNetworkStack.any_instance.expects(:publish_message).with do |response_message|
+      assert_equal "test_message", response_message.type
+      assert_equal message.from, response_message.to
+      assert_equal [["A", "response", "message"]], response_message.body
+    end
+
+    server.receive_message(message)
+  end
+
   class ClientOnlyCommand < Pantry::Command
   end
 

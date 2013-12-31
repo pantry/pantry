@@ -97,7 +97,7 @@ module Pantry
       response_message = message.build_response
       response_message.from = Pantry::SERVER_IDENTITY
 
-      [results].flatten.each do |entry|
+      [results].flatten(1).each do |entry|
         response_message << entry
       end
 
