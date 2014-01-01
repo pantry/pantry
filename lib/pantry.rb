@@ -37,8 +37,10 @@ require 'pantry/communication/publish_socket'
 require 'pantry/communication/subscribe_socket'
 require 'pantry/communication/receive_socket'
 require 'pantry/communication/send_socket'
-require 'pantry/communication/receive_file'
-require 'pantry/communication/send_file'
+
+require 'pantry/communication/file_service'
+require 'pantry/communication/file_service/receive_file'
+require 'pantry/communication/file_service/send_file'
 
 require 'pantry/client_info'
 require 'pantry/client_registry'

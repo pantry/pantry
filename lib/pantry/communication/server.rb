@@ -28,6 +28,12 @@ module Pantry
         )
         @receive_socket.add_listener(self)
         @receive_socket.open
+
+        @file_service = Communication::FileService.new_link(
+          Pantry.config.server_host,
+          Pantry.config.file_service_port
+        )
+        @file_service.start_server
       end
 
       # Send a request to all clients, expecting a result. Returns a Future
@@ -64,16 +70,12 @@ module Pantry
         end
       end
 
-      def receive_file(save_path, file_size, file_checksum)
-        receiver = Pantry::Communication::ReceiveFile.new_link(self, save_path, file_size, file_checksum)
-        @response_wait_list.wait_for_persistent(receiver)
-        receiver.uuid
+      def receive_file(file_size, file_checksum)
+        @file_service.receive_file(file_size, file_checksum)
       end
 
-      def send_file(file_path)
-        sender = Pantry::Communication::SendFile.new_link(self, file_path)
-        @response_wait_list.wait_for_persistent(sender)
-        sender.uuid
+      def send_file(file_path, receiver_uuid)
+        @file_service.send_file(file_path, receiver_uuid)
       end
 
     end

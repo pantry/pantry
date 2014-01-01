@@ -23,6 +23,12 @@ module Pantry
           Pantry.config.receive_port
         )
         @send_socket.open
+
+        @file_service = Communication::FileService.new_link(
+          Pantry.config.server_host,
+          Pantry.config.file_service_port
+        )
+        @file_service.start_client
       end
 
       # Receive a message from the server
@@ -34,25 +40,23 @@ module Pantry
         end
       end
 
-      # Send a request to the server, setting up a future
-      # that will eventually have the response
       def send_request(message)
         @response_wait_list.wait_for(message).tap do
           send_message(message)
         end
       end
 
-      # Send a message back up to the server
       def send_message(message)
         message.from = @listener
         @send_socket.send_message(message)
       end
 
-      # Send a file up to the Server.
-      def send_file(file_path, options = {})
-        uploader = Pantry::Communication::SendFile.new_link(self, file_path, **options)
-        @response_wait_list.wait_for_persistent(uploader)
-        uploader.uuid
+      def receive_file(file_size, file_checksum)
+        @file_service.receive_file(file_size, file_checksum)
+      end
+
+      def send_file(file_path, receiver_uuid)
+        @file_service.send_file(file_path, receiver_uuid)
       end
 
     end

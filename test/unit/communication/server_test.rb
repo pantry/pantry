@@ -7,6 +7,8 @@ describe Pantry::Communication::Server do
 
     Pantry::Communication::ReceiveSocket.any_instance.stubs(:add_listener)
     Pantry::Communication::ReceiveSocket.any_instance.stubs(:open)
+
+    Pantry::Communication::FileService.any_instance.stubs(:start_server)
   end
 
   it "opens a publish socket for communication" do
@@ -21,6 +23,14 @@ describe Pantry::Communication::Server do
 
     Pantry::Communication::ReceiveSocket.any_instance.expects(:add_listener).with(server)
     Pantry::Communication::ReceiveSocket.any_instance.expects(:open)
+
+    server.run
+  end
+
+  it "starts up a local file service" do
+    server = Pantry::Communication::Server.new(nil)
+
+    Pantry::Communication::FileService.any_instance.expects(:start_server)
 
     server.run
   end

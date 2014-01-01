@@ -5,6 +5,8 @@ describe Pantry::Communication::Client do
   before do
     Pantry::Communication::SubscribeSocket.any_instance.stubs(:open)
     Pantry::Communication::SendSocket.any_instance.stubs(:open)
+
+    Pantry::Communication::FileService.any_instance.stubs(:start_client)
   end
 
   it "sets up a subscribe socket for communication" do
@@ -43,6 +45,15 @@ describe Pantry::Communication::Client do
     client = Pantry::Communication::Client.new(pantry_client)
 
     Pantry::Communication::SendSocket.any_instance.expects(:open)
+
+    client.run
+  end
+
+  it "starts up a local file service" do
+    pantry_client = Pantry::Client.new
+    client = Pantry::Communication::Client.new(pantry_client)
+
+    Pantry::Communication::FileService.any_instance.expects(:start_client)
 
     client.run
   end
