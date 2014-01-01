@@ -37,3 +37,6 @@ networking:
 
   # Port over which Clients communicate back to this Server
   # receive_port: 23002
+
+  # Port over which File data is passed between Client and Server
+  # file_service_port: 23003

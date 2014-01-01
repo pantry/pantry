@@ -38,6 +38,9 @@ networking:
   # Port over which the Client sends messages to the Server
   # receive_port: 23002
 
+  # Port over which File data is passed between Client and Server
+  # file_service_port: 23003
+
 client:
   # Set the unique identity of this Client. The default is the current
   # hostname of the server. This name should be unique across the entire

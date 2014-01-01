@@ -21,6 +21,10 @@ class Minitest::Test
     end
   end
 
+  def fixture_path(file_path)
+    File.join(File.dirname(__FILE__), "..", "fixtures", file_path)
+  end
+
   def self.fake_fs!
     before do
       FakeFS.activate!

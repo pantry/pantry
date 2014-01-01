@@ -45,6 +45,9 @@ module Pantry
     # Port clients use to send information to the Server
     attr_accessor :receive_port
 
+    # Port through which files are sent and received
+    attr_accessor :file_service_port
+
     # How often, in seconds, the client pings the Server
     attr_accessor :client_heartbeat_interval
 
@@ -76,13 +79,14 @@ module Pantry
 
       # Logging defaults
       @log_level = "info"
+      @data_dir  = "/var/lib/pantry"
       @syslog_program_name = "pantry"
-      @data_dir = "/var/lib/pantry"
 
       # Default connectivity settings
-      @server_host = "127.0.0.1"
-      @pub_sub_port = 23001
-      @receive_port = 23002
+      @server_host       = "127.0.0.1"
+      @pub_sub_port      = 23001
+      @receive_port      = 23002
+      @file_service_port = 23003
 
       # Default client heartbeat to every 5 minutes
       @client_heartbeat_interval = 300
@@ -135,6 +139,10 @@ module Pantry
 
       if configs["receive_port"]
         @receive_port = configs["receive_port"]
+      end
+
+      if configs["file_service_port"]
+        @file_service_port = configs["file_service_port"]
       end
     end
 

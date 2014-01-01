@@ -37,7 +37,7 @@ describe Pantry::Config do
     end
 
     it "can load values from a given YAML file" do
-      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
+      config_file = fixture_path("config.yml")
       pantry_config.load_file(config_file)
 
       assert_equal "/var/log/pantry.log", pantry_config.log_to
@@ -47,7 +47,7 @@ describe Pantry::Config do
     end
 
     it "does not set values to nil if not in the config" do
-      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "empty.yml")
+      config_file = fixture_path("empty.yml")
       pantry_config.load_file(config_file)
 
       assert_equal "info", pantry_config.log_level
@@ -72,22 +72,29 @@ describe Pantry::Config do
       assert_equal 7788, pantry_config.receive_port
     end
 
+    it "has an entry for the file service port" do
+      pantry_config.file_service_port = 1122
+      assert_equal 1122, pantry_config.file_service_port
+    end
+
     it "can load values from a given YAML file" do
-      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
+      config_file = fixture_path("config.yml")
       pantry_config.load_file(config_file)
 
       assert_equal "10.0.0.1", pantry_config.server_host
       assert_equal 12345, pantry_config.pub_sub_port
       assert_equal 54321, pantry_config.receive_port
+      assert_equal 35412, pantry_config.file_service_port
     end
 
     it "does not set values to nil if not in the config" do
-      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "empty.yml")
+      config_file = fixture_path("empty.yml")
       pantry_config.load_file(config_file)
 
       assert_equal "127.0.0.1", pantry_config.server_host
       assert_equal 23001, pantry_config.pub_sub_port
       assert_equal 23002, pantry_config.receive_port
+      assert_equal 23003, pantry_config.file_service_port
     end
   end
 
@@ -119,7 +126,7 @@ describe Pantry::Config do
     end
 
     it "can load values from a given YAML file" do
-      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "config.yml")
+      config_file = fixture_path("config.yml")
       pantry_config.load_file(config_file)
 
       assert_equal 600, pantry_config.client_heartbeat_interval
@@ -130,7 +137,7 @@ describe Pantry::Config do
     end
 
     it "does not clobber certain values if config has set to nil" do
-      config_file = File.join(File.dirname(__FILE__), "..", "fixtures", "empty.yml")
+      config_file = fixture_path("empty.yml")
       pantry_config.load_file(config_file)
 
       assert_equal 300, pantry_config.client_heartbeat_interval

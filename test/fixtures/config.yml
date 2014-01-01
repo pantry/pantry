@@ -8,6 +8,7 @@ networking:
   server_host: 10.0.0.1
   pub_sub_port: 12345
   receive_port: 54321
+  file_service_port: 35412
 
 client:
   heartbeat_interval: 600
