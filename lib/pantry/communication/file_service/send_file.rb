@@ -15,8 +15,10 @@ module Pantry
       end
 
       def send_file(file_path, receiver_uuid)
-        @sending[receiver_uuid] = SendFileProgress.new(file_path, receiver_uuid)
-        start_transfer(receiver_uuid)
+        FileService::SendingFile.new(file_path, receiver_uuid).tap do |info|
+          @sending[receiver_uuid] = info
+          start_transfer(receiver_uuid)
+        end
       end
 
       def receive_message(message)
@@ -33,29 +35,6 @@ module Pantry
       end
 
       protected
-
-      class SendFileProgress
-        attr_reader :path, :uuid, :file
-        def initialize(file_path, receiver_uuid)
-          @path = file_path
-          @uuid = receiver_uuid
-          @file = File.open(@path, "r")
-
-          @file_size = @file.size
-          @total_bytes_sent = 0
-        end
-
-        def read(offset, bytes_to_read)
-          @total_bytes_sent += bytes_to_read
-
-          @file.seek(offset)
-          @file.read(bytes_to_read)
-        end
-
-        def close
-          @file.close
-        end
-      end
 
       def start_transfer(uuid)
         send_message(uuid, "START")
@@ -78,7 +57,7 @@ module Pantry
         current_file = @sending[message.from]
         return unless current_file
 
-        current_file.close
+        current_file.finished!
         @sending.delete(message.from)
       end
 

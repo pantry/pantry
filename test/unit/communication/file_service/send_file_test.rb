@@ -35,6 +35,13 @@ describe Pantry::Communication::FileService::SendFile do
       assert_equal "uuid", start_message.to
       assert_equal "START", start_message.body[0]
     end
+
+    it "returns a sending info object for callers to use" do
+      info = sender.send_file(file_path, "uuid")
+
+      assert_not_nil info
+      assert_equal file_path, info.path
+    end
   end
 
   it "reads the requested chunk of file and sends it along to the receiver" do
@@ -79,8 +86,8 @@ describe Pantry::Communication::FileService::SendFile do
     assert_equal 0, service.sent.length
   end
 
-  it "closes up the file associated with the UUID on FINISH" do
-    sender.send_file(file_path, "uuid")
+  it "closes up the file associated with the UUID on FINISH and notifies info" do
+    info = sender.send_file(file_path, "uuid")
 
     finish = Pantry::Message.new
     finish.from = "uuid"
@@ -92,6 +99,9 @@ describe Pantry::Communication::FileService::SendFile do
     service.sent = []
     sender.receive_message(fetch("uuid", 0, 1))
     assert_equal [], service.sent
+
+    assert info.finished?, "Info object was not finished"
+    assert_not_nil info.wait_for_finish(1)
   end
 
 end

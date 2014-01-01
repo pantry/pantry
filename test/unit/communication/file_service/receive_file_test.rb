@@ -121,6 +121,9 @@ describe Pantry::Communication::FileService::ReceiveFile do
     assert_equal 1, service.sent.length
     assert_equal info.uuid, service.sent[0].to
     assert_equal ["FINISH"], service.sent[0].body
+
+    assert info.finished?, "Did not mark info object as finished"
+    assert_not_nil info.wait_for_finish(1)
   end
 
   it "fails and deletes the file if the checksum does not match after upload complete" do

@@ -21,7 +21,9 @@ module Pantry
       end
 
       def receive_file(file_size, checksum)
-        ReceivingFile.new(file_size, checksum, chunk_size, pipeline_size).tap do |info|
+        FileService::ReceivingFile.new(
+          file_size, checksum, chunk_size, pipeline_size
+        ).tap do |info|
           @receiving[info.uuid] = info
         end
       end
@@ -40,70 +42,6 @@ module Pantry
       end
 
       protected
-
-      class ReceivingFile
-        attr_reader :uuid, :file_size, :checksum, :uploaded_path
-
-        def initialize(file_size, checksum, chunk_size, pipeline_size)
-          @uuid      = SecureRandom.uuid
-          @file_size = file_size
-          @checksum  = checksum
-
-          @chunk_size    = chunk_size
-          @pipeline_size = pipeline_size
-
-          @uploaded_file = Tempfile.new(uuid)
-          @uploaded_path = @uploaded_file.path
-
-          @next_requested_file_offset = 0
-          @current_pipeline_size      = 0
-
-          @chunk_count      = (@file_size.to_f / @chunk_size.to_f).ceil
-          @requested_chunks = 0
-          @received_chunks  = 0
-        end
-
-        def chunks_to_fetch(&block)
-          chunks_to_fill_pipeline = [
-            (@pipeline_size - @current_pipeline_size),
-            @chunk_count - @requested_chunks
-          ].min
-
-          chunks_to_fill_pipeline.times do
-            block.call(@next_requested_file_offset, @chunk_size)
-
-            @next_requested_file_offset += @chunk_size
-            @current_pipeline_size += 1
-            @requested_chunks      += 1
-          end
-        end
-
-        def write_chunk(offset, size, data)
-          @current_pipeline_size -= 1
-          @received_chunks       += 1
-
-          @uploaded_file.seek(offset)
-          @uploaded_file.write(data)
-
-          if @received_chunks == @chunk_count
-            @uploaded_file.close
-          end
-        end
-
-        def complete?
-          @uploaded_file.closed?
-        end
-
-        def valid?
-          uploaded_checksum = Digest::SHA256.file(@uploaded_file.path).hexdigest
-          uploaded_checksum == @checksum
-        end
-
-        def remove
-          @uploaded_file.unlink
-        end
-
-      end
 
       def fill_the_pipeline(message)
         current_file = @receiving[message.from]
@@ -140,6 +78,7 @@ module Pantry
           send_message(current_file.uuid, "ERROR", "Checksum did not match the uploaded file")
         end
 
+        current_file.finished!
         @receiving.delete(current_file.uuid)
       end
 
