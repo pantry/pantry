@@ -18,7 +18,7 @@ describe Pantry::Communication::FileService::SendFile do
 
   def fetch(uuid, seek, size)
     chunk = Pantry::Message.new
-    chunk.from = uuid
+    chunk.to = uuid
     chunk << "FETCH"
     chunk << seek.to_s
     chunk << size.to_s
@@ -90,7 +90,7 @@ describe Pantry::Communication::FileService::SendFile do
     info = sender.send_file(file_path, "uuid")
 
     finish = Pantry::Message.new
-    finish.from = "uuid"
+    finish.to = "uuid"
     finish << "FINISH"
 
     sender.receive_message(finish)

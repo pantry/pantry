@@ -24,13 +24,13 @@ module Pantry
       def receive_message(message)
         case message.body[0]
         when "FETCH"
-          Pantry.logger.debug("[Send File] (#{@file_path}) FETCH requested #{message.inspect}")
+          Pantry.logger.debug("[Send File] FETCH requested #{message.inspect}")
           fetch_and_return_chunk(message)
         when "FINISH"
-          Pantry.logger.debug("[Send File] (#{@file_path}) FINISHED")
+          Pantry.logger.debug("[Send File] FINISHED")
           clean_up(message)
         when "ERROR"
-          Pantry.logger.debug("[Send File] (#{@file_path}) ERROR #{message.inspect}")
+          Pantry.logger.debug("[Send File] ERROR #{message.inspect}")
         end
       end
 
@@ -41,7 +41,7 @@ module Pantry
       end
 
       def fetch_and_return_chunk(message)
-        current_file = @sending[message.from]
+        current_file = @sending[message.to]
         return unless current_file
 
         chunk_offset = message.body[1].to_i
@@ -49,16 +49,16 @@ module Pantry
 
         chunk = current_file.read(chunk_offset, chunk_size)
 
-        send_message(message.from, ["CHUNK", chunk],
+        send_message(current_file.uuid, ["CHUNK", chunk],
                      chunk_offset: chunk_offset, chunk_size: chunk_size)
       end
 
       def clean_up(message)
-        current_file = @sending[message.from]
+        current_file = @sending[message.to]
         return unless current_file
 
         current_file.finished!
-        @sending.delete(message.from)
+        @sending.delete(message.to)
       end
 
       def send_message(receiver_uuid, body, metadata = {})

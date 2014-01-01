@@ -16,23 +16,16 @@ describe Pantry::Communication::FileService::ReceiveFile do
   let(:file_path)  { fixture_path("file_to_upload") }
   let(:receiver)   { Pantry::Communication::FileService::ReceiveFile.new(service) }
 
-  let(:start_message) do
-    Pantry::Message.new.tap do |msg|
-      msg.from = "client1"
-      msg << "START"
-    end
-  end
-
   def start_message(uuid)
     Pantry::Message.new.tap do |msg|
-      msg.from = uuid
+      msg.to = uuid
       msg << "START"
     end
   end
 
   def chunk(uuid, data = "binary data", offset: 0, size: 1_000)
     Pantry::Message.new.tap do |msg|
-      msg.from = uuid
+      msg.to = uuid
       msg[:chunk_offset] = offset
       msg[:chunk_size]   = size
       msg << "CHUNK"

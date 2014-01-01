@@ -44,7 +44,7 @@ module Pantry
       protected
 
       def fill_the_pipeline(message)
-        current_file = @receiving[message.from]
+        current_file = @receiving[message.to]
         return unless current_file
 
         current_file.chunks_to_fetch do |offset, size|
@@ -54,7 +54,7 @@ module Pantry
       end
 
       def process_chunk(message)
-        current_file = @receiving[message.from]
+        current_file = @receiving[message.to]
         return unless current_file
 
         chunk_offset = message[:chunk_offset]
