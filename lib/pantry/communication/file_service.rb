@@ -12,8 +12,8 @@ module Pantry
         @socket = Celluloid::ZMQ::DealerSocket.new
         @socket.linger = 0
 
-        @receiver = FileService::ReceiveFile.new_link(@socket)
-        @sender   = FileService::SendFile.new_link(@socket)
+        @receiver = FileService::ReceiveFile.new_link(self)
+        @sender   = FileService::SendFile.new_link(self)
       end
 
       def start_server

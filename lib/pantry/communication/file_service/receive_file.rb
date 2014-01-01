@@ -11,8 +11,8 @@ module Pantry
 
       attr_accessor :pipeline_size, :chunk_size
 
-      def initialize(socket, chunk_size: 250_000, pipeline_size: 10)
-        @socket    = socket
+      def initialize(service, chunk_size: 250_000, pipeline_size: 10)
+        @service = service
 
         @chunk_size    = chunk_size
         @pipeline_size = pipeline_size
@@ -149,7 +149,7 @@ module Pantry
 
         body.each {|part| message << part }
 
-        @socket.send_message(message)
+        @service.send_message(message)
       end
 
     end

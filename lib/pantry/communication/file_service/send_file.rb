@@ -9,8 +9,8 @@ module Pantry
     class FileService::SendFile
       include Celluloid
 
-      def initialize(socket)
-        @socket  = socket
+      def initialize(service)
+        @service = service
         @sending = {}
       end
 
@@ -92,7 +92,7 @@ module Pantry
           message[key] = value
         end
 
-        @socket.send_message(message)
+        @service.send_message(message)
       end
 
     end
