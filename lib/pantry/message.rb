@@ -11,7 +11,7 @@ module Pantry
   class Message
 
     # Unique identifier for this Message. Automatically generated
-    attr_accessor :uuid
+    attr_reader :uuid
 
     # Where or who is this message intended for (Can be an identity or a stream)
     # Defaults to the catch-all stream `""`
