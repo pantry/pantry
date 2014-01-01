@@ -6,6 +6,7 @@ module Pantry
     # functionality.
     class ReadingSocket
       include Celluloid::ZMQ
+      finalizer :shutdown
 
       attr_reader :host, :port
 
@@ -29,7 +30,7 @@ module Pantry
         raise "Implement the socket setup. Must return the socket object already connected/bound."
       end
 
-      def close
+      def shutdown
         @running = false
       end
 

@@ -5,7 +5,7 @@ module Pantry
     include Celluloid
     finalizer :shutdown
 
-    # This server's Identity. By default this is the server's hostname but can be specified manually.
+    # This server's Identity. This is currently just the server's hostname.
     attr_accessor :identity
 
     # Registry of clients this Server knows about
@@ -79,12 +79,12 @@ module Pantry
       @networking.send_request(message)
     end
 
-    def send_file(file_path)
-      @networking.send_file(file_path)
+    def send_file(file_path, receiver_uuid)
+      @networking.send_file(file_path, receiver_uuid)
     end
 
-    def receive_file(save_path, file_size, file_checksum)
-      @networking.receive_file(save_path, file_size, file_checksum)
+    def receive_file(file_size, file_checksum)
+      @networking.receive_file(file_size, file_checksum)
     end
 
     protected
