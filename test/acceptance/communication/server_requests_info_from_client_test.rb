@@ -3,7 +3,7 @@ require 'acceptance/test_helper'
 describe "Server requests info from the Client" do
 
   it "asks a client for info and waits for the response" do
-    set_up_environment(pub_sub_port: 10600, receive_port: 10601)
+    set_up_environment(ports_start_at: 10600)
 
     message = Pantry::Commands::Echo.new("Hello Client").to_message
     response_future = @server.send_request(@client1, message)
@@ -12,7 +12,7 @@ describe "Server requests info from the Client" do
   end
 
   it "asks multiple clients for info and matches responses with requests" do
-    set_up_environment(pub_sub_port: 10602, receive_port: 10603)
+    set_up_environment(ports_start_at: 10610)
 
     message1 = Pantry::Commands::Echo.new("Hello Client1").to_message
     message2 = Pantry::Commands::Echo.new("Hello Client2").to_message
@@ -25,7 +25,7 @@ describe "Server requests info from the Client" do
   end
 
   it "handles multiple subsequent requests of the same type to the same client" do
-    set_up_environment(pub_sub_port: 10604, receive_port: 10605)
+    set_up_environment(ports_start_at: 10620)
 
     futures = []
     10.times do |i|

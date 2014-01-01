@@ -4,7 +4,7 @@ require 'fileutils'
 describe "Uploading cookbooks to the server" do
 
   it "finds the current cookbook and uploads it" do
-    set_up_environment(pub_sub_port: 11000, receive_port: 11001)
+    set_up_environment(ports_start_at: 11000)
 
     cli = Pantry::CLI.new(
       ["chef:cookbook:upload", File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)],
@@ -19,7 +19,7 @@ describe "Uploading cookbooks to the server" do
   end
 
   it "allows forcing a cookbook version up if the version already exists on the server" do
-    set_up_environment(pub_sub_port: 11010, receive_port: 11011)
+    set_up_environment(ports_start_at: 11010)
 
     chef_dir = Pantry.root.join("chef", "cookbooks", "mini")
     FileUtils.mkdir_p chef_dir

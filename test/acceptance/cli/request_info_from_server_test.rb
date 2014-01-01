@@ -3,7 +3,7 @@ require 'acceptance/test_helper'
 describe "CLI can ask Server for information" do
 
   it "can ask for all known nodes" do
-    set_up_environment(pub_sub_port: 10200, receive_port: 10201)
+    set_up_environment(ports_start_at: 10200)
 
     listener = SaveInfoProgressListener.new
     cli = Pantry::CLI.new(
@@ -19,7 +19,7 @@ describe "CLI can ask Server for information" do
   end
 
   it "can limit the query to a subset of clients" do
-    set_up_environment(pub_sub_port: 10202, receive_port: 10203)
+    set_up_environment(ports_start_at: 10210)
 
     listener = SaveInfoProgressListener.new
     cli = Pantry::CLI.new(

@@ -3,7 +3,7 @@ require 'acceptance/test_helper'
 describe "Client requests information from the Server" do
 
   it "asks the server for information and waits for a response" do
-    set_up_environment(pub_sub_port: 10300, receive_port: 10301)
+    set_up_environment(ports_start_at: 10300)
 
     message = ServerEchoCommand.new("Hello Server").to_message
     response_future = @client1.send_request(message)
@@ -12,7 +12,7 @@ describe "Client requests information from the Server" do
   end
 
   it "handles multiple requests in the proper order" do
-    set_up_environment(pub_sub_port: 10303, receive_port: 10304)
+    set_up_environment(ports_start_at: 10310)
 
     futures = []
     10.times do |i|

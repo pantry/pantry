@@ -46,15 +46,17 @@ class Minitest::Test
 
   # Set up a fully functional Server + 2 Client environment on the given ports
   # Make sure that the ports given are different for each test or port-conflict
-  # errors will happen.
+  # errors will happen. Make sure each test has a wide enough range between
+  # port_start_at values (10 is a good number)
   #
   # This helper exposes @server, @client1, and @client2 for use in tests
-  def set_up_environment(pub_sub_port: 10101, receive_port: 10102, heartbeat: 300)
+  def set_up_environment(ports_start_at: 10101, heartbeat: 300)
     Celluloid.boot
 
     Pantry.config.server_host  = "127.0.0.1"
-    Pantry.config.pub_sub_port = pub_sub_port
-    Pantry.config.receive_port = receive_port
+    Pantry.config.pub_sub_port = ports_start_at
+    Pantry.config.receive_port = ports_start_at + 1
+    Pantry.config.file_service_port = ports_start_at + 2
     Pantry.config.client_heartbeat_interval = heartbeat
     Pantry.config.data_dir = File.expand_path("../../data_dir", __FILE__)
     Pantry.config.response_timeout = 5

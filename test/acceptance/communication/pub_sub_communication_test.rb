@@ -4,7 +4,7 @@ describe "Pub/Sub Communication" do
 
   describe "Server" do
     it "can publish a message to all connected clients" do
-      set_up_environment(pub_sub_port: 10400, receive_port: 10401)
+      set_up_environment(ports_start_at: 10400)
 
       @server.publish_message(
         Pantry::Message.new("test_message"),
@@ -19,7 +19,7 @@ describe "Pub/Sub Communication" do
     end
 
     it "can publish a message to a subset of all connected clients" do
-      set_up_environment(pub_sub_port: 10402, receive_port: 10403)
+      set_up_environment(ports_start_at: 10410)
 
       client3 = Pantry::Client.new(roles: %w(database), identity: "client3")
       client3.run

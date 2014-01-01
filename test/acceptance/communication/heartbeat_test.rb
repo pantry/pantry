@@ -4,7 +4,7 @@ describe "Client / Server heartbeats" do
 
   describe "Client" do
     it "re-registers with the server every interval seconds" do
-      set_up_environment(pub_sub_port: 10500, receive_port: 10501, heartbeat: 1)
+      set_up_environment(ports_start_at: 10500, heartbeat: 1)
 
       # Clean out the server registry then wait for clients to re-register themselves
       @server.client_registry.clear!

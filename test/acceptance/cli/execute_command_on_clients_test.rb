@@ -3,7 +3,7 @@ require 'acceptance/test_helper'
 describe "CLI requests information from individual clients" do
 
   it "receives responses from each client asked" do
-    set_up_environment(pub_sub_port: 10100, receive_port: 10101)
+    set_up_environment(ports_start_at: 10100)
 
     listener = SaveInfoProgressListener.new
     cli = Pantry::CLI.new(
@@ -19,7 +19,7 @@ describe "CLI requests information from individual clients" do
   end
 
   it "can target specific clients for the commands sent" do
-    set_up_environment(pub_sub_port: 10102, receive_port: 10103)
+    set_up_environment(ports_start_at: 10110)
 
     listener = SaveInfoProgressListener.new
     cli = Pantry::CLI.new(
