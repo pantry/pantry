@@ -70,8 +70,13 @@ module Pantry
         if !message[:cookbook_force_upload] && File.exists?(version_path)
           [false, "Version #{cookbook_version} of cookbook #{cookbook_name} already exists"]
         else
-          uploader_uuid = server.receive_file(version_path, cookbook_size, cookbook_checksum)
-          [true, uploader_uuid]
+          uploader_info = server.receive_file(cookbook_size, cookbook_checksum)
+          uploader_info.on_complete do
+            # Move tempfile into place
+            FileUtils.mv uploader_info.uploaded_path, version_path
+          end
+
+          [true, uploader_info.receiver_identity, uploader_info.uuid]
         end
       end
 
@@ -83,13 +88,15 @@ module Pantry
         Pantry.logger.debug("[Upload Cookbook] #{response_message.inspect}")
 
         if upload_allowed == "true"
-          client.send_file(@cookbook_tarball,
-                           receiver_uuid: response_message.body[1],
-                           listener: progress_listener)
+          send_info = client.send_file(@cookbook_tarball,
+                                       response_message.body[1],
+                                       response_message.body[2])
+          send_info.wait_for_finish
         else
           progress_listener.error(response_message.body[1])
-          progress_listener.finished
         end
+
+        progress_listener.finished
       end
 
     end

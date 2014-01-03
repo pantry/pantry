@@ -76,8 +76,16 @@ describe Pantry::Chef::UploadCookbook do
 
     let(:command) { build_command("mini") }
 
+    let(:receiver_info) {
+      stub(
+        :uuid => "abc123",
+        :receiver_identity => "receiver",
+        :on_complete => nil
+      )
+    }
+
     it "ensures a place exists for the uploaded cookbook to go" do
-      command.server_or_client = stub_everything
+      command.server_or_client = stub(:receive_file => receiver_info)
       response = command.perform(incoming_message)
 
       assert File.directory?(Pantry.root.join("chef", "cookbooks", "testing")),
@@ -86,16 +94,13 @@ describe Pantry::Chef::UploadCookbook do
 
     it "responds successfully and fires off a file upload receiver" do
       server_mock = mock
-      server_mock.expects(:receive_file).with(
-        Pantry.root.join("chef", "cookbooks", "testing", "1.0.0.tgz"),
-        100, "123abc"
-      ).returns("abc123")
+      server_mock.expects(:receive_file).with(100, "123abc").returns(receiver_info)
 
       command.server_or_client = server_mock
 
       response = command.perform(incoming_message)
 
-      assert_equal [true, "abc123"], response
+      assert_equal [true, "receiver", "abc123"], response
     end
 
     it "response with an error if a cookbook upload exists with that version" do
@@ -115,14 +120,14 @@ describe Pantry::Chef::UploadCookbook do
       FileUtils.mkdir_p Pantry.root.join("chef", "cookbooks", "testing")
       FileUtils.touch Pantry.root.join("chef", "cookbooks", "testing", "1.0.0.tgz")
 
-      server = mock(:receive_file => "a1b2c3")
+      server = mock(:receive_file => receiver_info)
 
       incoming_message[:cookbook_force_upload] = true
 
       command.server_or_client = server
       response = command.perform(incoming_message)
 
-      assert_equal [true, "a1b2c3"], response
+      assert_equal [true, "receiver", "abc123"], response
     end
 
   end
@@ -133,9 +138,10 @@ describe Pantry::Chef::UploadCookbook do
 
     it "triggers a file upload actor with the cookbook tarball and message UUID" do
       client = mock
-      client.expects(:send_file).with do |file, options|
-        options[:receiver_uuid] == "abc123" && File.exists?(file)
-      end
+      client.expects(:send_file).with do |file, receiver_uuid|
+        assert File.exists?(file), "Did not find the file"
+        assert_equal "abc123", receiver_uuid
+      end.returns(mock(:wait_for_finish))
 
       command.server_or_client = client
       command.prepare_message(filter, {})

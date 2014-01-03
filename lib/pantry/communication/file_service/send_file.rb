@@ -14,21 +14,26 @@ module Pantry
         @sending = {}
       end
 
-      def send_file(file_path, receiver_uuid)
-        FileService::SendingFile.new(file_path, receiver_uuid).tap do |info|
-          @sending[receiver_uuid] = info
-          start_transfer(receiver_uuid)
-        end
+      def send_file(file_path, receiver_identity, file_uuid)
+        sender_info = FileService::SendingFile.new(file_path, receiver_identity, file_uuid)
+
+        @sending[file_uuid] = sender_info
+        send_message(sender_info, "START")
+
+        sender_info
       end
 
-      def receive_message(message)
+      def receive_message(from_identity, message)
+        current_file_info = @sending[message.to]
+        return unless current_file_info
+
         case message.body[0]
         when "FETCH"
           Pantry.logger.debug("[Send File] FETCH requested #{message.inspect}")
-          fetch_and_return_chunk(message)
+          fetch_and_return_chunk(current_file_info, message)
         when "FINISH"
-          Pantry.logger.debug("[Send File] FINISHED")
-          clean_up(message)
+          Pantry.logger.debug("[Send File] FINISHED cleaning up for #{message.inspect}")
+          clean_up(current_file_info, message)
         when "ERROR"
           Pantry.logger.debug("[Send File] ERROR #{message.inspect}")
         end
@@ -36,34 +41,23 @@ module Pantry
 
       protected
 
-      def start_transfer(uuid)
-        send_message(uuid, "START")
-      end
-
-      def fetch_and_return_chunk(message)
-        current_file = @sending[message.to]
-        return unless current_file
-
+      def fetch_and_return_chunk(current_file, message)
         chunk_offset = message.body[1].to_i
         chunk_size   = message.body[2].to_i
 
         chunk = current_file.read(chunk_offset, chunk_size)
 
-        send_message(current_file.uuid, ["CHUNK", chunk],
-                     chunk_offset: chunk_offset, chunk_size: chunk_size)
+        send_message(current_file, ["CHUNK", chunk], chunk_offset: chunk_offset, chunk_size: chunk_size)
       end
 
-      def clean_up(message)
-        current_file = @sending[message.to]
-        return unless current_file
-
+      def clean_up(current_file, message)
         current_file.finished!
         @sending.delete(message.to)
       end
 
-      def send_message(receiver_uuid, body, metadata = {})
+      def send_message(sender_info, body, metadata = {})
         message    = Pantry::Message.new
-        message.to = receiver_uuid
+        message.to = sender_info.uuid
 
         [body].flatten.each {|part| message << part }
 
@@ -71,7 +65,7 @@ module Pantry
           message[key] = value
         end
 
-        @service.send_message(message)
+        @service.send_message(sender_info.receiver_identity, message)
       end
 
     end

@@ -21,12 +21,15 @@ module Pantry
       # Informational object to keep track of the progress of sending a file
       # up to a receiver.
       class SendingFile < FileProgressInfo
-        attr_reader :path, :uuid, :file
-        def initialize(file_path, receiver_uuid)
+        attr_reader :path, :receiver_identity, :uuid, :file
+
+        def initialize(file_path, receiver_identity, file_uuid)
           super()
           @path = file_path
-          @uuid = receiver_uuid
+          @uuid = file_uuid
           @file = File.open(@path, "r")
+
+          @receiver_identity = receiver_identity
 
           @file_size = @file.size
           @total_bytes_sent = 0
@@ -55,6 +58,8 @@ module Pantry
       class ReceivingFile < FileProgressInfo
         attr_reader :uuid, :file_size, :checksum, :uploaded_path
 
+        attr_accessor :receiver_identity, :sender_identity
+
         def initialize(file_size, checksum, chunk_size, pipeline_size)
           super()
           @uuid      = SecureRandom.uuid
@@ -73,6 +78,10 @@ module Pantry
           @chunk_count      = (@file_size.to_f / @chunk_size.to_f).ceil
           @requested_chunks = 0
           @received_chunks  = 0
+        end
+
+        def on_complete(&block)
+          @completion_block = block
         end
 
         def chunks_to_fetch(&block)
@@ -104,6 +113,11 @@ module Pantry
 
         def finished!
           @uploaded_file.close
+
+          if @completion_block && valid?
+            @completion_block.call
+          end
+
           super
         end
 
@@ -113,8 +127,9 @@ module Pantry
         alias finished? complete?
 
         def valid?
+          return @is_valid if defined?(@is_valid)
           uploaded_checksum = Digest::SHA256.file(@uploaded_file.path).hexdigest
-          uploaded_checksum == @checksum
+          @is_valid = (uploaded_checksum == @checksum)
         end
 
         def remove

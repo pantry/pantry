@@ -28,35 +28,33 @@ module Pantry
         end
       end
 
-      def receive_message(message)
+      def receive_message(from_identity, message)
+        if current_file = @receiving[message.to]
+          current_file.sender_identity = from_identity
+        else
+          return
+        end
+
         case message.body[0]
         when "START"
           Pantry.logger.debug("[Receive File] Received START message #{message.inspect}")
-          fill_the_pipeline(message)
+          fill_the_pipeline(current_file, message)
         when "CHUNK"
           Pantry.logger.debug("[Receive File] Received CHUNK message #{message.metadata}")
-          process_chunk(message)
-        else
-          Pantry.logger.error("[Recieve File] Received message with unknown body")
+          process_chunk(current_file, message)
         end
       end
 
       protected
 
-      def fill_the_pipeline(message)
-        current_file = @receiving[message.to]
-        return unless current_file
-
+      def fill_the_pipeline(current_file, message)
         current_file.chunks_to_fetch do |offset, size|
           Pantry.logger.debug("[Receive File] Fetching #{offset} x #{size} for #{current_file.uuid}")
-          send_message(current_file.uuid, "FETCH", offset, size)
+          send_message(current_file, "FETCH", offset, size)
         end
       end
 
-      def process_chunk(message)
-        current_file = @receiving[message.to]
-        return unless current_file
-
+      def process_chunk(current_file, message)
         chunk_offset = message[:chunk_offset]
         chunk_size   = message[:chunk_size]
         chunk_data   = message.body[1]
@@ -66,29 +64,29 @@ module Pantry
         if current_file.complete?
           finalize_file(current_file)
         else
-          fill_the_pipeline(message)
+          fill_the_pipeline(current_file, message)
         end
       end
 
       def finalize_file(current_file)
         if current_file.valid?
-          send_message(current_file.uuid, "FINISH")
+          send_message(current_file, "FINISH")
         else
           current_file.remove
-          send_message(current_file.uuid, "ERROR", "Checksum did not match the uploaded file")
+          send_message(current_file, "ERROR", "Checksum did not match the uploaded file")
         end
 
         current_file.finished!
         @receiving.delete(current_file.uuid)
       end
 
-      def send_message(uuid, *body)
+      def send_message(current_file, *body)
         message    = Pantry::Message.new
-        message.to = uuid
+        message.to = current_file.uuid
 
         body.each {|part| message << part }
 
-        @service.send_message(message)
+        @service.send_message(current_file.sender_identity, message)
       end
 
     end

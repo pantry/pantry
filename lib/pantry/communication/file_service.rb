@@ -5,11 +5,14 @@ module Pantry
       include Celluloid::ZMQ
       finalizer :shutdown
 
+      attr_reader :identity
+
       def initialize(server_host, port)
         @host = server_host
         @port = port
 
-        @socket = Celluloid::ZMQ::DealerSocket.new
+        @socket = Celluloid::ZMQ::RouterSocket.new
+        @socket.identity = @identity = SecureRandom.uuid
         @socket.linger = 0
 
         @receiver = FileService::ReceiveFile.new_link(self)
@@ -40,25 +43,30 @@ module Pantry
       # the Sender.
       def receive_file(size, checksum)
         Pantry.logger.debug("[FileService] Receiving file of size #{size} and checksum #{checksum}")
-        @receiver.receive_file(size, checksum)
+        @receiver.receive_file(size, checksum).tap do |info|
+          info.receiver_identity = @socket.identity
+        end
       end
 
       # Inform the service that we want to start sending a file up to the receiver
       # who's listening on the given UUID.
-      def send_file(file_path, receiver_uuid)
-        Pantry.logger.debug("[FileService] Sending file #{file_path} to #{receiver_uuid}")
-        @sender.send_file(file_path, receiver_uuid)
+      def send_file(file_path, receiver_identity, file_uuid)
+        Pantry.logger.debug("[FileService] Sending file #{file_path} to #{receiver_identity}")
+        @sender.send_file(file_path, receiver_identity, file_uuid)
       end
 
-      def send_message(message)
+      def send_message(identity, message)
         @socket.write(
-          SerializeMessage.to_zeromq(message)
+          [
+            identity,
+            SerializeMessage.to_zeromq(message)
+          ].flatten
         )
       end
 
-      def receive_message(message)
-        @sender.receive_message(message)
-        @receiver.receive_message(message)
+      def receive_message(from_identity, message)
+        @sender.async.receive_message(from_identity, message)
+        @receiver.async.receive_message(from_identity, message)
       end
 
       protected
@@ -74,16 +82,14 @@ module Pantry
       def process_next_message
         next_message = []
 
-        next_message << @socket.read
+        from_identity = @socket.read
 
         while @socket.more_parts?
           next_message << @socket.read
         end
 
-        Pantry.logger.debug("[File Service] Got message #{next_message.inspect}")
-
         async.receive_message(
-          SerializeMessage.from_zeromq(next_message)
+          from_identity, SerializeMessage.from_zeromq(next_message)
         )
       end
 
