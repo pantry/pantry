@@ -3,12 +3,12 @@ require 'fileutils'
 require 'tempfile'
 
 require 'pantry/chef/upload_cookbook'
-require 'pantry/chef/run_chef_solo'
 require 'pantry/chef/list_cookbooks'
 require 'pantry/chef/sync_cookbooks'
 require 'pantry/chef/send_cookbooks'
 
 require 'pantry/chef/configure_chef'
+require 'pantry/chef/run_chef_solo'
 
 module Pantry
   module Chef
@@ -26,5 +26,6 @@ Pantry.add_server_command(Pantry::Chef::UploadCookbook)
 Pantry.add_server_command(Pantry::Chef::ListCookbooks)
 Pantry.add_server_command(Pantry::Chef::SendCookbooks)
 
-Pantry.add_client_command(Pantry::Chef::RunChefSolo)
 Pantry.add_client_command(Pantry::Chef::ConfigureChef)
+Pantry.add_client_command(Pantry::Chef::SyncCookbooks)
+Pantry.add_client_command(Pantry::Chef::RunChefSolo)
