@@ -74,8 +74,8 @@ module Pantry
         @file_service.receive_file(file_size, file_checksum)
       end
 
-      def send_file(file_path, receiver_uuid)
-        @file_service.send_file(file_path, receiver_uuid)
+      def send_file(file_path, receiver_identity, file_uuid)
+        @file_service.send_file(file_path, receiver_identity, file_uuid)
       end
 
     end

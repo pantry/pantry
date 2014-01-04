@@ -79,8 +79,8 @@ module Pantry
       @networking.send_request(message)
     end
 
-    def send_file(file_path, receiver_uuid)
-      @networking.send_file(file_path, receiver_uuid)
+    def send_file(file_path, receiver_identity, file_uuid)
+      @networking.send_file(file_path, receiver_identity, file_uuid)
     end
 
     def receive_file(file_size, file_checksum)
