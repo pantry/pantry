@@ -74,6 +74,20 @@ module Pantry
       progress_listener.finished
     end
 
+    # Send a request out, returning the Future which will eventually
+    # contain the response Message
+    def send_request(message)
+      @server_or_client.send_request(message)
+    end
+
+    # Send a request out and wait for the response. Will return the response
+    # once it is received.
+    #
+    # This is a blocking call.
+    def send_request!(message)
+      send_request(message).value
+    end
+
     # Create a new Message from the information in the current Command
     def to_message
       Pantry::Message.new(self.class.command_type)
@@ -102,6 +116,8 @@ module Pantry
     def server_or_client=(server_or_client)
       @server_or_client = server_or_client
     end
+    alias client= server_or_client=
+    alias server= server_or_client=
 
     # Get the Server handling this command
     def server

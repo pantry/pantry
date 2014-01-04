@@ -84,6 +84,33 @@ describe Pantry::Command do
     assert_equal "Gir::WantsWaffles", message.type
   end
 
+  describe "#send_request!" do
+    it "can send a request out and wait for the response" do
+      client = Pantry::Client.new
+      command = Pantry::Command.new
+      command.client = client
+      message = Pantry::Message.new
+      response = Pantry::Message.new
+
+      client.expects(:send_request).with(message).returns(mock(:value => response))
+
+      assert_equal response, command.send_request!(message)
+    end
+  end
+
+  describe "#send_request" do
+    it "can send a request and return the future for async waiting" do
+      client = Pantry::Client.new
+      command = Pantry::Command.new
+      command.client = client
+      message = Pantry::Message.new
+
+      client.expects(:send_request).with(message).returns("future")
+
+      assert_equal "future", command.send_request(message)
+    end
+  end
+
   describe "CLI" do
 
     class CLICommand < Pantry::Command
