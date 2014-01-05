@@ -7,6 +7,7 @@ require 'fakefs/safe'
 require 'pantry'
 
 Pantry.logger.disable!
+#Pantry.config.log_level = :debug
 
 class Minitest::Test
 
