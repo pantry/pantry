@@ -115,7 +115,11 @@ module Pantry
           @uploaded_file.close
 
           if @completion_block && valid?
-            @completion_block.call
+            begin
+              @completion_block.call
+            rescue => ex
+              Pantry.logger.debug("[Receive File] Error running completion block #{ex.inspect}")
+            end
           end
 
           super

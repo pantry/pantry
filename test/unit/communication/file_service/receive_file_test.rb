@@ -160,6 +160,22 @@ describe Pantry::Communication::FileService::ReceiveFile do
     assert_false completion_called, "The completion block was called when it shouldn't have"
   end
 
+  it "does not fall over if the completion block throws an error" do
+    info = receiver.receive_file(
+      File.size(file_path),
+      "9cb63cb779e8c571db3199b783a36cc43cd9e7c076beeb496c39e9cc06196dc5"
+    )
+    info.on_complete do
+      raise "This is an error zomg"
+    end
+
+    # Finish the file
+    receiver.receive_message("sender_ident", start_message(info.uuid))
+    receiver.receive_message("sender_ident", chunk(info.uuid))
+
+    info.wait_for_finish(1)
+  end
+
   it "fails and deletes the file if the checksum does not match after upload complete" do
     info = receiver.receive_file(File.size(file_path), "invalid")
     receiver.receive_message("sender_ident", start_message(info.uuid))

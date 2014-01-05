@@ -36,8 +36,8 @@ module Pantry
           @receiver_info = receiver_info
         end
 
-        def method_missing(*args)
-          @receiver_info.send(*args)
+        def method_missing(*args, &block)
+          @receiver_info.send(*args, &block)
         end
       end
 
@@ -58,7 +58,7 @@ module Pantry
           stdout, stderr = Open3.capture2e(
             "tar",
             "-xzC", Pantry.root.join("chef", "cookbooks").to_s,
-            "-f", receive_info.uploaded_path
+            "-f", receiver_info.uploaded_path
           )
 
           Pantry.logger.debug("[#{client.identity}] Unpack cookbook #{stdout.inspect}, #{stderr.inspect}")
