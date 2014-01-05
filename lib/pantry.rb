@@ -18,6 +18,7 @@ require 'pantry/progress_listener'
 require 'pantry/cli_progress_listener'
 
 require 'pantry/command'
+require 'pantry/multi_command'
 require 'pantry/command_handler'
 
 require 'pantry/commands/echo'
