@@ -119,15 +119,12 @@ module Pantry
     alias client= server_or_client=
     alias server= server_or_client=
 
-    # Get the Server handling this command
-    def server
+    # Get the server or client object handling this command
+    def server_or_client
       @server_or_client
     end
-
-    # Get the Client handling this command
-    def client
-      @server_or_client
-    end
+    alias server server_or_client
+    alias client server_or_client
 
   end
 

@@ -19,7 +19,7 @@ module Pantry
     end
 
     def say(message)
-      Pantry.logger.info("[CLI] #{message}")
+      Pantry.logger.info("[CLI] #{message.inspect}")
     end
 
     def error(message)

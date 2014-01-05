@@ -20,6 +20,7 @@ module Pantry
         recievers = build_cookbook_receivers(cookbooks_to_download)
         send_receiver_information_to_server(recievers)
         wait_for_receivers_to_finish(recievers)
+        true
       end
 
       protected
