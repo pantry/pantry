@@ -25,6 +25,7 @@ module Pantry
       def create_required_directories
         FileUtils.mkdir_p(@base_chef_dir.join("cache"))
         FileUtils.mkdir_p(@base_chef_dir.join("cookbooks"))
+        FileUtils.mkdir_p(@base_chef_dir.join("environments"))
         FileUtils.mkdir_p(@etc_dir)
       end
 

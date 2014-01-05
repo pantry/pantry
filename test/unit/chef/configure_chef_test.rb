@@ -12,11 +12,10 @@ describe Pantry::Chef::ConfigureChef do
     command = Pantry::Chef::ConfigureChef.new
     command.perform(Pantry::Message.new)
 
-    assert File.directory?(Pantry.root.join("chef", "cache")),
-      "Did not create the chef file cache directory"
-
-    assert File.directory?(Pantry.root.join("chef", "cookbooks")),
-      "Did not create the chef cookbooks directory"
+    %w(cache cookbooks environments).each do |dir|
+      assert File.directory?(Pantry.root.join("chef", dir)),
+        "Did not create the chef #{dir} directory"
+    end
   end
 
   it "writes out chef/solo.rb pointing chef to the right locations" do
