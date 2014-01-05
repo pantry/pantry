@@ -9,6 +9,7 @@ require 'pantry/chef/send_cookbooks'
 
 require 'pantry/chef/configure_chef'
 require 'pantry/chef/run_chef_solo'
+require 'pantry/chef/run'
 
 module Pantry
   module Chef
@@ -26,6 +27,7 @@ Pantry.add_server_command(Pantry::Chef::UploadCookbook)
 Pantry.add_server_command(Pantry::Chef::ListCookbooks)
 Pantry.add_server_command(Pantry::Chef::SendCookbooks)
 
+Pantry.add_client_command(Pantry::Chef::Run)
 Pantry.add_client_command(Pantry::Chef::ConfigureChef)
 Pantry.add_client_command(Pantry::Chef::SyncCookbooks)
 Pantry.add_client_command(Pantry::Chef::RunChefSolo)

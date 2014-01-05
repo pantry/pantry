@@ -132,6 +132,5 @@ Pantry.add_client_command(Pantry::Commands::Echo)
 Pantry.add_server_command(Pantry::Commands::ListClients)
 Pantry.add_server_command(Pantry::Commands::RegisterClient)
 
-## Chef
-
+# Chef Handling Commands and Code #
 require 'pantry/chef'
