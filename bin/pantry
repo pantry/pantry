@@ -6,6 +6,6 @@ require 'rubygems'
 $:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 require 'pantry'
 
-Pantry.config.log_level = :debug
+Pantry.config.log_level = :error
 cli = Pantry::CLI.new(ARGV.clone)
 cli.run

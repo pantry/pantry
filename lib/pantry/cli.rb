@@ -9,6 +9,9 @@ module Pantry
       option "-a", "--application APPLICATION", String, "Filter Clients by a specific APPLICATION"
       option "-e", "--environment ENVIRONMENT", String, "Filter Clients by a specific ENVIRONMENT"
       option "-r", "--roles ROLE1,ROLE2",       Array,  "Filter Clients by given ROLES"
+      option "-v", "--verbose", "Verbose output (INFO)"
+      option "-d", "--debug",   "Even more Verbose output (DEBUG)"
+      option "-V", "--version", "Print out Pantry's version"
     }
 
     def initialize(command_line, **args)
@@ -24,7 +27,9 @@ module Pantry
 
       find_all_cli_commands
       options, arguments = parse_command_line(@command_line)
-      process_command(options, arguments)
+      if options && process_global_command_line_options(options)
+        process_command(options, arguments)
+      end
       terminate
     end
 
@@ -63,13 +68,27 @@ module Pantry
       end
     end
 
-    def process_command(options, arguments)
-      if options.nil?
-        # Errored out =/
-        terminate
-        return
+    def process_global_command_line_options(options)
+      if options["verbose"]
+        Pantry.config.log_level = :info
+        Pantry.config.refresh
       end
 
+      if options["debug"]
+        Pantry.config.log_level = :debug
+        Pantry.config.refresh
+      end
+
+      if options["version"]
+        puts Pantry::VERSION
+        terminate
+        return false
+      end
+
+      true
+    end
+
+    def process_command(options, arguments)
       triggered_command = options.command_found
       if command_class = @known_commands[triggered_command]
         client_filter = Pantry::Communication::ClientFilter.new(

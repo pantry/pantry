@@ -42,6 +42,33 @@ describe Pantry::CLI do
     cli.run
   end
 
+  it "sets the logging level to info on -v" do
+    Pantry.config.expects(:refresh)
+
+    cli = build_cli(["-v"])
+    cli.run
+
+    assert_equal :info, Pantry.config.log_level
+  end
+
+  it "sets logging level to debug on -d" do
+    Pantry.config.expects(:refresh)
+
+    cli = build_cli(["-d"])
+    cli.run
+
+    assert_equal :debug, Pantry.config.log_level
+  end
+
+  it "prints out the version of pantry when requested" do
+    out, err = capture_io do
+      cli = build_cli(["-V"])
+      cli.run
+    end
+
+    assert_equal Pantry::VERSION, out.strip
+  end
+
   it "can be given a set of filters to limit the request to a certain subset of clients" do
     cli = build_cli(["-a", "pantry", "-e", "test", "echo", "Hello World"])
 

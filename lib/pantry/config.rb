@@ -105,6 +105,10 @@ module Pantry
       load_global_configs(configs)
       load_networking_configs(configs["networking"])
       load_client_configs(configs["client"])
+      refresh
+    end
+
+    def refresh
       apply_configuration
     end
 

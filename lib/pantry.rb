@@ -11,6 +11,7 @@ require 'yaml'
 
 require 'opt_parse_plus'
 
+require 'pantry/version'
 require 'pantry/config'
 require 'pantry/logger'
 require 'pantry/message'
