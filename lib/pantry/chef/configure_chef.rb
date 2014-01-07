@@ -16,6 +16,7 @@ module Pantry
         @etc_dir       = Pantry.root.join("etc", "chef")
         create_required_directories
         write_solo_rb
+        write_client_configs
         # TODO: Error handling response message?
         true
       end
@@ -41,6 +42,14 @@ module Pantry
 
         File.open(@etc_dir.join("solo.rb"), "w+") do |file|
           file.write(contents.join("\n"))
+        end
+      end
+
+      def write_client_configs
+        if client && client.environment
+          File.open(@base_chef_dir.join("environments", "#{client.environment}.rb"), "w+") do |file|
+            file.write(%|name "#{client.environment}"|)
+          end
         end
       end
 

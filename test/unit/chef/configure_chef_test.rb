@@ -46,4 +46,17 @@ describe Pantry::Chef::ConfigureChef do
     assert_match %|environment "staging"|, solo_contents
   end
 
+  it "writes out an environment file if the Client is configured with an environment" do
+    client = Pantry::Client.new(environment: "staging")
+
+    command = Pantry::Chef::ConfigureChef.new
+    command.server_or_client = client
+    command.perform(Pantry::Message.new)
+
+    staging_env = Pantry.root.join("chef", "environments", "staging.rb")
+    contents = File.read(staging_env)
+
+    assert_match %|name "staging"|, contents
+  end
+
 end
