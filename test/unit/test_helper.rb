@@ -42,7 +42,7 @@ end
 # Minitest uses Tempfiles for figuring out more complicated diffs
 # This causes FakeFS to explode, so make sure this is run without FakeFS
 # enabled.
-module MiniTest
+module Minitest
   module Assertions
     alias :actual_diff :diff
 

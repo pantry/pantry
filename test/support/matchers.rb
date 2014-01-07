@@ -1,6 +1,6 @@
 # Some custom MiniTest matchers used throughout the system
 
-class Minitest::Test
+module Minitest::Assertions
 
   # I don't like the refute_ syntax, sorry =/
 
