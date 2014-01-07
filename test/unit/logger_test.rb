@@ -53,6 +53,7 @@ describe Pantry::Logger do
   end
 
   it "sets the log's level according to config.log_level" do
+    Pantry.config.log_level = :info
     logger = Pantry::Logger.new
 
     assert_equal ::Logger::INFO, Celluloid.logger.level
