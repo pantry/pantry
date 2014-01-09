@@ -23,8 +23,13 @@ class OptParsePlus
 
   def add_command(command_name, &block)
     command_parser = OptParsePlus.new(self)
+
+    base_command = base_command_name(command_name.to_s)
+    rest = command_name.gsub(base_command, '')
+
+    command_parser.banner "Usage: #$0 #{base_command} [options]#{rest}"
     command_parser.add_options(&block) if block_given?
-    @commands[base_command_name(command_name.to_s)] = command_parser
+    @commands[base_command] = command_parser
   end
 
   def option(*arguments)
@@ -42,6 +47,7 @@ class OptParsePlus
     @summary = message
     @parser.separator("")
     @parser.separator(message)
+    @parser.separator("")
   end
 
   def set(key, value)

@@ -138,8 +138,21 @@ describe OptParsePlus do
     assert_match /stock\s+Stock the item/, help_text
   end
 
-  it "includes sub-command descriptions and banner strings in help text"
+  it "includes sub-command descriptions and banner strings in help text" do
+    parser = OptParsePlus.new
+    parser.add_command("display MESSAGE") do
+      description "Show the given message"
+      option "-c", "--cap", "Capitalize the message"
+    end
 
-  it "builds help banner from the full stack of commands and options"
+    help_text, error = capture_io do
+      parser.parse!(["display", "--help"])
+    end
+
+    assert_match /display \[options\] MESSAGE/, help_text
+    assert_match /-c, --cap/, help_text
+    assert_match /Capitalize the message/, help_text
+    assert_match /Show the given message/, help_text
+  end
 
 end
