@@ -6,8 +6,8 @@ module Pantry
     # Given a cookbook, upload it to the server
     class UploadCookbook < Pantry::Command
 
-      command "chef:cookbook:upload [options] COOKBOOK_DIR" do
-        description "Upload a given cookbook to the server."
+      command "chef:cookbook:upload COOKBOOK_DIR" do
+        description "Upload the cookbook at COOKBOOK_DIR to the server."
         option      "-f", "--force", "Overwrite a previously uploaded version of this cookbook"
       end
 
