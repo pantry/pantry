@@ -1,6 +1,9 @@
+$:.push File.expand_path("../lib", __FILE__)
+require "pantry/version"
+
 Gem::Specification.new do |s|
   s.name     = "pantry"
-  s.version  = "0.0.0"
+  s.version  = Pantry::VERSION
   s.platform = Gem::Platform::RUBY
   s.authors  = ["Collective Idea", "Jason Roelofs"]
   s.email    = ["code@collectiveidea.com", "jasongroelofs@gmail.com"]
@@ -12,8 +15,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.0.0"
 
-  s.files        = Dir["README.md", "lib/**/*", "test/**/*"]
-  s.test_files   = Dir["test/**/*"]
+  s.files        = `git ls-files`.split("\n")
+  s.test_files   = `git ls-files -- test/*`.split("\n")
   s.require_path = "lib"
   s.bindir       = "bin"
 
