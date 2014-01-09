@@ -38,7 +38,10 @@ module Pantry
         if command_class.command_name
           # Hmm duplicated from OptParsePlus
           base_command_name = command_class.command_name.split(/\s/).first
-          @known_commands[base_command_name] = command_class
+          @known_commands[base_command_name] = {
+            banner:  command_class.command_name,
+            class: command_class
+          }
         end
       end
     end
@@ -48,8 +51,12 @@ module Pantry
         parser = OptParsePlus.new
         parser.add_options(&BASE_OPTIONS)
 
-        @known_commands.each do |command_name, command_class|
-          parser.add_command(command_name, &command_class.command_config)
+        if command_line.empty?
+          command_line << "--help"
+        end
+
+        @known_commands.each do |base_command_name, command_info|
+          parser.add_command(command_info[:banner], &command_info[:class].command_config)
         end
 
         options = parser.parse!(command_line)
@@ -89,18 +96,18 @@ module Pantry
 
     def process_command(options, arguments)
       triggered_command = options.command_found
-      if command_class = @known_commands[triggered_command]
+      if command_info = @known_commands[triggered_command]
         client_filter = Pantry::Communication::ClientFilter.new(
           application: options['application'],
           environment: options['environment'],
           roles:       options['roles']
         )
 
-        command = command_class.new(*arguments)
+        command = command_info[:class].new(*arguments)
 
         request(client_filter, command, options[triggered_command])
       else
-        Pantry.logger.error("[CLI] I don't know the #{command.inspect} command")
+        $stderr.puts "I don't know the #{arguments.first} command"
       end
     end
 

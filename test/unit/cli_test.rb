@@ -45,8 +45,10 @@ describe Pantry::CLI do
   it "sets the logging level to info on -v" do
     Pantry.config.expects(:refresh)
 
-    cli = build_cli(["-v"])
-    cli.run
+    capture_io do
+      cli = build_cli(["-v"])
+      cli.run
+    end
 
     assert_equal :info, Pantry.config.log_level
   end
@@ -54,8 +56,10 @@ describe Pantry::CLI do
   it "sets logging level to debug on -d" do
     Pantry.config.expects(:refresh)
 
-    cli = build_cli(["-d"])
-    cli.run
+    capture_io do
+      cli = build_cli(["-d"])
+      cli.run
+    end
 
     assert_equal :debug, Pantry.config.log_level
   end
@@ -67,6 +71,15 @@ describe Pantry::CLI do
     end
 
     assert_equal Pantry::VERSION, out.strip
+  end
+
+  it "prints the help if nothing given on the command line" do
+    out, err = capture_io do
+      cli = build_cli([])
+      cli.run
+    end
+
+    assert_match /Usage:/, out
   end
 
   it "can be given a set of filters to limit the request to a certain subset of clients" do
