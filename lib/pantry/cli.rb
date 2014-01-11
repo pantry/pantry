@@ -23,13 +23,16 @@ module Pantry
     end
 
     def run
+      results = nil
+
       find_all_cli_commands
       options, arguments = parse_command_line(@command_line)
       if options && process_global_command_line_options(options)
         super
-        process_command(options, arguments)
+        results = process_command(options, arguments)
       end
       terminate
+      results
     end
 
     def find_all_cli_commands

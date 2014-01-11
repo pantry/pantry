@@ -8,6 +8,7 @@ module Pantry
 
     def initialize
       @finish_future = Celluloid::Future.new
+      @messages = []
     end
 
     def start_progress(count)
@@ -19,6 +20,7 @@ module Pantry
     end
 
     def say(message)
+      @messages << message
       Pantry.logger.info("[CLI] #{message.inspect}")
     end
 
@@ -28,7 +30,7 @@ module Pantry
 
     def finished
       Pantry.logger.info("[CLI PF] We are done")
-      @finish_future.signal(OpenStruct.new(:value => self))
+      @finish_future.signal(OpenStruct.new(:value => @messages))
     end
 
     def wait_for_finish
