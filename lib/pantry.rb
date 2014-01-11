@@ -109,9 +109,9 @@ module Pantry
   end
 
   def check_for_duplicates(command_list, command_class_to_add)
-    known_commands = command_list.map(&:command_type)
-    if known_commands.include?(command_class_to_add.command_type)
-      raise Pantry::DuplicateCommandError.new("Command with type #{command_class_to_add.command_type} already registered")
+    known_commands = command_list.map(&:message_type)
+    if known_commands.include?(command_class_to_add.message_type)
+      raise Pantry::DuplicateCommandError.new("Command with type #{command_class_to_add.message_type} already registered")
     end
   end
 

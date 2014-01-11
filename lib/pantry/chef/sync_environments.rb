@@ -9,7 +9,7 @@ module Pantry
         description "Update Clients with the environments they should know about."
       end
 
-      def self.command_type
+      def self.message_type
         "Chef::SyncEnvironments"
       end
 

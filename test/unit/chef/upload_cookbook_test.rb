@@ -10,7 +10,7 @@ describe Pantry::Chef::UploadCookbook do
   end
 
   it "has a custom type" do
-    assert_equal "Chef::UploadCookbook", Pantry::Chef::UploadCookbook.command_type
+    assert_equal "Chef::UploadCookbook", Pantry::Chef::UploadCookbook.message_type
   end
 
   describe "#prepare_message" do

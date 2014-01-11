@@ -90,13 +90,13 @@ module Pantry
 
     # Create a new Message from the information in the current Command
     def to_message
-      Pantry::Message.new(self.class.command_type)
+      Pantry::Message.new(self.class.message_type)
     end
 
     # The Type of this command, used to differentiate Messages.
     # Defaults to the base class name, removing all scope information.
     # Override this for a custom name.
-    def self.command_type
+    def self.message_type
       self.name.split("::").last
     end
 

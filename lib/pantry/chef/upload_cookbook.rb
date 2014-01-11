@@ -11,7 +11,7 @@ module Pantry
         option      "-f", "--force", "Overwrite a previously uploaded version of this cookbook"
       end
 
-      def self.command_type
+      def self.message_type
         "Chef::UploadCookbook"
       end
 

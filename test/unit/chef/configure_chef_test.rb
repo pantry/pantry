@@ -5,7 +5,7 @@ describe Pantry::Chef::ConfigureChef do
   fake_fs!
 
   it "has a custom type" do
-    assert_equal "Chef::Configure", Pantry::Chef::ConfigureChef.command_type
+    assert_equal "Chef::Configure", Pantry::Chef::ConfigureChef.message_type
   end
 
   it "creates expected directory structure for chef file storage" do

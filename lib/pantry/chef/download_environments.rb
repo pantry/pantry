@@ -5,7 +5,7 @@ module Pantry
     # including the contents of the environments as uploaded to the Server
     class DownloadEnvironments < Pantry::Command
 
-      def self.command_type
+      def self.message_type
         "Chef::DownloadEnvironments"
       end
 

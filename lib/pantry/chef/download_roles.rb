@@ -5,7 +5,7 @@ module Pantry
     # including the contents of the roles as uploaded to the Server
     class DownloadRoles < Pantry::Command
 
-      def self.command_type
+      def self.message_type
         "Chef::DownloadRoles"
       end
 

@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Chef::RunChefSolo do
 
   it "has a custom type" do
-    assert_equal "Chef::ChefSolo", Pantry::Chef::RunChefSolo.command_type
+    assert_equal "Chef::ChefSolo", Pantry::Chef::RunChefSolo.message_type
   end
 
   it "executes the chef-solo command, returning outputs" do

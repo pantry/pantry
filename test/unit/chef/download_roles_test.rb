@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Chef::DownloadRoles do
 
   it "has a custom type" do
-    assert_equal "Chef::DownloadRoles", Pantry::Chef::DownloadRoles.command_type
+    assert_equal "Chef::DownloadRoles", Pantry::Chef::DownloadRoles.message_type
   end
 
   describe "#perform" do

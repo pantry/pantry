@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Chef::SyncCookbooks do
 
   it "has a custom type" do
-    assert_equal "Chef::SyncCookbooks", Pantry::Chef::SyncCookbooks.command_type
+    assert_equal "Chef::SyncCookbooks", Pantry::Chef::SyncCookbooks.message_type
   end
 
   describe "#perform" do

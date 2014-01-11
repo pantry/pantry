@@ -7,7 +7,7 @@ module Pantry
         description "Run Chef on Clients"
       end
 
-      def self.command_type
+      def self.message_type
         "Chef::Run"
       end
 

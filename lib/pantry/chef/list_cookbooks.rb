@@ -10,7 +10,7 @@ module Pantry
         description "List all known cookbooks on the server"
       end
 
-      def self.command_type
+      def self.message_type
         "Chef::ListCookbooks"
       end
 

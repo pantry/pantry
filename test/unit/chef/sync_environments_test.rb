@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Chef::SyncEnvironments do
 
   it "has a custom type" do
-    assert_equal "Chef::SyncEnvironments", Pantry::Chef::SyncEnvironments.command_type
+    assert_equal "Chef::SyncEnvironments", Pantry::Chef::SyncEnvironments.message_type
   end
 
   describe "#perform" do

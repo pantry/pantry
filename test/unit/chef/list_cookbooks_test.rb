@@ -5,7 +5,7 @@ describe Pantry::Chef::ListCookbooks do
   fake_fs!
 
   it "has a custom type" do
-    assert_equal "Chef::ListCookbooks", Pantry::Chef::ListCookbooks.command_type
+    assert_equal "Chef::ListCookbooks", Pantry::Chef::ListCookbooks.message_type
   end
 
   describe "#perform" do

@@ -7,7 +7,7 @@ module Pantry
         description "Configure the Client(s) for running Chef"
       end
 
-      def self.command_type
+      def self.message_type
         "Chef::Configure"
       end
 

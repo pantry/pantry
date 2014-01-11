@@ -72,7 +72,7 @@ describe Pantry::Command do
   end
 
   class CustomNameCommand < Pantry::Command
-    def self.command_type
+    def self.message_type
       "Gir::WantsWaffles"
     end
   end

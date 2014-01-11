@@ -5,7 +5,7 @@ module Pantry
     # set up some senders to start sending the appropriate Cookbook files along.
     class SendCookbooks < Pantry::Command
 
-      def self.command_type
+      def self.message_type
         "Chef::SendCookbooks"
       end
 

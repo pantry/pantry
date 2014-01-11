@@ -3,7 +3,7 @@ require 'unit/test_helper'
 describe Pantry::Chef::DownloadEnvironments do
 
   it "has a custom type" do
-    assert_equal "Chef::DownloadEnvironments", Pantry::Chef::DownloadEnvironments.command_type
+    assert_equal "Chef::DownloadEnvironments", Pantry::Chef::DownloadEnvironments.message_type
   end
 
   describe "#perform" do

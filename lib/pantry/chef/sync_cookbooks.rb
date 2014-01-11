@@ -9,7 +9,7 @@ module Pantry
         description "Update Clients with the cookbooks they should run"
       end
 
-      def self.command_type
+      def self.message_type
         "Chef::SyncCookbooks"
       end
 
