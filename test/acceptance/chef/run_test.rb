@@ -11,15 +11,33 @@ describe "Running Chef on a Client" do
       identity: "cli1"
     ).run
 
-    # Run chef to sync the cookbooks to the client
+    # Add a role definition
     Pantry::CLI.new(
-      ["-a", "pantry", "-e", "test", "-r", "app1", "chef:run"],
+      ["-a", "pantry", "chef:role:upload", fixture_path("roles/app1.rb")],
       identity: "cli2"
+    ).run
+
+    # Add an environment definition
+    Pantry::CLI.new(
+      ["-a", "pantry", "chef:environment:upload", fixture_path("environments/test.rb")],
+      identity: "cli3"
+    ).run
+
+    # Run chef to sync the cookbooks to the client
+    responses = Pantry::CLI.new(
+      ["-a", "pantry", "-e", "test", "-r", "app1", "chef:run"],
+      identity: "cli4"
     ).run
 
     # Configure chef
     assert File.exists?(Pantry.root.join("etc", "chef", "solo.rb")),
       "Did not write out the solo file"
+
+    # Sync roles and environments
+    assert File.exists?(Pantry.root.join("chef", "roles", "app1.rb")),
+      "Did not sync the role files"
+    assert File.exists?(Pantry.root.join("chef", "environments", "test.rb")),
+      "Did not sync the environment files"
 
     # Sync Cookbooks
     assert File.exists?(Pantry.root.join("chef", "cookbooks", "mini", "metadata.rb")),
@@ -30,6 +48,8 @@ describe "Running Chef on a Client" do
     # Run chef-solo
     assert File.exists?(Pantry.root.join("chef", "cache", "chef-client-running.pid")),
       "Did not run chef-solo"
+
+    assert_match /Chef Run complete in/, responses[0]
   end
 
 end
