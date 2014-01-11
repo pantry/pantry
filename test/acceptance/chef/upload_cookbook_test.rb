@@ -12,8 +12,6 @@ describe "Uploading cookbooks to the server" do
     )
     cli.run
 
-    sleep 1
-
     assert File.exists?(Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz")),
       "The mini cookbook was not uploaded to the server properly"
   end
@@ -30,8 +28,6 @@ describe "Uploading cookbooks to the server" do
       identity: "cli1"
     )
     cli.run
-
-    sleep 1
 
     assert File.size(Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz")) > 0,
       "The mini cookbook was not properly forced into place"

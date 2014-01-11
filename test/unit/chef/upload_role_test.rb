@@ -6,11 +6,11 @@ describe Pantry::Chef::UploadRole do
 
   describe "#to_message" do
     it "sets the file name and contents in the message to the Server" do
-      command = Pantry::Chef::UploadRole.new(fixture_path("roles/staging.rb"))
+      command = Pantry::Chef::UploadRole.new(fixture_path("roles/app.rb"))
       message = command.to_message
 
-      assert_equal "staging.rb", message.body[0]
-      assert_equal %|name "Staging"\ndescription "Staging test role"\n|, message.body[1]
+      assert_equal "app.rb", message.body[0]
+      assert_equal %|name "Application"\ndescription "Application test role"\n|, message.body[1]
     end
   end
 
