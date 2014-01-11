@@ -53,4 +53,9 @@ describe Pantry::ClientRegistry do
     assert_equal [@c1, @c2], @registry.all
   end
 
+  it "returns the client who matches the given identity" do
+    assert_equal @c1, @registry.find("client1")
+    assert_nil @registry.find("unknown")
+  end
+
 end

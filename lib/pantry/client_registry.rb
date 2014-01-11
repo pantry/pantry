@@ -28,6 +28,15 @@ module Pantry
       @clients[client.identity].checked_in?
     end
 
+    # Find info for Client that matches the given identity
+    def find(identity)
+      if found = @clients[identity]
+        found.client
+      else
+        nil
+      end
+    end
+
     # Find and return all clients who will receive messages
     # on the given stream or ClientFilter.
     #
