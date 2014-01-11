@@ -10,7 +10,7 @@ describe Pantry::Chef::UploadRole do
       message = command.to_message
 
       assert_equal "app.rb", message.body[0]
-      assert_equal %|name "Application"\ndescription "Application test role"\n|, message.body[1]
+      assert_equal %|name "app"\ndescription "Application test role"\n|, message.body[1]
     end
   end
 
