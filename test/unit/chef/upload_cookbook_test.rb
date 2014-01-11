@@ -6,9 +6,7 @@ describe Pantry::Chef::UploadCookbook do
 
   def build_command(cookbook_name)
     @command ||=
-      Pantry::Chef::UploadCookbook.new(
-        File.expand_path("../../../fixtures/cookbooks/#{cookbook_name}", __FILE__)
-      )
+      Pantry::Chef::UploadCookbook.new(fixture_path("cookbooks/#{cookbook_name}"))
   end
 
   describe "#prepare_message" do

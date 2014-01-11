@@ -7,7 +7,7 @@ describe "Uploading cookbooks to the server" do
     set_up_environment(ports_start_at: 11000)
 
     cli = Pantry::CLI.new(
-      ["chef:cookbook:upload", File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)],
+      ["chef:cookbook:upload", fixture_path("cookbooks/mini")],
       identity: "cli1"
     )
     cli.run
@@ -24,7 +24,7 @@ describe "Uploading cookbooks to the server" do
     system "touch #{File.join(chef_dir, "1.0.0.tgz")}"
 
     cli = Pantry::CLI.new(
-      ["chef:cookbook:upload", "-f", File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)],
+      ["chef:cookbook:upload", "-f", fixture_path("cookbooks/mini")],
       identity: "cli1"
     )
     cli.run

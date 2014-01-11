@@ -7,7 +7,7 @@ describe "Running Chef on a Client" do
 
     # Make sure cookbook is uploaded to the server
     Pantry::CLI.new(
-      ["chef:cookbook:upload", File.expand_path("../../../fixtures/cookbooks/mini", __FILE__)],
+      ["chef:cookbook:upload", fixture_path("cookbooks/mini")],
       identity: "cli1"
     ).run
 
