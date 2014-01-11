@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require 'support/minitest'
 require 'mocha/setup'
 require 'support/matchers'
 require 'celluloid/test'
@@ -17,13 +17,7 @@ class Minitest::Test
   end
 
   def teardown
-    Dir["#{Pantry.root}/*"].each do |file|
-      FileUtils.rm_rf file
-    end
-  end
-
-  def fixture_path(file_path)
-    File.join(File.dirname(__FILE__), "..", "fixtures", file_path)
+    clean_up_pantry_root
   end
 
   def self.fake_fs!

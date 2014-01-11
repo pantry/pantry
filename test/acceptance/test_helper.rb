@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require 'support/minitest'
 require 'support/matchers'
 require 'celluloid/test'
 require 'mocha/setup'
@@ -83,9 +83,7 @@ class Minitest::Test
     @client2.shutdown if @client2
     @server.shutdown  if @server
 
-    Dir["#{Pantry.config.data_dir}/*"].each do |file|
-      FileUtils.rm_rf file
-    end
+    clean_up_pantry_root
   end
 
 end
