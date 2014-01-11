@@ -7,6 +7,8 @@ require 'pantry/chef/list_cookbooks'
 require 'pantry/chef/sync_cookbooks'
 require 'pantry/chef/send_cookbooks'
 
+require 'pantry/chef/upload_role'
+
 require 'pantry/chef/configure_chef'
 require 'pantry/chef/run_chef_solo'
 require 'pantry/chef/run'
@@ -26,6 +28,8 @@ end
 Pantry.add_server_command(Pantry::Chef::UploadCookbook)
 Pantry.add_server_command(Pantry::Chef::ListCookbooks)
 Pantry.add_server_command(Pantry::Chef::SendCookbooks)
+
+Pantry.add_server_command(Pantry::Chef::UploadRole)
 
 Pantry.add_client_command(Pantry::Chef::Run)
 Pantry.add_client_command(Pantry::Chef::ConfigureChef)
