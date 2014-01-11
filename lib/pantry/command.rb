@@ -94,10 +94,16 @@ module Pantry
     end
 
     # The Type of this command, used to differentiate Messages.
-    # Defaults to the base class name, removing all scope information.
+    # Defaults to the full scope of the name, though with the special
+    # case of removing any "Pantry" related scoping such as Pantry::
+    # and Pantry::Commands::
+    #
+    # This value must be unique across the system or the messages will not
+    # be processed reliably.
+    #
     # Override this for a custom name.
     def self.message_type
-      self.name.split("::").last
+      self.name.gsub(/Pantry::Commands::/, '').gsub(/Pantry::/, '')
     end
 
     # Set a specific Progress Listener object on this Command

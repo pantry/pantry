@@ -47,14 +47,23 @@ describe Pantry::Command do
     assert_equal "listener!", command.progress_listener
   end
 
-  class SubCommand < Pantry::Command
+  module Pantry
+    module Commands
+      class SubCommand < Pantry::Command
+      end
+    end
   end
 
-  it "uses the subclass name when figuring out the message type" do
-    command = SubCommand.new
-    message = command.to_message
+  module Pantry
+    module MyStuff
+      class SubCommand < Pantry::Command
+      end
+    end
+  end
 
-    assert_equal "SubCommand", message.type
+  it "cleans up any known Pantry scoping when figuring out message type" do
+    assert_equal "SubCommand", Pantry::Commands::SubCommand.message_type
+    assert_equal "MyStuff::SubCommand", Pantry::MyStuff::SubCommand.message_type
   end
 
   module John
@@ -64,11 +73,11 @@ describe Pantry::Command do
     end
   end
 
-  it "drops any scope information from the name" do
+  it "uses the full scoped name of the class" do
     command = John::Pete::InnerClass.new
     message = command.to_message
 
-    assert_equal "InnerClass", message.type
+    assert_equal "John::Pete::InnerClass", message.type
   end
 
   class CustomNameCommand < Pantry::Command
