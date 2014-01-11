@@ -2,10 +2,6 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::SyncRoles do
 
-  it "has a custom type" do
-    assert_equal "Chef::SyncRoles", Pantry::Chef::SyncRoles.message_type
-  end
-
   describe "#perform" do
     fake_fs!
 

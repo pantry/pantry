@@ -10,10 +10,6 @@ module Pantry
         description "List all known cookbooks on the server"
       end
 
-      def self.message_type
-        "Chef::ListCookbooks"
-      end
-
       def perform(message)
         Dir[Pantry.root.join("chef", "cookbooks", "*")].map do |cookbook_path|
           build_cookbook_info(cookbook_path)

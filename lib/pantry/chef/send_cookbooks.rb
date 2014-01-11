@@ -5,10 +5,6 @@ module Pantry
     # set up some senders to start sending the appropriate Cookbook files along.
     class SendCookbooks < Pantry::Command
 
-      def self.message_type
-        "Chef::SendCookbooks"
-      end
-
       def perform(message)
         message.body.each do |(name, version, receiver_identity, file_uuid)|
           server.send_file(

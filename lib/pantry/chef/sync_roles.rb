@@ -9,10 +9,6 @@ module Pantry
         description "Update Clients with the roles they should know about."
       end
 
-      def self.message_type
-        "Chef::SyncRoles"
-      end
-
       def perform(message)
         roles = send_request!(Pantry::Chef::DownloadRoles.new.to_message)
 

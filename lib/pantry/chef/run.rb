@@ -7,10 +7,6 @@ module Pantry
         description "Run Chef on Clients"
       end
 
-      def self.message_type
-        "Chef::Run"
-      end
-
       performs [
         ConfigureChef,
         SyncCookbooks,

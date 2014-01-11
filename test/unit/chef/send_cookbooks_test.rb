@@ -4,10 +4,6 @@ describe Pantry::Chef::SendCookbooks do
 
   fake_fs!
 
-  it "has a custom type" do
-    assert_equal "Chef::SendCookbooks", Pantry::Chef::SendCookbooks.message_type
-  end
-
   describe "#perform" do
 
     it "takes the list of receivers and builds senders, passing in the proper cookbook file" do

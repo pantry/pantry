@@ -4,10 +4,6 @@ describe Pantry::Chef::UploadEnvironment do
 
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
-  it "has a custom type" do
-    assert_equal "Chef::UploadEnvironment", Pantry::Chef::UploadEnvironment.message_type
-  end
-
   describe "#prepare_message" do
     it "requires an application we're uploading for" do
       command = Pantry::Chef::UploadEnvironment.new(fixture_path("environments/test.rb"))

@@ -4,10 +4,6 @@ module Pantry
     # Execute ChefSolo on the current box, returning STDOUT, STDERR, and status code.
     class RunChefSolo < Pantry::Command
 
-      def self.message_type
-        "Chef::ChefSolo"
-      end
-
       def perform(message)
         begin
           solo_rb = Pantry.root.join("etc", "chef", "solo.rb")

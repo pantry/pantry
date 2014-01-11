@@ -8,10 +8,6 @@ module Pantry
         description "Upload the file at ROLE_FILE as a Chef Role. Requires an Application"
       end
 
-      def self.message_type
-        "Chef::UploadRole"
-      end
-
       def initialize(role_path = nil)
         @role_path = role_path
       end

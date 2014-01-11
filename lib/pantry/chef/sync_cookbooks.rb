@@ -9,10 +9,6 @@ module Pantry
         description "Update Clients with the cookbooks they should run"
       end
 
-      def self.message_type
-        "Chef::SyncCookbooks"
-      end
-
       def perform(message)
         cookbooks_to_download = ask_server_for_cookbook_list
         Pantry.logger.debug("[#{client.identity}] Downloading cookbooks #{cookbooks_to_download}")

@@ -9,10 +9,6 @@ module Pantry
         description "Update Clients with the environments they should know about."
       end
 
-      def self.message_type
-        "Chef::SyncEnvironments"
-      end
-
       def perform(message)
         environments = send_request!(Pantry::Chef::DownloadEnvironments.new.to_message)
 

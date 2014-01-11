@@ -2,10 +2,6 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::SyncCookbooks do
 
-  it "has a custom type" do
-    assert_equal "Chef::SyncCookbooks", Pantry::Chef::SyncCookbooks.message_type
-  end
-
   describe "#perform" do
 
     it "requests to the server a list of cookbooks it should have" do

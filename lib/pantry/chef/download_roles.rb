@@ -5,10 +5,6 @@ module Pantry
     # including the contents of the roles as uploaded to the Server
     class DownloadRoles < Pantry::Command
 
-      def self.message_type
-        "Chef::DownloadRoles"
-      end
-
       def perform(message)
         client = server.client_who_sent(message)
         application = client.application

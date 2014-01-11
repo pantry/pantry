@@ -5,10 +5,6 @@ module Pantry
     # including the contents of the environments as uploaded to the Server
     class DownloadEnvironments < Pantry::Command
 
-      def self.message_type
-        "Chef::DownloadEnvironments"
-      end
-
       def perform(message)
         client = server.client_who_sent(message)
         application = client.application

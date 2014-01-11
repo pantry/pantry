@@ -2,10 +2,6 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::RunChefSolo do
 
-  it "has a custom type" do
-    assert_equal "Chef::ChefSolo", Pantry::Chef::RunChefSolo.message_type
-  end
-
   it "executes the chef-solo command, returning outputs" do
     config_file = Pantry.root.join(*%w(etc chef solo.rb))
     Open3.expects(:capture3).with("chef-solo --config #{config_file}").

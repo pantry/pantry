@@ -7,10 +7,6 @@ module Pantry
         description "Configure the Client(s) for running Chef"
       end
 
-      def self.message_type
-        "Chef::Configure"
-      end
-
       def perform(message)
         @base_chef_dir = Pantry.root.join("chef")
         @etc_dir       = Pantry.root.join("etc", "chef")

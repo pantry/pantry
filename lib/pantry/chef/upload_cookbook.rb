@@ -11,10 +11,6 @@ module Pantry
         option      "-f", "--force", "Overwrite a previously uploaded version of this cookbook"
       end
 
-      def self.message_type
-        "Chef::UploadCookbook"
-      end
-
       attr_reader :cookbook_tarball
 
       def initialize(cookbook_path = nil)
