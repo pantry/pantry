@@ -14,6 +14,8 @@ module Pantry
       performs [
         ConfigureChef,
         SyncCookbooks,
+        SyncRoles,
+#        SyncEnvironments,
         RunChefSolo
       ]
 

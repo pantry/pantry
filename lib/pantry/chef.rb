@@ -10,6 +10,9 @@ require 'pantry/chef/send_cookbooks'
 require 'pantry/chef/upload_role'
 require 'pantry/chef/upload_environment'
 
+require 'pantry/chef/sync_roles'
+require 'pantry/chef/download_roles'
+
 require 'pantry/chef/configure_chef'
 require 'pantry/chef/run_chef_solo'
 require 'pantry/chef/run'
@@ -31,6 +34,9 @@ Pantry.add_server_command(Pantry::Chef::ListCookbooks)
 Pantry.add_server_command(Pantry::Chef::SendCookbooks)
 
 Pantry.add_server_command(Pantry::Chef::UploadRole)
+Pantry.add_server_command(Pantry::Chef::SyncRoles)
+Pantry.add_server_command(Pantry::Chef::DownloadRoles)
+
 Pantry.add_server_command(Pantry::Chef::UploadEnvironment)
 
 Pantry.add_client_command(Pantry::Chef::Run)
