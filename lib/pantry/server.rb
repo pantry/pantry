@@ -39,6 +39,11 @@ module Pantry
       @client_registry.check_in(client)
     end
 
+    # Return ClientInfo on which Client sent the given Message
+    def client_who_sent(message)
+      @client_registry.find(message.from)
+    end
+
     # Broadcast a message to all clients, optionally filtering for certain clients.
     def publish_message(message, filter = Communication::ClientFilter.new)
       Pantry.logger.debug("[#{@identity}] Publishing #{message.inspect} to #{filter.stream.inspect}")

@@ -29,6 +29,20 @@ describe Pantry::Server do
       assert_equal [client], server.client_registry.all
     end
 
+    it "can figure out what client sent a given message" do
+      server = Pantry::Server.new
+      c1 = Pantry::ClientInfo.new identity: "client1"
+      c2 = Pantry::ClientInfo.new identity: "client2"
+
+      server.register_client(c1)
+      server.register_client(c2)
+
+      message = Pantry::Message.new
+      message.from = "client1"
+
+      assert_equal c1, server.client_who_sent(message)
+    end
+
   end
 
   it "can publish messages to all clients" do
