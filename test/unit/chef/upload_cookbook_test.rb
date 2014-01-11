@@ -9,6 +9,10 @@ describe Pantry::Chef::UploadCookbook do
       Pantry::Chef::UploadCookbook.new(fixture_path("cookbooks/#{cookbook_name}"))
   end
 
+  it "has a custom type" do
+    assert_equal "Chef::UploadCookbook", Pantry::Chef::UploadCookbook.command_type
+  end
+
   describe "#prepare_message" do
 
     after do

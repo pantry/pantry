@@ -8,6 +8,10 @@ module Pantry
         description "Upload the file at ENV_FILE as a Chef Environment. Requires an Application."
       end
 
+      def self.command_type
+        "Chef::UploadEnvironment"
+      end
+
       def initialize(environment_path = nil)
         @environment_path = environment_path
       end

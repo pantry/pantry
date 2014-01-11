@@ -4,6 +4,10 @@ describe Pantry::Chef::UploadRole do
 
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
+  it "has a custom type" do
+    assert_equal "Chef::UploadRole", Pantry::Chef::UploadRole.command_type
+  end
+
   describe "#prepare_message" do
     it "requires an application we're uploading for" do
       command = Pantry::Chef::UploadRole.new(fixture_path("roles/app.rb"))
