@@ -7,12 +7,13 @@ describe "Uploading environment definitions to the server" do
     set_up_environment(ports_start_at: 14000)
 
     cli = Pantry::CLI.new(
-      ["chef:environment:upload", fixture_path("environments/test.rb")],
+      ["-a", "pantry", "chef:environment:upload", fixture_path("environments/test.rb")],
       identity: "cli1"
     )
     cli.run
 
-    assert File.exists?(Pantry.root.join("chef", "environments", "test.rb")),
+    assert File.exists?(Pantry.root.join(
+      "applications", "pantry", "chef", "environments", "test.rb")),
       "The test environment was not uploaded to the server properly"
   end
 

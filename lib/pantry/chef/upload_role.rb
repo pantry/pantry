@@ -5,30 +5,36 @@ module Pantry
     class UploadRole < Pantry::Command
 
       command "chef:role:upload ROLE_FILE" do
-        description "Upload the file at ROLE_FILE as a Chef Role"
+        description "Upload the file at ROLE_FILE as a Chef Role. Requires an Application"
       end
 
       def initialize(role_path = nil)
         @role_path = role_path
       end
 
-      def perform(message)
-        role_name = message.body[0]
-        role_body = message.body[1]
+      def prepare_message(filter, options)
+        application = options['application']
+        raise Pantry::MissingOption, "Required option APPLICATION is missing" unless application
 
-        FileUtils.mkdir_p(Pantry.root.join("chef", "roles"))
-        File.open(Pantry.root.join("chef", "roles", role_name), "w+") do |file|
+        super.tap do |message|
+          message << application
+          message << File.basename(@role_path)
+          message << File.read(@role_path)
+        end
+      end
+
+      def perform(message)
+        application = message.body[0]
+        role_name   = message.body[1]
+        role_body   = message.body[2]
+
+        roles_dir = Pantry.root.join("applications", application, "chef", "roles")
+        FileUtils.mkdir_p(roles_dir)
+        File.open(roles_dir.join(role_name), "w+") do |file|
           file.write role_body
         end
 
         true
-      end
-
-      def to_message
-        message = super
-        message << File.basename(@role_path)
-        message << File.read(@role_path)
-        message
       end
 
     end

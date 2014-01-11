@@ -5,30 +5,36 @@ module Pantry
     class UploadEnvironment < Pantry::Command
 
       command "chef:environment:upload ENV_FILE" do
-        description "Upload the file at ENV_FILE as a Chef Environment"
+        description "Upload the file at ENV_FILE as a Chef Environment. Requires an Application."
       end
 
       def initialize(environment_path = nil)
         @environment_path = environment_path
       end
 
-      def perform(message)
-        environment_name = message.body[0]
-        environment_body = message.body[1]
+      def prepare_message(filter, options)
+        application = options['application']
+        raise Pantry::MissingOption, "Required option APPLICATION is missing" unless application
 
-        FileUtils.mkdir_p(Pantry.root.join("chef", "environments"))
-        File.open(Pantry.root.join("chef", "environments", environment_name), "w+") do |file|
+        super.tap do |message|
+          message << application
+          message << File.basename(@environment_path)
+          message << File.read(@environment_path)
+        end
+      end
+
+      def perform(message)
+        application      = message.body[0]
+        environment_name = message.body[1]
+        environment_body = message.body[2]
+
+        env_dir = Pantry.root.join("applications", application, "chef", "environments")
+        FileUtils.mkdir_p(env_dir)
+        File.open(env_dir.join(environment_name), "w+") do |file|
           file.write environment_body
         end
 
         true
-      end
-
-      def to_message
-        message = super
-        message << File.basename(@environment_path)
-        message << File.read(@environment_path)
-        message
       end
 
     end

@@ -58,6 +58,9 @@ module Pantry
   # messages are coming from.
   SERVER_IDENTITY = ""
 
+  # Various exceptions Pantry can raise
+  class MissingOption < Exception; end
+
   # The root of all stored Pantry data for this Server/Client
   # Uses Pantry.config.data_dir
   def root(config = Pantry.config)

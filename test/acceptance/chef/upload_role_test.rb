@@ -7,12 +7,12 @@ describe "Uploading role definitions to the server" do
     set_up_environment(ports_start_at: 13000)
 
     cli = Pantry::CLI.new(
-      ["chef:role:upload", fixture_path("roles/app.rb")],
+      ["-a", "pantry", "chef:role:upload", fixture_path("roles/app.rb")],
       identity: "cli1"
     )
     cli.run
 
-    assert File.exists?(Pantry.root.join("chef", "roles", "app.rb")),
+    assert File.exists?(Pantry.root.join("applications", "pantry", "chef", "roles", "app.rb")),
       "The app role was not uploaded to the server properly"
   end
 
