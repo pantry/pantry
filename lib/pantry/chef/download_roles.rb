@@ -13,7 +13,7 @@ module Pantry
         client = server.client_who_sent(message)
         application = client.application
 
-        Dir[Pantry.root.join("applications", application, "chef", "roles", "*.rb")].map do |role|
+        Dir[Pantry.root.join("applications", application, "chef", "roles", "*")].map do |role|
           [File.basename(role), File.read(role)]
         end
       end

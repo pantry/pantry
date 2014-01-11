@@ -15,7 +15,7 @@ module Pantry
         ConfigureChef,
         SyncCookbooks,
         SyncRoles,
-#        SyncEnvironments,
+        SyncEnvironments,
         RunChefSolo
       ]
 
