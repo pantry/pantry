@@ -25,6 +25,7 @@ require 'pantry/command_handler'
 require 'pantry/commands/echo'
 require 'pantry/commands/list_clients'
 require 'pantry/commands/register_client'
+require 'pantry/commands/upload_file'
 
 require 'pantry/communication'
 require 'pantry/communication/serialize_message'
