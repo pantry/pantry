@@ -42,6 +42,19 @@ describe Pantry::CLI do
     cli.run
   end
 
+  it "includes global options when passing options to a command handler" do
+    cli = build_cli(["-a", "pantry", "-e", "test", "echo", "Hello World"])
+
+    Pantry::Commands::Echo.any_instance.expects(:prepare_message).with do |filter, options|
+      assert_equal "pantry", options["application"]
+      assert_equal "test", options["environment"]
+    end.returns(stub_everything)
+
+    cli.stubs(:send_message)
+
+    cli.run
+  end
+
   it "sets the logging level to info on -v" do
     Pantry.config.expects(:refresh)
 

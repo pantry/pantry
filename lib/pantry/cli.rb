@@ -107,8 +107,9 @@ module Pantry
         )
 
         command = command_info[:class].new(*arguments)
+        command_options = options[triggered_command].merge(options)
 
-        request(client_filter, command, options[triggered_command])
+        request(client_filter, command, command_options)
       else
         $stderr.puts "I don't know the #{arguments.first} command"
       end
