@@ -2,30 +2,19 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::SyncEnvironments do
 
-  describe "#perform" do
-    fake_fs!
+  it "reads from the server directory for chef" do
+    cmd = Pantry::Chef::SyncEnvironments.new
+    cmd.client = Pantry::ClientInfo.new(application: "pantry")
 
-    it "asks Server for all environments, writes them locally" do
-      client = stub_everything
+    dir = cmd.server_directory(Pathname.new(""))
+    assert_equal "applications/pantry/chef/environments", dir.to_s
+  end
 
-      response = Pantry::Message.new
-      response << ["staging.rb", %|name "app"\ndescription ""\n|]
-      response << ["test.rb",  %|name "db"\ndescription ""\n|]
+  it "writes to the client's local chef dir" do
+    cmd = Pantry::Chef::SyncEnvironments.new
 
-      client.expects(:send_request).with do |message|
-        assert_equal "Chef::DownloadEnvironments", message.type
-      end.returns(mock(:value => response))
-
-      command = Pantry::Chef::SyncEnvironments.new
-      command.client = client
-      command.perform(Pantry::Message.new)
-
-      assert File.exists?(Pantry.root.join("chef", "environments", "staging.rb")),
-        "Did not get the staging.rb environment file"
-      assert File.exists?(Pantry.root.join("chef", "environments", "test.rb")),
-        "Did not get the test.rb environment file"
-    end
-
+    dir = cmd.client_directory(Pathname.new(""))
+    assert_equal "chef/environments", dir.to_s
   end
 
 end

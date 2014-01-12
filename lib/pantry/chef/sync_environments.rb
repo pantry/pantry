@@ -3,25 +3,14 @@ module Pantry
 
     # Client syncs up it's local list of Chef Environments with what the Server
     # says the Client should have.
-    class SyncEnvironments < Pantry::Command
+    class SyncEnvironments < Pantry::Commands::SyncDirectory
 
-      command "chef:environments:sync" do
-        description "Update Clients with the environments they should know about."
+      def server_directory(local_root)
+        local_root.join("applications", client.application, "chef", "environments")
       end
 
-      def perform(message)
-        environments = send_request!(Pantry::Chef::DownloadEnvironments.new.to_message)
-
-        environments_dir = Pantry.root.join("chef", "environments")
-        FileUtils.mkdir_p(environments_dir)
-
-        environments.body.each do |(environment_name, environment_contents)|
-          File.open(environments_dir.join(environment_name), "w+") do |file|
-            file.write(environment_contents)
-          end
-        end
-
-        true
+      def client_directory(local_root)
+        local_root.join("chef", "environments")
       end
 
     end

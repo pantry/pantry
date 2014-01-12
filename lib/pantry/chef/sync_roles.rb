@@ -3,25 +3,14 @@ module Pantry
 
     # Client syncs up it's local list of Chef Roles with what the Server
     # says the Client should have.
-    class SyncRoles < Pantry::Command
+    class SyncRoles < Pantry::Commands::SyncDirectory
 
-      command "chef:roles:sync" do
-        description "Update Clients with the roles they should know about."
+      def server_directory(local_root)
+        local_root.join("applications", client.application, "chef", "roles")
       end
 
-      def perform(message)
-        roles = send_request!(Pantry::Chef::DownloadRoles.new.to_message)
-
-        roles_dir = Pantry.root.join("chef", "roles")
-        FileUtils.mkdir_p(roles_dir)
-
-        roles.body.each do |(role_name, role_contents)|
-          File.open(roles_dir.join(role_name), "w+") do |file|
-            file.write(role_contents)
-          end
-        end
-
-        true
+      def client_directory(local_root)
+        local_root.join("chef", "roles")
       end
 
     end
