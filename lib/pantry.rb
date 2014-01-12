@@ -26,6 +26,8 @@ require 'pantry/commands/echo'
 require 'pantry/commands/list_clients'
 require 'pantry/commands/register_client'
 require 'pantry/commands/upload_file'
+require 'pantry/commands/sync_directory'
+require 'pantry/commands/download_directory'
 
 require 'pantry/communication'
 require 'pantry/communication/serialize_message'
@@ -136,6 +138,7 @@ Pantry.add_client_command(Pantry::Commands::Echo)
 
 Pantry.add_server_command(Pantry::Commands::ListClients)
 Pantry.add_server_command(Pantry::Commands::RegisterClient)
+Pantry.add_server_command(Pantry::Commands::DownloadDirectory)
 
 # Chef Handling Commands and Code #
 require 'pantry/chef'
