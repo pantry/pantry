@@ -33,7 +33,9 @@ module Pantry
         FileUtils.mkdir_p(write_to)
 
         dir_contents.body.each do |(file_name, file_contents)|
-          File.open(write_to.join(file_name), "w+") do |file|
+          file_path = write_to.join(File.basename(file_name))
+
+          File.open(file_path, "w+") do |file|
             file.write(file_contents)
           end
         end

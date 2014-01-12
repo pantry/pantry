@@ -39,4 +39,21 @@ describe Pantry::Commands::SyncDirectory do
     assert_equal "def main; end;", File.read(file2)
   end
 
+  it "doesn't allow path injection attacks" do
+    client = stub_everything
+
+    response = Pantry::Message.new
+    response << ["../../../../file1.txt", %|some content here|]
+
+    client.stubs(:send_request).returns(mock(:value => response))
+
+    command = MySyncTest.new
+    command.client = client
+    command.perform(Pantry::Message.new)
+
+    file1 = Pantry.root.join("copy", "to", "file1.txt")
+    assert File.exists?(file1), "Did not write the first file"
+    assert_equal "some content here", File.read(file1)
+  end
+
 end
