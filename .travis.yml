@@ -1,7 +1,7 @@
 before_install:
-  - travis_retry sudo apt-add-repository ppa:chris-lea/zeromq -y
+  - travis_retry sudo apt-add-repository ppa:bpaquet/zeromq4-precise -y
   - travis_retry sudo apt-get update
-  - travis_retry sudo apt-get install libzmq3 libzmq3-dev -y
+  - travis_retry sudo apt-get install libzmq-dev -y
 language: ruby
 rvm:
   - 2.0.0

@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
 
   s.executables  = %w(pantry-client pantry-server pantry)
 
+  s.add_runtime_dependency "ffi-rzmq",      "~> 2.0.0"
   s.add_runtime_dependency "celluloid",     "~> 0.15.0"
   s.add_runtime_dependency "celluloid-zmq", "~> 0.15.0"
   s.add_runtime_dependency "json"
