@@ -7,7 +7,7 @@ module Pantry
     # to the configured listener as Messages.
     class SubscribeSocket < ReadingSocket
 
-      def initialize(host, port)
+      def initialize(host, port, security)
         super
         @filter = ClientFilter.new
       end
@@ -19,14 +19,15 @@ module Pantry
       def build_socket
         socket = Celluloid::ZMQ::SubSocket.new
         socket.linger = 0
+        socket
+      end
 
+      def open_socket(socket)
         socket.connect("tcp://#{host}:#{port}")
 
         @filter.streams.each do |stream|
           socket.subscribe(stream)
         end
-
-        socket
       end
 
     end

@@ -10,8 +10,11 @@ module Pantry
       def build_socket
         socket = Celluloid::ZMQ::PubSocket.new
         socket.linger = 0
-        socket.bind("tcp://#{host}:#{port}")
         socket
+      end
+
+      def open_socket(socket)
+        socket.bind("tcp://#{host}:#{port}")
       end
 
     end

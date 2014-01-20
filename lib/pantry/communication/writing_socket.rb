@@ -9,17 +9,25 @@ module Pantry
 
       attr_reader :host, :port
 
-      def initialize(host, port)
+      def initialize(host, port, security)
         @host     = host
         @port     = port
+        @security = security
       end
 
       def open
         @socket = build_socket
+        @security.configure_socket(@socket)
+
+        open_socket(@socket)
       end
 
       def build_socket
-        raise "Implement the socket setup. Must return the socket object already connected/bound."
+        raise "Implement the socket setup."
+      end
+
+      def open_socket(socket)
+        raise "Connect / Bind the socket built in #build_socket"
       end
 
       def close

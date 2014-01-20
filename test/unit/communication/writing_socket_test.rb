@@ -8,7 +8,12 @@ describe Pantry::Communication::WritingSocket do
     def build_socket
       @socket_impl
     end
+
+    def open_socket(socket)
+    end
   end
+
+  let(:security) { Pantry::Communication::Security.new_client }
 
   it "serializes a message and sends it down the pipe" do
     zmq_socket = Class.new do
@@ -19,7 +24,7 @@ describe Pantry::Communication::WritingSocket do
       end
     end.new
 
-    writer = TestWriter.new("host", 1234)
+    writer = TestWriter.new("host", 1234, security)
     writer.socket_impl = zmq_socket
     writer.open
 

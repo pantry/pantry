@@ -6,9 +6,11 @@ module Pantry
     class ReceiveSocket < ReadingSocket
 
       def build_socket
-        socket = Celluloid::ZMQ::RouterSocket.new
+        Celluloid::ZMQ::RouterSocket.new
+      end
+
+      def open_socket(socket)
         socket.bind("tcp://#{host}:#{port}")
-        socket
       end
 
       def has_source_header?

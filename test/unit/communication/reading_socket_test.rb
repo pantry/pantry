@@ -10,6 +10,9 @@ describe Pantry::Communication::ReadingSocket do
       @socket_impl
     end
 
+    def open_socket(socket)
+    end
+
     def process_next_message
       @socket = @socket_impl
       super
@@ -23,6 +26,8 @@ describe Pantry::Communication::ReadingSocket do
   before do
     Celluloid.init
   end
+
+  let(:security) { Pantry::Communication::Security.new_client }
 
   it "builds messages and passes each message to a listener" do
     zmq_socket = Class.new do
@@ -49,7 +54,7 @@ describe Pantry::Communication::ReadingSocket do
       end
     end.new
 
-    reader = TestSocket.new("host", 1235)
+    reader = TestSocket.new("host", 1235, security)
     reader.add_listener(listener)
     reader.socket_impl = zmq_socket
 
@@ -89,7 +94,7 @@ describe Pantry::Communication::ReadingSocket do
       end
     end.new
 
-    reader = TestSocket.new("host", 1235)
+    reader = TestSocket.new("host", 1235, security)
     reader.has_source_header = true
     reader.add_listener(listener)
     reader.socket_impl = zmq_socket
