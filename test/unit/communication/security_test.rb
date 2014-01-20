@@ -13,6 +13,15 @@ describe Pantry::Communication::Security do
       assert client_handler.is_a?(Pantry::Communication::Security::NullSecurity),
         "Returned the wrong kind of client handler"
     end
+
+    it "raises if given security type is unknown" do
+      config = Pantry::Config.new
+      config.security = "--unknown--"
+
+      assert_raises(Pantry::Communication::Security::UnknownSecurityStrategyError) do
+        Pantry::Communication::Security.new_client(config)
+      end
+    end
   end
 
   describe ".new_server" do
@@ -25,6 +34,15 @@ describe Pantry::Communication::Security do
       assert_not_nil server_handler
       assert server_handler.is_a?(Pantry::Communication::Security::NullSecurity),
         "Returned the wrong kind of server handler"
+    end
+
+    it "raises if given security type is unknown" do
+      config = Pantry::Config.new
+      config.security = "--unknown--"
+
+      assert_raises(Pantry::Communication::Security::UnknownSecurityStrategyError) do
+        Pantry::Communication::Security.new_server(config)
+      end
     end
   end
 
