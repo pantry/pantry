@@ -10,6 +10,7 @@ require 'open3'
 require 'yaml'
 
 require 'opt_parse_plus'
+require 'celluloid_zmq_patches'
 
 require 'pantry/version'
 require 'pantry/config'
@@ -37,6 +38,7 @@ require 'pantry/communication/client_filter'
 require 'pantry/communication/wait_list'
 
 require 'pantry/communication/security/null_security'
+require 'pantry/communication/security/curve_security'
 require 'pantry/communication/security'
 
 require 'pantry/communication/reading_socket'

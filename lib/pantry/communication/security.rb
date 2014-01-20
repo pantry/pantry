@@ -5,7 +5,8 @@ module Pantry
       class UnknownSecurityStrategyError < Exception; end
 
       AVAILABLE_SECURITY = {
-        nil => Pantry::Communication::Security::NullSecurity
+        nil     => Pantry::Communication::Security::NullSecurity,
+        "curve" => Pantry::Communication::Security::CurveSecurity
       }
 
       # Build a Client implementation of the security strategy
