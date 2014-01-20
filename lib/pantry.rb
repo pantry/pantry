@@ -10,6 +10,7 @@ require 'open3'
 require 'yaml'
 
 require 'opt_parse_plus'
+require 'ffi_rzmq_patches'
 require 'celluloid_zmq_patches'
 
 require 'pantry/version'
