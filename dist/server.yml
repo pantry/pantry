@@ -40,3 +40,16 @@ networking:
 
   # Port over which File data is passed between Client and Server
   # file_service_port: 23003
+
+  # Security strategy to use in communication
+  #
+  # Defaults to nil, meaning no built-in security.
+  # Also available is "curve" which turns on ZeroMQ's Curve encryption
+  # as seen here: http://api.zeromq.org/4-0:zmq-curve
+  # This is not the default because Curve has not yet been fully vetted by
+  # the crypto community
+  #
+  # If this Server is configured for curve security then all connecting
+  # Clients must also be configured for curve and be given this Server's
+  # public encryption key.
+  # security:

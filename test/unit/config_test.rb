@@ -77,6 +77,11 @@ describe Pantry::Config do
       assert_equal 1122, pantry_config.file_service_port
     end
 
+    it "has an entry for the security strategy in use" do
+      pantry_config.security = "curve"
+      assert_equal "curve", pantry_config.security
+    end
+
     it "can load values from a given YAML file" do
       config_file = fixture_path("config.yml")
       pantry_config.load_file(config_file)
@@ -85,6 +90,7 @@ describe Pantry::Config do
       assert_equal 12345, pantry_config.pub_sub_port
       assert_equal 54321, pantry_config.receive_port
       assert_equal 35412, pantry_config.file_service_port
+      assert_equal "curve", pantry_config.security
     end
 
     it "does not set values to nil if not in the config" do

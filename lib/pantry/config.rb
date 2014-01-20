@@ -51,6 +51,13 @@ module Pantry
     # How often, in seconds, the client pings the Server
     attr_accessor :client_heartbeat_interval
 
+    # What type of security will Pantry be employing?
+    # Available types are nil (no security) and "curve" (ZMQ4 Curve security)
+    #
+    # Defaults to nil because curve security has not yet been fully
+    # vetted by the crypto-community
+    attr_accessor :security
+
     ##
     # Client Identification
     ##
@@ -148,6 +155,8 @@ module Pantry
       if configs["file_service_port"]
         @file_service_port = configs["file_service_port"]
       end
+
+      @security = configs["security"]
     end
 
     def load_client_configs(configs)
