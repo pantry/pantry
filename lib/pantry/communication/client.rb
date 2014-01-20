@@ -7,12 +7,14 @@ module Pantry
       def initialize(listener)
         @listener = listener
         @response_wait_list = Communication::WaitList.new
+        @security           = Communication::Security.new_client
       end
 
       def run
         @subscribe_socket = Communication::SubscribeSocket.new_link(
           Pantry.config.server_host,
-          Pantry.config.pub_sub_port
+          Pantry.config.pub_sub_port,
+          @security
         )
         @subscribe_socket.add_listener(self)
         @subscribe_socket.filter_on(@listener.filter)
@@ -20,13 +22,15 @@ module Pantry
 
         @send_socket = Communication::SendSocket.new_link(
           Pantry.config.server_host,
-          Pantry.config.receive_port
+          Pantry.config.receive_port,
+          @security
         )
         @send_socket.open
 
         @file_service = Communication::FileService.new_link(
           Pantry.config.server_host,
-          Pantry.config.file_service_port
+          Pantry.config.file_service_port,
+          @security
         )
         @file_service.start_client
       end

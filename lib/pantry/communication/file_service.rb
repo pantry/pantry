@@ -7,7 +7,7 @@ module Pantry
 
       attr_reader :identity
 
-      def initialize(server_host, port)
+      def initialize(server_host, port, security)
         @host = server_host
         @port = port
 
@@ -15,8 +15,15 @@ module Pantry
         @socket.identity = @identity = SecureRandom.uuid
         @socket.linger = 0
 
+        @security = security
+        @security.configure_socket(@socket)
+
         @receiver = FileService::ReceiveFile.new_link(self)
         @sender   = FileService::SendFile.new_link(self)
+      end
+
+      def secure_with(security_handler)
+        @security = security_handler
       end
 
       def start_server

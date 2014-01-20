@@ -11,6 +11,7 @@ module Pantry
       def initialize(listener)
         @listener           = listener
         @response_wait_list = Communication::WaitList.new
+        @security           = Communication::Security.new_server
       end
 
       # Start up the networking layer, opening up sockets and getting
@@ -18,20 +19,23 @@ module Pantry
       def run
         @publish_socket = Communication::PublishSocket.new_link(
           Pantry.config.server_host,
-          Pantry.config.pub_sub_port
+          Pantry.config.pub_sub_port,
+          @security
         )
         @publish_socket.open
 
         @receive_socket = Communication::ReceiveSocket.new_link(
           Pantry.config.server_host,
-          Pantry.config.receive_port
+          Pantry.config.receive_port,
+          @security
         )
         @receive_socket.add_listener(self)
         @receive_socket.open
 
         @file_service = Communication::FileService.new_link(
           Pantry.config.server_host,
-          Pantry.config.file_service_port
+          Pantry.config.file_service_port,
+          @security
         )
         @file_service.start_server
       end

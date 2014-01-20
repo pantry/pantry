@@ -13,6 +13,10 @@ module Pantry
           new
         end
 
+        def configure_socket(socket)
+          # no-op
+        end
+
       end
 
     end
