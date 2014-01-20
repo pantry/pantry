@@ -36,6 +36,9 @@ require 'pantry/communication/client'
 require 'pantry/communication/client_filter'
 require 'pantry/communication/wait_list'
 
+require 'pantry/communication/security/null_security'
+require 'pantry/communication/security'
+
 require 'pantry/communication/reading_socket'
 require 'pantry/communication/writing_socket'
 require 'pantry/communication/publish_socket'
