@@ -1,6 +1,9 @@
 # Monkey Patch the new curve_keypair method until
 # a new release of ffi-rzmq is out.
 module ZMQ
+  class NotSupportedError < ZeroMQError
+  end
+
   class Util
     def self.curve_keypair
       public_key = FFI::MemoryPointer.from_string(' ' * 41)
