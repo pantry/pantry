@@ -2,7 +2,7 @@ before_install:
   - travis_retry sudo apt-add-repository ppa:shnatsel/dnscrypt -y
   - travis_retry sudo apt-add-repository ppa:bpaquet/zeromq4-precise -y
   - travis_retry sudo apt-get update
-  - travis_retry sudo apt-get install libzmq-dev libsodium -y
+  - travis_retry sudo apt-get install libzmq-dev libsodium-dev -y
 language: ruby
 rvm:
   - 2.0.0
