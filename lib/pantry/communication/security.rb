@@ -9,6 +9,16 @@ module Pantry
         "curve" => Pantry::Communication::Security::CurveSecurity
       }
 
+      # Check if ZeroMQ is built properly to support Curve encryption
+      def self.curve_supported?
+        begin
+          ZMQ::Util.curve_keypair
+          true
+        rescue
+          false
+        end
+      end
+
       # Build a Client implementation of the security strategy
       # configured in Pantry.config.security
       def self.new_client(config = Pantry.config)

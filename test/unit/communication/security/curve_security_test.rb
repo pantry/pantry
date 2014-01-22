@@ -2,6 +2,8 @@ require 'unit/test_helper'
 
 describe Pantry::Communication::Security::CurveSecurity do
 
+  break unless Pantry::Communication::Security.curve_supported?
+
   fake_fs!
 
   describe "Client" do
