@@ -2,6 +2,8 @@ require 'unit/test_helper'
 
 describe Pantry::Communication::Security::CurveKeyStore do
 
+  break unless Pantry::Communication::Security.curve_supported?
+
   let(:key_store) { Pantry::Communication::Security::CurveKeyStore.new("my_keys") }
 
   def write_test_keys
