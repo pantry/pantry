@@ -24,11 +24,10 @@ module Pantry
 
           def initialize
             @key_store = CurveKeyStore.new("client_keys")
+            Pantry.logger.info("Configuring Client to use Curve encryption")
           end
 
           def configure_socket(socket)
-            Pantry.logger.debug("[Curve] Configuring socket with #{@key_store.get("server.pub")}")
-
             socket.setsockopt(::ZMQ::CURVE_SERVERKEY, @key_store.get("server.pub"))
             socket.setsockopt(::ZMQ::CURVE_PUBLICKEY, @key_store.public_key)
             socket.setsockopt(::ZMQ::CURVE_SECRETKEY, @key_store.private_key)
@@ -40,11 +39,10 @@ module Pantry
 
           def initialize
             @key_store = CurveKeyStore.new("server_keys")
+            Pantry.logger.info("Configuring Server to use Curve encryption")
           end
 
           def configure_socket(socket)
-            Pantry.logger.debug("[Curve] Configuring socket with #{@key_store.private_key}")
-
             socket.setsockopt(::ZMQ::CURVE_SERVER,    1)
             socket.setsockopt(::ZMQ::CURVE_SECRETKEY, @key_store.private_key)
           end
