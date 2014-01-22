@@ -37,7 +37,7 @@ describe Pantry::Communication::Server do
 
   describe "#publish_message" do
     let(:listener) { Pantry::Server.new }
-    let(:message) { Pantry::Message.new }
+    let(:msg) { Pantry::Message.new }
     let(:server)  { Pantry::Communication::Server.new(listener) }
 
     before do
@@ -45,9 +45,9 @@ describe Pantry::Communication::Server do
     end
 
     it "uses the publish socket to send messages to clients" do
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(msg)
 
-      server.publish_message(message)
+      server.publish_message(msg)
     end
 
     it "sets the from of the message to the sender" do
@@ -55,16 +55,16 @@ describe Pantry::Communication::Server do
         listener.identity == message.from
       end
 
-      server.publish_message(message)
+      server.publish_message(msg)
     end
   end
 
   describe "Message forwarding" do
     let(:listener) { Pantry::Server.new }
-    let(:message) {
-      message = Pantry::Message.new
-      message.from = "client427"
-      message
+    let(:msg) {
+      m = Pantry::Message.new
+      m.from = "client427"
+      m
     }
     let(:server)  { Pantry::Communication::Server.new(listener) }
 
@@ -73,20 +73,20 @@ describe Pantry::Communication::Server do
     end
 
     it "publishes the message to connected clients untouched" do
-      message.to = "pantry"
+      msg.to = "pantry"
 
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
-      server.forward_message(message)
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(msg)
+      server.forward_message(msg)
 
-      assert message.forwarded?, "Message should have been marked as forwarded"
+      assert msg.forwarded?, "Message should have been marked as forwarded"
     end
 
     it "forwards off responses to forwarded messages" do
-      message.to = "client500"
-      message.forwarded!
+      msg.to = "client500"
+      msg.forwarded!
 
-      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(message)
-      server.handle_message(message)
+      Pantry::Communication::PublishSocket.any_instance.expects(:send_message).with(msg)
+      server.handle_message(msg)
     end
   end
 
