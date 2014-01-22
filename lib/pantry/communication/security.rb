@@ -22,18 +22,18 @@ module Pantry
       # Build a Client implementation of the security strategy
       # configured in Pantry.config.security
       def self.new_client(config = Pantry.config)
-        if handler_class = AVAILABLE_SECURITY[config.security]
-          handler_class.client
-        else
-          raise UnknownSecurityStrategyError, "Unknown security strategy #{config.security.inspect}"
-        end
+        handler_class(config).client
       end
 
       # Build a Server implementation of the security strategy
       # configured in Pantry.config.security
       def self.new_server(config = Pantry.config)
-        if handler_class = AVAILABLE_SECURITY[config.security]
-          handler_class.server
+        handler_class(config).server
+      end
+
+      def self.handler_class(config)
+        if handler = AVAILABLE_SECURITY[config.security]
+          handler
         else
           raise UnknownSecurityStrategyError, "Unknown security strategy #{config.security.inspect}"
         end
