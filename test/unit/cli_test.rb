@@ -77,6 +77,15 @@ describe Pantry::CLI do
     assert_equal :debug, Pantry.config.log_level
   end
 
+  it "sets the hostname of the server to communicate with" do
+    capture_io do
+      cli = build_cli(["-h", "localhost"])
+      cli.run
+    end
+
+    assert_equal "localhost", Pantry.config.server_host
+  end
+
   it "prints out the version of pantry when requested" do
     out, err = capture_io do
       cli = build_cli(["-V"])

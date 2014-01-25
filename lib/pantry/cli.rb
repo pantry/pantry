@@ -6,6 +6,8 @@ module Pantry
     # The top-level set of CLI options and flags Pantry respects
     BASE_OPTIONS = proc {
       banner "Usage: #{$0} [options] [command [command options]]"
+      option "-h", "--host HOSTNAME", String, "Hostname of the Server to connect to"
+
       option "-a", "--application APPLICATION", String, "Filter Clients by a specific APPLICATION"
       option "-e", "--environment ENVIRONMENT", String, "Filter Clients by a specific ENVIRONMENT"
       option "-r", "--roles ROLE1,ROLE2",       Array,  "Filter Clients by given ROLES"
@@ -86,6 +88,10 @@ module Pantry
       if options["debug"]
         Pantry.config.log_level = :debug
         Pantry.config.refresh
+      end
+
+      if server_host = options["host"]
+        Pantry.config.server_host = server_host
       end
 
       if options["version"]
