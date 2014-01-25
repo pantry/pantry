@@ -2,6 +2,8 @@ require 'unit/test_helper'
 
 describe Pantry::CLI do
 
+  fake_fs!
+
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
   class EmptyProgressListener < Pantry::ProgressListener
@@ -115,7 +117,24 @@ describe Pantry::CLI do
     cli.run
   end
 
-  it "forwards other messages recieved to the current command" do
+  it "reads a local .pantry file and sets default options" do
+    File.open(".pantry", "w+") do |f|
+      f.puts("-a pantry")
+      f.puts("--environment test")
+      f.puts("-r app")
+    end
+
+    cli = build_cli(["echo", "Hello World"])
+
+    cli.expects(:send_message).with do |message|
+      assert_equal "Echo", message.type
+      assert_equal "pantry.test.app", message.to
+    end
+
+    cli.run
+  end
+
+  it "forwards other messages received to the current command" do
     cli = build_cli("status")
     cli.stubs(:send_message)
 
