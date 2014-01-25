@@ -117,8 +117,9 @@ describe Pantry::CLI do
     cli.run
   end
 
-  it "reads a local .pantry file and sets default options" do
-    File.open(".pantry", "w+") do |f|
+  it "reads a local .pantry/config file and sets default options" do
+    FileUtils.mkdir_p(File.join(Dir.pwd, ".pantry"))
+    File.open(File.join(Dir.pwd, ".pantry/config"), "w+") do |f|
       f.puts("-a pantry")
       f.puts("--environment test")
       f.puts("-r app")

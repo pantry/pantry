@@ -30,10 +30,12 @@ module Pantry
       find_all_cli_commands
       full_command_line = merge_command_line_with_defaults(@command_line)
       options, arguments = parse_command_line(full_command_line)
+
       if options && process_global_command_line_options(options)
         super
         results = process_command(options, arguments)
       end
+
       terminate
       results
     end
@@ -55,10 +57,13 @@ module Pantry
     def merge_command_line_with_defaults(base_command_line)
       full_command_line = base_command_line
 
-      if File.exist?(".pantry")
+      dot_pantry_config = File.join(Dir.pwd, ".pantry", "config")
+      if File.exist?(dot_pantry_config)
         # ARGV is an array of the command line seperated by white-space.
         # Make sure what we read from .pantry returns the same
-        defaults = File.readlines(".pantry").map {|line| line.strip.split(/\s/) }.flatten
+        defaults = File.readlines(dot_pantry_config).map { |line|
+          line.strip.split(/\s/)
+        }.flatten
         full_command_line = [defaults, base_command_line].flatten
       end
 
