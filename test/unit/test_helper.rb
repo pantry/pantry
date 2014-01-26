@@ -13,6 +13,7 @@ class Minitest::Test
 
   def setup
     Celluloid.init
+    Pantry.reset_config!
     Pantry.config.data_dir = File.expand_path("../../data_dir", __FILE__)
   end
 

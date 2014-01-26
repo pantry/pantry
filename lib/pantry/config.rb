@@ -5,6 +5,10 @@ module Pantry
     @@config ||= Config.new
   end
 
+  def self.reset_config!
+    @@config = nil
+  end
+
   # Global configuration values for running all of Pantry.
   class Config
     ##
