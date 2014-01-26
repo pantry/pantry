@@ -55,6 +55,8 @@ module Pantry
     end
 
     def merge_command_line_with_defaults(base_command_line)
+      return base_command_line if Pantry.config.ignore_dot_pantry
+
       full_command_line = base_command_line
 
       dot_pantry_config = File.join(Dir.pwd, ".pantry", "config")

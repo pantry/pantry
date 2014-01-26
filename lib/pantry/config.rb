@@ -32,6 +32,9 @@ module Pantry
     # Default: /var/lib/pantry
     attr_accessor :data_dir
 
+    # Ignore .pantry (used mainly in tests)
+    attr_accessor :ignore_dot_pantry
+
     ##
     # Communication Configuration
     ##
