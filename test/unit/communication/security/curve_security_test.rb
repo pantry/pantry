@@ -12,14 +12,10 @@ describe Pantry::Communication::Security::CurveSecurity do
       client = Pantry::Communication::Security::CurveSecurity.client
 
       curve_dir = Pantry.root.join("security", "curve")
-      File.open(curve_dir.join("server.pub"), "w+") do |f|
-        f.write("server public key")
-      end
-
       client_keys = YAML.load_file(curve_dir.join("client_keys.yml"))
 
       socket = mock
-      socket.expects(:setsockopt).with(::ZMQ::CURVE_SERVERKEY, "server public key")
+      socket.expects(:setsockopt).with(::ZMQ::CURVE_SERVERKEY, client_keys["server_public_key"])
       socket.expects(:setsockopt).with(::ZMQ::CURVE_PUBLICKEY, client_keys["public_key"])
       socket.expects(:setsockopt).with(::ZMQ::CURVE_SECRETKEY, client_keys["private_key"])
 
@@ -34,10 +30,6 @@ describe Pantry::Communication::Security::CurveSecurity do
       server = Pantry::Communication::Security::CurveSecurity.server
 
       curve_dir = Pantry.root.join("security", "curve")
-      File.open(curve_dir.join("server.pub"), "w+") do |f|
-        f.write("server public key")
-      end
-
       server_keys = YAML.load_file(curve_dir.join("server_keys.yml"))
 
       socket = mock

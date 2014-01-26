@@ -11,7 +11,9 @@ describe Pantry::Communication::Security::CurveKeyStore do
     FileUtils.mkdir_p security_dir
     File.open(security_dir.join("my_keys.yml"), "w+") do |f|
       f.write(YAML.dump({
-        "private_key" => "private key", "public_key" => "public key"}))
+        "private_key" => "private key", "public_key" => "public key",
+        "server_public_key" => "server key"
+      }))
     end
   end
 
@@ -43,19 +45,9 @@ describe Pantry::Communication::Security::CurveKeyStore do
     assert_equal "private key", key_store.private_key
   end
 
-  it "can read a specific other key file in the storage" do
-    key_store
-    File.open(Pantry.root.join("security", "curve", "other_file.pub"), "w+") do |file|
-      file.write("a new hope\n")
-    end
-
-    assert_equal "a new hope", key_store.get("other_file.pub")
-  end
-
-  it "errors if it cannot read the requested key file" do
-    assert_raises(Pantry::Communication::Security::MissingKeyError) do
-      key_store.get("unknown_file.pub")
-    end
+  it "can read back the server public key" do
+    write_test_keys
+    assert_equal "server key", key_store.server_public_key
   end
 
 end

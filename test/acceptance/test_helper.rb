@@ -87,6 +87,29 @@ class Minitest::Test
     end
   end
 
+  def set_up_encrypted(ports_start_at, options = {})
+    Celluloid.boot
+    configure_pantry(ports_start_at: ports_start_at, security: "curve")
+
+    server_public, server_private = ZMQ::Util.curve_keypair
+    client_public, client_private = ZMQ::Util.curve_keypair
+
+    File.open(key_dir.join("server_keys.yml"), "w+") do |f|
+      f.write(YAML.dump({
+        "private_key" => server_private,
+        "public_key" => options[:server_public_key] || server_public,
+      }))
+    end
+
+    File.open(key_dir.join("client_keys.yml"), "w+") do |f|
+      f.write(YAML.dump({
+        "private_key" => client_private, "public_key" => client_public,
+        "server_public_key" => options[:server_public_key] || server_public
+      }))
+    end
+  end
+
+
   def teardown
     @client1.shutdown if @client1
     @client2.shutdown if @client2
