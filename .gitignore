@@ -4,5 +4,6 @@ Gemfile.lock
 test/test.log
 test/acceptance/data_dir/*
 proto
+.pantry
 
 .vagrant
