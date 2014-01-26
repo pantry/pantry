@@ -6,7 +6,7 @@ require 'minitest/autorun'
 class Minitest::Test
 
   def clean_up_pantry_root
-    Dir["#{Pantry.root}/*"].each do |file|
+    Dir["#{Pantry.root}/**/*"].each do |file|
       FileUtils.rm_rf file
     end
   end
