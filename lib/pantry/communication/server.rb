@@ -11,12 +11,13 @@ module Pantry
       def initialize(listener)
         @listener           = listener
         @response_wait_list = Communication::WaitList.new
-        @security           = Communication::Security.new_server
       end
 
       # Start up the networking layer, opening up sockets and getting
       # ready for client communication.
       def run
+        @security = Communication::Security.new_server
+
         @publish_socket = Communication::PublishSocket.new_link(
           Pantry.config.server_host,
           Pantry.config.pub_sub_port,

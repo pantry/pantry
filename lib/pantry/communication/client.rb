@@ -7,10 +7,11 @@ module Pantry
       def initialize(listener)
         @listener = listener
         @response_wait_list = Communication::WaitList.new
-        @security           = Communication::Security.new_client
       end
 
       def run
+        @security = Communication::Security.new_client
+
         @subscribe_socket = Communication::SubscribeSocket.new_link(
           Pantry.config.server_host,
           Pantry.config.pub_sub_port,

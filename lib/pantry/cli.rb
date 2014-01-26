@@ -7,6 +7,8 @@ module Pantry
     BASE_OPTIONS = proc {
       banner "Usage: #{$0} [options] [command [command options]]"
       option "-h", "--host HOSTNAME", String, "Hostname of the Server to connect to"
+      option "--curve-key-file FILE", String, "Name of the file in .pantry holding Curve keys.",
+        "Specifying this option will turn on Curve encryption."
 
       option "-a", "--application APPLICATION", String, "Filter Clients by a specific APPLICATION"
       option "-e", "--environment ENVIRONMENT", String, "Filter Clients by a specific ENVIRONMENT"
@@ -27,6 +29,7 @@ module Pantry
     def run
       results = nil
 
+      prepare_local_pantry_root
       find_all_cli_commands
       full_command_line = merge_command_line_with_defaults(@command_line)
       options, arguments = parse_command_line(full_command_line)
@@ -38,6 +41,12 @@ module Pantry
 
       terminate
       results
+    end
+
+    def prepare_local_pantry_root
+      return if Pantry.config.ignore_dot_pantry
+      Pantry.config.data_dir = File.join(Dir.pwd, ".pantry")
+      FileUtils.mkdir_p(Pantry.root)
     end
 
     def find_all_cli_commands
@@ -113,6 +122,15 @@ module Pantry
 
       if server_host = options["host"]
         Pantry.config.server_host = server_host
+      end
+
+      if curve_key_file = options["curve-key-file"]
+        Pantry.config.security = "curve"
+        FileUtils.mkdir_p(Pantry.root.join("security", "curve"))
+        FileUtils.cp(
+          Pantry.root.join(curve_key_file),
+          Pantry.root.join("security", "curve", "client_keys.yml")
+        )
       end
 
       if options["version"]

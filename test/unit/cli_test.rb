@@ -135,6 +135,34 @@ describe Pantry::CLI do
     cli.run
   end
 
+  it "turns on Curve and sets keys if --curve-key-file is set" do
+    FileUtils.mkdir_p(".pantry")
+    File.open(".pantry/keys.yml", "w+") do |f|
+      f.write(YAML.dump(
+        "server_public_key" => "server-public",
+        "public_key" => "client-public",
+        "private_key" => "client-private"
+      ))
+    end
+
+    out, err = capture_io do
+      cli = build_cli(["--curve-key-file", "keys.yml"])
+      cli.run
+    end
+
+    assert_equal "curve", Pantry.config.security
+
+    assert FileUtils.compare_file(
+      File.join(".pantry", "keys.yml"),
+      File.join(".pantry", "security", "curve", "client_keys.yml")
+    ), "Did not copy the keys file into a client-ready position"
+
+    # Reset so this doesn't kill other tests
+    Pantry.config.security = nil
+  end
+
+  it "errors if the curve-key-file is not found"
+
   it "forwards other messages received to the current command" do
     cli = build_cli("status")
     cli.stubs(:send_message)
