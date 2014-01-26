@@ -44,10 +44,6 @@ end
 
 class Minitest::Test
 
-  def setup
-    Pantry.config.ignore_dot_pantry = true
-  end
-
   # Set up a fully functional Server + 2 Client environment on the given ports
   # Make sure that the ports given are different for each test or port-conflict
   # errors will happen. Make sure each test has a wide enough range between

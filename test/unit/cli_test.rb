@@ -2,8 +2,6 @@ require 'unit/test_helper'
 
 describe Pantry::CLI do
 
-  fake_fs!
-
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
   class EmptyProgressListener < Pantry::ProgressListener
@@ -118,8 +116,7 @@ describe Pantry::CLI do
   end
 
   it "reads a local .pantry/config file and sets default options" do
-    FileUtils.mkdir_p(File.join(Dir.pwd, ".pantry"))
-    File.open(File.join(Dir.pwd, ".pantry/config"), "w+") do |f|
+    File.open(Pantry.root.join("config"), "w+") do |f|
       f.puts("-a pantry")
       f.puts("--environment test")
       f.puts("-r app")
@@ -136,12 +133,11 @@ describe Pantry::CLI do
   end
 
   it "turns on Curve and sets keys if --curve-key-file is set" do
-    FileUtils.mkdir_p(".pantry")
-    File.open(".pantry/keys.yml", "w+") do |f|
+    File.open(Pantry.root.join("keys.yml"), "w+") do |f|
       f.write(YAML.dump(
-        "server_public_key" => "server-public",
-        "public_key" => "client-public",
-        "private_key" => "client-private"
+        "server_public_key" => "x" * 40,
+        "public_key" => "y" * 40,
+        "private_key" => "z" * 40
       ))
     end
 
@@ -156,9 +152,6 @@ describe Pantry::CLI do
       File.join(".pantry", "keys.yml"),
       File.join(".pantry", "security", "curve", "client_keys.yml")
     ), "Did not copy the keys file into a client-ready position"
-
-    # Reset so this doesn't kill other tests
-    Pantry.config.security = nil
   end
 
   it "errors if the curve-key-file is not found"
