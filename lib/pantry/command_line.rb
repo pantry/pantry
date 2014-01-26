@@ -18,11 +18,10 @@ module Pantry
     }
 
     def initialize(command_line)
+      @command_line   = command_line
       @known_commands = {}
 
       @commands = find_all_cli_enabled_commands
-      @command_line = merge_command_line_with_defaults(command_line)
-      @parser = build_parser(@commands)
     end
 
     # Parse the full command line. Returns a hash containing the options found
@@ -31,12 +30,15 @@ module Pantry
     #
     # Returns [nil, nil] if help was requested or there was a problem.
     def parse!
+      @command_line = merge_command_line_with_defaults(@command_line)
+      parser = build_parser(@commands)
+
       begin
         if @command_line.empty?
           @command_line << "--help"
         end
 
-        @parsed_options = @parser.parse!(@command_line)
+        @parsed_options = parser.parse!(@command_line)
 
         if @parsed_options['help']
           # Help printed already
