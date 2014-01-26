@@ -133,6 +133,8 @@ describe Pantry::CLI do
   end
 
   it "turns on Curve and sets keys if --curve-key-file is set" do
+    break unless Pantry::Communication::Security.curve_supported?
+
     File.open(Pantry.root.join("keys.yml"), "w+") do |f|
       f.write(YAML.dump(
         "server_public_key" => "x" * 40,
