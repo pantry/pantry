@@ -89,7 +89,6 @@ module Pantry
 
       # Logging defaults
       @log_level = "info"
-      @data_dir  = "/var/lib/pantry"
       @syslog_program_name = "pantry"
 
       # Default connectivity settings
@@ -135,9 +134,7 @@ module Pantry
         @syslog_program_name = configs["syslog_program_name"]
       end
 
-      if configs["data_dir"]
-        @data_dir = configs["data_dir"]
-      end
+      @data_dir = configs["data_dir"]
     end
 
     def load_networking_configs(configs)

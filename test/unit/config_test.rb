@@ -30,8 +30,6 @@ describe Pantry::Config do
     end
 
     it "has an entry for the data dir" do
-      assert_equal "/var/lib/pantry", pantry_config.data_dir
-
       pantry_config.data_dir = "dir"
       assert_equal "dir", pantry_config.data_dir
     end
@@ -52,7 +50,6 @@ describe Pantry::Config do
 
       assert_equal "info", pantry_config.log_level
       assert_equal "pantry", pantry_config.syslog_program_name
-      assert_equal "/var/lib/pantry", pantry_config.data_dir
     end
   end
 
