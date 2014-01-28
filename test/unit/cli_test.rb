@@ -115,7 +115,7 @@ describe Pantry::CLI do
     cli.run
   end
 
-  it "reads a local .pantry/config file and sets default options" do
+  it "reads a local config file and sets default options" do
     File.open(Pantry.root.join("config"), "w+") do |f|
       f.puts("-a pantry")
       f.puts("--environment test")
@@ -151,9 +151,10 @@ describe Pantry::CLI do
     assert_equal "curve", Pantry.config.security
 
     assert FileUtils.compare_file(
-      File.join(".pantry", "keys.yml"),
-      File.join(".pantry", "security", "curve", "client_keys.yml")
+      Pantry.root.join("keys.yml"),
+      Pantry.root.join("security", "curve", "client_keys.yml")
     ), "Did not copy the keys file into a client-ready position"
+
   end
 
   it "errors if the curve-key-file is not found"
