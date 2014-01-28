@@ -112,6 +112,14 @@ describe Pantry::Communication::SerializeMessage do
       assert_equal [1, 2, 3, "go"], message.body[0]
     end
 
+    it "returns raw parts if they don't parse as JSON" do
+      parts = [ "source", {}.to_json, "{ blah blah thing", "[notreallyanarray" ]
+
+      message = Pantry::Communication::SerializeMessage.from_zeromq(parts)
+
+      assert_equal "{ blah blah thing", message.body[0]
+      assert_equal "[notreallyanarray", message.body[1]
+    end
 
   end
 

@@ -65,7 +65,7 @@ module Pantry
             # JSON without actually parsing it. I don't think this will be
             # much of a problem as we have full control over message encoding.
             if part.start_with?('{', '[')
-              JSON.parse(part, symbolize_names: true)
+              JSON.parse(part, symbolize_names: true) rescue part
             else
               part
             end
