@@ -27,6 +27,10 @@ describe Pantry::Chef::ConfigureChef do
       solo_contents
     assert_match %|file_cache_path "#{Pantry.root.join("chef", "cache")}|,
       solo_contents
+    assert_match %|role_path "#{Pantry.root.join("chef", "roles")}|,
+      solo_contents
+    assert_match %|environment_path "#{Pantry.root.join("chef", "environments")}|,
+      solo_contents
   end
 
   it "writes out the current environment of the Client if one exists" do

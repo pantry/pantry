@@ -28,15 +28,19 @@ module Pantry
       # NOTE: Writes out the file every time this command is run.
       def write_solo_rb
         contents = []
-        contents << %|file_cache_path "#{@base_chef_dir.join("cache")}"|
-        contents << %|cookbook_path "#{@base_chef_dir.join("cookbooks")}"|
 
         if client && client.environment
           contents << %|environment "#{client.environment}"|
         end
 
+        contents << %|file_cache_path "#{@base_chef_dir.join("cache")}"|
+        contents << %|cookbook_path "#{@base_chef_dir.join("cookbooks")}"|
+        contents << %|environment_path "#{@base_chef_dir.join("environments")}"|
+        contents << %|role_path "#{@base_chef_dir.join("roles")}"|
+
+
         File.open(@etc_dir.join("solo.rb"), "w+") do |file|
-          file.write(contents.join("\n"))
+          file.write(contents.join("\n") + "\n")
         end
       end
 
