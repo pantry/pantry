@@ -70,8 +70,10 @@ module Pantry
 
       def finalize_file(current_file)
         if current_file.valid?
+          Pantry.logger.debug("[Receive File] File #{current_file.uuid} finished")
           send_message(current_file, "FINISH")
         else
+          Pantry.logger.debug("[Receive File] File #{current_file.uuid} did not upload successfully")
           current_file.remove
           send_message(current_file, "ERROR", "Checksum did not match the uploaded file")
         end
