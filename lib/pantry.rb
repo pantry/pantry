@@ -13,6 +13,7 @@ require 'opt_parse_plus'
 require 'celluloid_zmq_patches'
 
 require 'pantry/version'
+require 'pantry/ui'
 require 'pantry/config'
 require 'pantry/logger'
 require 'pantry/message'
