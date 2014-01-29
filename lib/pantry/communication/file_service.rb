@@ -12,6 +12,7 @@ module Pantry
         @port = port
 
         @socket = Celluloid::ZMQ::RouterSocket.new
+        @socket.setsockopt(::ZMQ::ROUTER_MANDATORY, 1)
         @socket.identity = @identity = SecureRandom.uuid
         @socket.linger = 0
 
