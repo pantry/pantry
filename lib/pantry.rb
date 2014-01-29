@@ -132,6 +132,9 @@ module Pantry
   extend self
 end
 
+Celluloid.exception_handler do |exception|
+  Pantry.logger.error("Exception thrown", exception)
+end
 
 ####################
 # Command Registry #
