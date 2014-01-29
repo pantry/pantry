@@ -132,7 +132,7 @@ module Pantry
 end
 
 Celluloid.exception_handler do |exception|
-  Pantry.logger.error("Exception thrown", exception)
+  Pantry.logger.error("Exception thrown: #{exception.inspect}")
 end
 
 ####################
