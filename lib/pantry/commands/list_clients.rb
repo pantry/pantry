@@ -26,10 +26,9 @@ module Pantry
       end
 
       def receive_response(message)
-        message.body.each do |entry|
-          progress_listener.say("#{entry[:identity]} -- #{entry[:last_checked_in]}")
-        end
-        progress_listener.finished
+        clients = message.body.map {|entry| [entry[:identity], entry[:last_checked_in]] }
+        Pantry.ui.list(clients)
+        super
       end
 
       def to_message

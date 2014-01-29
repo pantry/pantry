@@ -1,7 +1,7 @@
 module Pantry
 
-  # Base class of all Commands, this offers up some sane defaults for working
-  # with Commands and their interactions with Messages.
+  # Base class of all Commands offering up some sane defaults for working
+  # with Commands and their associated Messages.
   # All commands must implement #perform, which should return the values that
   # should be sent back to the requester.
   #
@@ -67,11 +67,9 @@ module Pantry
 
     # When a message comes back from the server as a response to or because of
     # this command's #perform, the command object on the CLI will receive that
-    # message here. By default we just pass the message to the current listener
-    # and makr ourselves finished.
+    # message here. By default we just mark ourselves finished.
     def receive_response(message)
-      progress_listener.say(message)
-      progress_listener.finished
+      finished
     end
 
     # Send a request out, returning the Future which will eventually
@@ -93,6 +91,27 @@ module Pantry
       Pantry::Message.new(self.class.message_type)
     end
 
+    # Blocking call that returns when the command has completed
+    # Can be given a timeout (in seconds) to wait for a response
+    def wait_for_finish(timeout = nil)
+      completion_future.value(timeout)
+    end
+
+    # Notify all listeners that this command has completed its tasks
+    def finished
+      completion_future.signal(OpenStruct.new(:value => nil))
+    end
+
+    # Is this command finished?
+    def finished?
+      completion_future.ready?
+    end
+
+    def completion_future
+      @completion_future ||= Celluloid::Future.new
+    end
+    protected :completion_future
+
     # The Type of this command, used to differentiate Messages.
     # Defaults to the full scope of the name, though with the special
     # case of removing any "Pantry" related scoping such as Pantry::
@@ -104,16 +123,6 @@ module Pantry
     # Override this for a custom name.
     def self.message_type
       self.name.gsub(/Pantry::Commands::/, '').gsub(/Pantry::/, '')
-    end
-
-    # Set a specific Progress Listener object on this Command
-    def progress_listener=(listener)
-      @progress_listener = listener
-    end
-
-    # Retrieve the current progress listener
-    def progress_listener
-      @progress_listener ||= ProgressListener.new
     end
 
     # Set a link back to the Server or Client that's handling

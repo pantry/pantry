@@ -93,10 +93,10 @@ module Pantry
                                        response_message.body[2])
           send_info.wait_for_finish
         else
-          progress_listener.error(response_message.body[1])
+          Pantry.ui.say("ERROR: #{response_message.body[1]}")
         end
 
-        progress_listener.finished
+        super
       end
 
     end

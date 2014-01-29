@@ -35,7 +35,7 @@ describe Pantry::Commands::ListClients do
     assert_equal ["client1", "client2"], response.map {|entry| entry[:identity] }
   end
 
-  it "reports the name and last time checked in to the listener" do
+  it "reports the name and last time checked in to the user" do
     response = Pantry::Message.new
     client1_check_in = Time.now - 60 * 60
     client2_check_in = Time.now - 60 * 5
@@ -44,11 +44,12 @@ describe Pantry::Commands::ListClients do
 
     command = Pantry::Commands::ListClients.new
 
-    command.progress_listener = mock
-    command.progress_listener.expects(:say).times(2)
-    command.progress_listener.expects(:finished)
+    out, err = capture_io do
+      command.receive_response(response)
+    end
 
-    command.receive_response(response)
+    assert_match /client1/, out, "Did not include client1 in output"
+    assert_match /client2/, out, "Did not include client2 in output"
   end
 
   it "generates a message with the given client filter" do

@@ -162,11 +162,11 @@ describe Pantry::Chef::UploadCookbook do
       response_message.body << "false"
       response_message.body << "Unable to Upload Reason"
 
-      command.progress_listener = mock
-      command.progress_listener.expects(:error).with("Unable to Upload Reason")
-      command.progress_listener.expects(:finished)
+      out, err = capture_io do
+        command.receive_response(response_message)
+      end
 
-      command.receive_response(response_message)
+      assert_equal "ERROR: Unable to Upload Reason\n", out
     end
 
   end

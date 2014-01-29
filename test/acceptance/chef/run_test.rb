@@ -24,10 +24,12 @@ describe "Running Chef on a Client" do
     ).run
 
     # Run chef to sync the cookbooks to the client
-    responses = Pantry::CLI.new(
-      ["-a", "pantry", "-e", "test", "-r", "app1", "chef:run"],
-      identity: "cli4"
-    ).run
+    out, err = capture_io do
+      Pantry::CLI.new(
+        ["-a", "pantry", "-e", "test", "-r", "app1", "chef:run"],
+        identity: "cli4"
+      ).run
+    end
 
     # Configure chef
     assert File.exists?(Pantry.root.join("etc", "chef", "solo.rb")),
@@ -49,7 +51,7 @@ describe "Running Chef on a Client" do
     assert File.exists?(Pantry.root.join("chef", "cache", "chef-client-running.pid")),
       "Did not run chef-solo"
 
-    assert_match /Chef Run complete in/, responses[0]
+    assert_match /Chef Run complete in/, out
   end
 
 end

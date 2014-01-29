@@ -4,16 +4,8 @@ describe Pantry::CLI do
 
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
-  class EmptyProgressListener < Pantry::ProgressListener
-    def wait_for_finish
-      self
-    end
-  end
-
-  let(:listener) { EmptyProgressListener.new }
-
   def build_cli(command)
-    Pantry::CLI.new [command].flatten, progress_listener: listener
+    Pantry::CLI.new([command].flatten)
   end
 
   it "defaults identity to the current ENV['USER']" do
@@ -22,6 +14,7 @@ describe Pantry::CLI do
 
   it "builds a message from a command request and sends it to the server" do
     cli = build_cli("status")
+    Pantry::Command.any_instance.stubs(:wait_for_finish)
 
     cli.expects(:send_message).with do |message|
       assert_equal "ListClients", message.type
@@ -32,6 +25,7 @@ describe Pantry::CLI do
 
   it "passes along arguments to the command handler" do
     cli = build_cli(["echo", "Hello World"])
+    Pantry::Command.any_instance.stubs(:wait_for_finish)
 
     cli.expects(:send_message).with do |message|
       assert message.requires_response?, "Message not flagged to require response"
@@ -44,6 +38,7 @@ describe Pantry::CLI do
 
   it "includes global options when passing options to a command handler" do
     cli = build_cli(["-a", "pantry", "-e", "test", "echo", "Hello World"])
+    Pantry::Command.any_instance.stubs(:wait_for_finish)
 
     Pantry::Commands::Echo.any_instance.expects(:prepare_message).with do |filter, options|
       assert_equal "pantry", options["application"]
@@ -106,6 +101,7 @@ describe Pantry::CLI do
 
   it "can be given a set of filters to limit the request to a certain subset of clients" do
     cli = build_cli(["-a", "pantry", "-e", "test", "echo", "Hello World"])
+    Pantry::Command.any_instance.stubs(:wait_for_finish)
 
     cli.expects(:send_message).with do |message|
       assert_equal "Echo", message.type
@@ -123,6 +119,7 @@ describe Pantry::CLI do
     end
 
     cli = build_cli(["echo", "Hello World"])
+    Pantry::Command.any_instance.stubs(:wait_for_finish)
 
     cli.expects(:send_message).with do |message|
       assert_equal "Echo", message.type
@@ -134,6 +131,7 @@ describe Pantry::CLI do
 
   it "turns on Curve and sets keys if --curve-key-file is set" do
     break unless Pantry::Communication::Security.curve_supported?
+    Pantry::Command.any_instance.stubs(:wait_for_finish)
 
     File.open(Pantry.root.join("keys.yml"), "w+") do |f|
       f.write(YAML.dump(
@@ -159,21 +157,15 @@ describe Pantry::CLI do
 
   it "errors if the curve-key-file is not found"
 
-  it "forwards other messages received to the current command" do
+  it "forwards messages received to the current command" do
     cli = build_cli("status")
     cli.stubs(:send_message)
 
     command = Pantry::Command.new
-    cli.request(filter, command, {})
+    cli.async.request(filter, command, {})
 
-    response = Pantry::Message.new
-    response << "Hello World"
-
-    listener.expects(:say).with do |message|
-      assert message.body[0] == "Hello World"
-    end
-
-    cli.receive_message(response)
+    cli.receive_message(Pantry::Message.new)
+    assert command.finished?, "Command was not marked as finished"
   end
 
 end

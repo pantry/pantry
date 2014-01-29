@@ -27,21 +27,6 @@ end
 class ServerEchoCommand < Pantry::Commands::Echo
 end
 
-class SaveInfoProgressListener < Pantry::CLIProgressListener
-
-  attr_accessor :said
-
-  def initialize
-    @said = []
-    super
-  end
-
-  def say(message)
-    @said << message
-  end
-
-end
-
 class Minitest::Test
 
   # Set up a fully functional Server + 2 Client environment on the given ports
@@ -67,6 +52,7 @@ class Minitest::Test
   end
 
   def configure_pantry(ports_start_at: 10101, heartbeat: 300, security: nil)
+    Pantry.reset_ui!
     Pantry.config.server_host  = "127.0.0.1"
     Pantry.config.pub_sub_port = ports_start_at
     Pantry.config.receive_port = ports_start_at + 1

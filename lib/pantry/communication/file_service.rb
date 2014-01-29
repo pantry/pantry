@@ -47,7 +47,7 @@ module Pantry
       end
 
       # Inform the service that it will soon be receiving a file of the given
-      # size and checksum. Returns a FileInfo struct with the information for
+      # size and checksum. Returns a FileProgressInfo struct with the information for
       # the Sender.
       def receive_file(size, checksum)
         Pantry.logger.debug("[FileService] Receiving file of size #{size} and checksum #{checksum}")

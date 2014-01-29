@@ -24,11 +24,11 @@ module Pantry
           @expected_clients = message.body
         else
           @received << message
-          progress_listener.say("#{message.from} echo's #{message.body[0].inspect}")
+          Pantry.ui.say("#{message.from} echo's #{message.body[0].inspect}")
         end
 
         if !@expected_clients.empty? && @received.length >= @expected_clients.length
-          progress_listener.finished
+          super
         end
       end
 

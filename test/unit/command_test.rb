@@ -27,24 +27,13 @@ describe Pantry::Command do
     assert_equal filter.stream, message.to
   end
 
-  it "passes received message to the current listener and shuts down on received message" do
+  it "by default is finished on receipt of a message" do
     command = Pantry::Command.new
-    command.progress_listener.expects(:say)
-    command.progress_listener.expects(:finished)
-
     command.receive_response(Pantry::Message.new)
-  end
+    # Will raise if blocked on the future
+    command.wait_for_finish(1)
 
-  it "builds a default progress listener if one isn't given" do
-    command = Pantry::Command.new
-    assert command.progress_listener.is_a?(Pantry::ProgressListener),
-      "Default progress listener wasn't created"
-  end
-
-  it "can be given a specific progress listener" do
-    command = Pantry::Command.new
-    command.progress_listener = "listener!"
-    assert_equal "listener!", command.progress_listener
+    assert command.finished?, "Command not marked as finished"
   end
 
   module Pantry

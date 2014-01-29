@@ -4,26 +4,22 @@ module Pantry
   class CLI < Client
 
     def initialize(command_line, **args)
-      @progress_listener = args.delete(:progress_listener) || Pantry::CLIProgressListener.new
-      @command_line      = Pantry::CommandLine.new(command_line)
+      @command_line = Pantry::CommandLine.new(command_line)
 
       args[:identity] ||= ENV["USER"]
       super(**args)
     end
 
     def run
-      results = nil
-
       prepare_local_pantry_root
 
       options, arguments = @command_line.parse!
       if options && process_global_options(options)
         super
-        results = perform(options, arguments)
+        perform(options, arguments)
       end
 
       terminate
-      results
     end
 
     def prepare_local_pantry_root
@@ -92,8 +88,7 @@ module Pantry
     # Fire off the requested Command.
     def request(filter, command, options)
       @command = command
-      @command.server_or_client  = self
-      @command.progress_listener = @progress_listener
+      @command.client = self
 
       # We don't use send_request here because we don't want to deal with the
       # wait-list future system. This lets command objects handle responses
@@ -107,7 +102,7 @@ module Pantry
 
       send_message(message)
 
-      @command.progress_listener.wait_for_finish
+      @command.wait_for_finish
     end
 
     # All messages received by this client are assumed to be responses

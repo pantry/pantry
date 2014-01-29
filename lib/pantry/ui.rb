@@ -4,6 +4,10 @@ module Pantry
     @@ui ||= Pantry::UI.new
   end
 
+  def self.reset_ui!
+    @@ui = nil
+  end
+
   class UI
 
     def initialize
