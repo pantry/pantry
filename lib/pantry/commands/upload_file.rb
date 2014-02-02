@@ -25,18 +25,18 @@ module Pantry
         raise Pantry::MissingOption, "Required option APPLICATION is missing" unless application
 
         super.tap do |message|
-          message << application
+          message << options
           message << File.basename(@file_path)
           message << File.read(@file_path)
         end
       end
 
       def perform(message)
-        application = message.body[0]
+        cmd_options = message.body[0]
         file_name   = message.body[1]
         file_body   = message.body[2]
 
-        upload_dir = upload_directory(application)
+        upload_dir = upload_directory(cmd_options)
 
         FileUtils.mkdir_p(upload_dir)
         File.open(upload_dir.join(file_name), "w+") do |file|

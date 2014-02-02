@@ -8,8 +8,8 @@ module Pantry
         description "Upload the file at ENV_FILE as a Chef Environment. Requires an Application."
       end
 
-      def upload_directory(application)
-        Pantry.root.join("applications", application, "chef", "environments")
+      def upload_directory(options)
+        Pantry.root.join("applications", options[:application], "chef", "environments")
       end
 
     end

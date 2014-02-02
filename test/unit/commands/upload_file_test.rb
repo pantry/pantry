@@ -5,8 +5,8 @@ describe Pantry::Commands::UploadFile do
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
   class MyUploader < Pantry::Commands::UploadFile
-    def upload_directory(application)
-      Pantry.root.join("upload", application)
+    def upload_directory(options)
+      Pantry.root.join("upload", options[:application])
     end
   end
 
@@ -22,7 +22,7 @@ describe Pantry::Commands::UploadFile do
       command = MyUploader.new(fixture_path("file_to_upload"))
       message = command.prepare_message(filter, {"application" => "pantry"})
 
-      assert_equal "pantry", message.body[0]
+      assert_equal({"application" => "pantry"}, message.body[0])
       assert_equal "file_to_upload", message.body[1]
       assert_equal %|Hello\nPantry\n!\n|, message.body[2]
     end
@@ -33,7 +33,7 @@ describe Pantry::Commands::UploadFile do
 
     it "writes out the file data to the appropriate location" do
       message = Pantry::Message.new
-      message << "pantry"
+      message << {application: "pantry"}
       message << "filename.rb"
       message << "This is the content"
 
