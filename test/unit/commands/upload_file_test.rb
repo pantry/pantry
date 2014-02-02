@@ -20,9 +20,9 @@ describe Pantry::Commands::UploadFile do
 
     it "sets the file name and contents in the message to the Server" do
       command = MyUploader.new(fixture_path("file_to_upload"))
-      message = command.prepare_message(filter, {"application" => "pantry"})
+      message = command.prepare_message(filter, {application: "pantry"})
 
-      assert_equal({"application" => "pantry"}, message.body[0])
+      assert_equal({application: "pantry"}, message.body[0])
       assert_equal "file_to_upload", message.body[1]
       assert_equal %|Hello\nPantry\n!\n|, message.body[2]
     end

@@ -12,6 +12,7 @@ describe OptParsePlus do
     options      = parser.parse!(command_line)
 
     assert_equal "application_name", options['application']
+    assert_equal "application_name", options[:application]
     assert_equal [], command_line
   end
 
@@ -25,6 +26,7 @@ describe OptParsePlus do
     options      = parser.parse!(command_line)
 
     assert_equal "application_name", options['one']['application']
+    assert_equal "application_name", options[:one][:application]
     assert_equal [], command_line
   end
 

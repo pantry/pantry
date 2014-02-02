@@ -21,7 +21,7 @@ module Pantry
       end
 
       def prepare_message(filter, options)
-        application = options['application']
+        application = options[:application]
         raise Pantry::MissingOption, "Required option APPLICATION is missing" unless application
 
         super.tap do |message|

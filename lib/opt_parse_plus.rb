@@ -6,6 +6,14 @@ class OptParsePlus
 
   class OptionsFound < Hash
     attr_accessor :command_found
+
+    # Let these options be queried by a string key or symbol
+    # key equally.
+    def [](key)
+      super ||
+        (key.is_a?(Symbol) && super(key.to_s)) ||
+        (key.is_a?(String) && super(key.to_sym))
+    end
   end
 
   def initialize(parent = nil)
