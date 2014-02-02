@@ -5,6 +5,10 @@ describe Pantry::Commands::UploadFile do
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
   class MyUploader < Pantry::Commands::UploadFile
+    def required_options
+      %i(application)
+    end
+
     def upload_directory(options)
       Pantry.root.join("upload", options[:application])
     end

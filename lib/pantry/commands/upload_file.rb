@@ -20,9 +20,19 @@ module Pantry
         raise "Must implement #upload_directory in subclass"
       end
 
+      # Specify any required options for this Command by long-name
+      # For example, to require the base APPLICATION option, return %i(application)
+      # Does not matter if the list is of strings or symbols.
+      def required_options
+        []
+      end
+
       def prepare_message(filter, options)
-        application = options[:application]
-        raise Pantry::MissingOption, "Required option APPLICATION is missing" unless application
+        required_options.each do |required|
+          unless options[required]
+            raise Pantry::MissingOption, "Required option #{required} is missing"
+          end
+        end
 
         super.tap do |message|
           message << options

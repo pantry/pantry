@@ -8,6 +8,10 @@ module Pantry
         description "Upload the file at ROLE_FILE as a Chef Role. Requires an Application"
       end
 
+      def required_options
+        %i(application)
+      end
+
       def upload_directory(options)
         Pantry.root.join("applications", options[:application], "chef", "roles")
       end
