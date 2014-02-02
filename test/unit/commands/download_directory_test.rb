@@ -26,6 +26,23 @@ describe Pantry::Commands::DownloadDirectory do
     assert_equal ["db.rb", ""], response[1]
   end
 
+  it "does nested read of the given directory" do
+    root_dir = Pantry
+    message = Pantry::Message.new
+    message << "copy/from"
+
+    FileUtils.mkdir_p(Pantry.root.join("copy", "from", "here", "there"))
+    FileUtils.touch(Pantry.root.join("copy", "from", "here", "there", "app.rb"))
+    FileUtils.touch(Pantry.root.join("copy", "from", "here", "there", "db.rb"))
+
+    command = Pantry::Commands::DownloadDirectory.new
+    response = command.perform(message)
+
+    assert_equal 2, response.length
+    assert_equal ["here/there/app.rb", ""], response[0]
+    assert_equal ["here/there/db.rb", ""], response[1]
+  end
+
   it "does not allow path traversal attacks" do
     root_dir = Pantry
     message = Pantry::Message.new

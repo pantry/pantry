@@ -16,9 +16,11 @@ module Pantry
       def perform(message)
         directory = Pantry.root.join(message.body[0])
 
-        Dir[directory.join("*")].map do |role|
-          [File.basename(role), File.read(role)]
-        end
+        Dir[directory.join("**", "*")].map do |file|
+          next if File.directory?(file)
+          [Pathname.new(file).relative_path_from(directory).to_s,
+           File.read(file)]
+        end.compact
       end
 
       def to_message

@@ -39,6 +39,22 @@ describe Pantry::Commands::SyncDirectory do
     assert_equal "def main; end;", File.read(file2)
   end
 
+  it "ensures nested directories are created" do
+    client = stub_everything
+
+    response = Pantry::Message.new
+    response << ["nested/file1.txt", ""]
+
+    client.expects(:send_request).returns(mock(:value => response))
+
+    command = MySyncTest.new
+    command.client = client
+    command.perform(Pantry::Message.new)
+
+    file1 = Pantry.root.join("copy", "to", "nested", "file1.txt")
+    assert File.exists?(file1), "Did not write the nested file"
+  end
+
   it "doesn't allow path injection attacks" do
     client = stub_everything
 
@@ -52,8 +68,8 @@ describe Pantry::Commands::SyncDirectory do
     command.perform(Pantry::Message.new)
 
     file1 = Pantry.root.join("copy", "to", "file1.txt")
-    assert File.exists?(file1), "Did not write the first file"
-    assert_equal "some content here", File.read(file1)
+    assert_false File.exists?(file1), "Still wrote out the bad file?"
+    assert_false File.exists?(Pantry.root.join("../../../../file1.txt")), "Still wrote out the bad file?"
   end
 
 end
