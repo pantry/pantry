@@ -12,6 +12,7 @@ module Pantry
         SyncCookbooks,
         SyncRoles,
         SyncEnvironments,
+        SyncDataBags,
         RunChefSolo
       ]
 

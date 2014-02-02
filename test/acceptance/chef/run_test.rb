@@ -23,11 +23,17 @@ describe "Running Chef on a Client" do
       identity: "cli3"
     ).run
 
+    # Add a data bag
+    Pantry::CLI.new(
+      ["-a", "pantry", "chef:data_bag:upload", fixture_path("data_bags/settings/test.json")],
+      identity: "cli4"
+    ).run
+
     # Run chef to sync the cookbooks to the client
     out, err = capture_io do
       Pantry::CLI.new(
         ["-a", "pantry", "-e", "test", "-r", "app1", "chef:run"],
-        identity: "cli4"
+        identity: "cli-runner"
       ).run
     end
 
@@ -46,6 +52,10 @@ describe "Running Chef on a Client" do
       "Did not receive the mini cookbook from the server"
     assert File.directory?(Pantry.root.join("chef", "cookbooks", "mini", "recipes")),
       "Did not receive the mini cookbook from the server"
+
+    # Sync Data Bags
+    assert File.exists?(Pantry.root.join("chef", "data_bags", "settings", "test.json")),
+      "Did not receive the test settings data bag from the server"
 
     # Run chef-solo
     assert File.exists?(Pantry.root.join("chef", "cache", "chef-client-running.pid")),
