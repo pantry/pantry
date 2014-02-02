@@ -10,8 +10,10 @@ module Pantry
     # and the directory where the uploaded file will end up.
     class UploadFile < Pantry::Command
 
-      def initialize(file_path = nil)
-        @file_path = file_path
+      attr_reader :file_to_upload
+
+      def initialize(file_to_upload = nil)
+        @file_to_upload = file_to_upload
       end
 
       # Specify the directory this file should be written to
@@ -36,8 +38,8 @@ module Pantry
 
         super.tap do |message|
           message << options
-          message << File.basename(@file_path)
-          message << File.read(@file_path)
+          message << File.basename(@file_to_upload)
+          message << File.read(@file_to_upload)
         end
       end
 

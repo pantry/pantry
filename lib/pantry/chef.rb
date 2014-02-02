@@ -13,6 +13,8 @@ require 'pantry/chef/sync_roles'
 require 'pantry/chef/upload_environment'
 require 'pantry/chef/sync_environments'
 
+require 'pantry/chef/upload_data_bag'
+
 require 'pantry/chef/configure_chef'
 require 'pantry/chef/run_chef_solo'
 require 'pantry/chef/run'
@@ -38,6 +40,8 @@ Pantry.add_server_command(Pantry::Chef::SyncRoles)
 
 Pantry.add_server_command(Pantry::Chef::UploadEnvironment)
 Pantry.add_server_command(Pantry::Chef::SyncEnvironments)
+
+Pantry.add_server_command(Pantry::Chef::UploadDataBag)
 
 Pantry.add_client_command(Pantry::Chef::Run)
 Pantry.add_client_command(Pantry::Chef::ConfigureChef)
