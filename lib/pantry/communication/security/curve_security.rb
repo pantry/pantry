@@ -28,9 +28,9 @@ module Pantry
           end
 
           def configure_socket(socket)
-            socket.setsockopt(::ZMQ::CURVE_SERVERKEY, @key_store.server_public_key)
-            socket.setsockopt(::ZMQ::CURVE_PUBLICKEY, @key_store.public_key)
-            socket.setsockopt(::ZMQ::CURVE_SECRETKEY, @key_store.private_key)
+            socket.set(::ZMQ::CURVE_SERVERKEY, @key_store.server_public_key)
+            socket.set(::ZMQ::CURVE_PUBLICKEY, @key_store.public_key)
+            socket.set(::ZMQ::CURVE_SECRETKEY, @key_store.private_key)
           end
 
         end
@@ -43,8 +43,8 @@ module Pantry
           end
 
           def configure_socket(socket)
-            socket.setsockopt(::ZMQ::CURVE_SERVER,    1)
-            socket.setsockopt(::ZMQ::CURVE_SECRETKEY, @key_store.private_key)
+            socket.set(::ZMQ::CURVE_SERVER,    1)
+            socket.set(::ZMQ::CURVE_SECRETKEY, @key_store.private_key)
           end
 
         end

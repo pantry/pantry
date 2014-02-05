@@ -15,9 +15,9 @@ describe Pantry::Communication::Security::CurveSecurity do
       client_keys = YAML.load_file(curve_dir.join("client_keys.yml"))
 
       socket = mock
-      socket.expects(:setsockopt).with(::ZMQ::CURVE_SERVERKEY, client_keys["server_public_key"])
-      socket.expects(:setsockopt).with(::ZMQ::CURVE_PUBLICKEY, client_keys["public_key"])
-      socket.expects(:setsockopt).with(::ZMQ::CURVE_SECRETKEY, client_keys["private_key"])
+      socket.expects(:set).with(::ZMQ::CURVE_SERVERKEY, client_keys["server_public_key"])
+      socket.expects(:set).with(::ZMQ::CURVE_PUBLICKEY, client_keys["public_key"])
+      socket.expects(:set).with(::ZMQ::CURVE_SECRETKEY, client_keys["private_key"])
 
       client.configure_socket(socket)
     end
@@ -33,8 +33,8 @@ describe Pantry::Communication::Security::CurveSecurity do
       server_keys = YAML.load_file(curve_dir.join("server_keys.yml"))
 
       socket = mock
-      socket.expects(:setsockopt).with(::ZMQ::CURVE_SERVER, 1)
-      socket.expects(:setsockopt).with(::ZMQ::CURVE_SECRETKEY, server_keys["private_key"])
+      socket.expects(:set).with(::ZMQ::CURVE_SERVER, 1)
+      socket.expects(:set).with(::ZMQ::CURVE_SECRETKEY, server_keys["private_key"])
 
       server.configure_socket(socket)
     end

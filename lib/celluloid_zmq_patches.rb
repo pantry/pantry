@@ -5,7 +5,7 @@
 module Celluloid
   module ZMQ
     class Socket
-      def setsockopt(*args)
+      def set(*args)
         unless ::ZMQ::Util.resultcode_ok? @socket.setsockopt(*args)
           raise IOError, "couldn't set value: #{::ZMQ::Util.error_string}"
         end
