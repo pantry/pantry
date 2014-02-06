@@ -4,6 +4,8 @@ before_install:
   - travis_retry sudo apt-get update
   - travis_retry sudo apt-get install libzmq-dev libsodium-dev -y
 language: ruby
+env:
+  - EDITOR=vim
 rvm:
   - 2.0.0
   - 2.1.0
