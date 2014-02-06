@@ -40,6 +40,8 @@ describe "Running Chef on a Client" do
     # Configure chef
     assert File.exists?(Pantry.root.join("etc", "chef", "solo.rb")),
       "Did not write out the solo file"
+    assert File.exists?(Pantry.root.join("etc", "chef", "node.json")),
+      "Did not write out the node file"
 
     # Sync roles and environments
     assert File.exists?(Pantry.root.join("chef", "roles", "app1.rb")),

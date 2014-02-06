@@ -23,21 +23,36 @@ describe Pantry::Chef::ConfigureChef do
 
     solo_contents = File.read(solo_rb)
 
-    assert_match %|cookbook_path "#{Pantry.root.join("chef", "cookbooks")}|,
+    assert_match %r|cookbook_path\s*"#{Pantry.root.join("chef", "cookbooks")}|,
       solo_contents
-    assert_match %|file_cache_path "#{Pantry.root.join("chef", "cache")}|,
+    assert_match %r|file_cache_path\s*"#{Pantry.root.join("chef", "cache")}|,
       solo_contents
-    assert_match %|role_path "#{Pantry.root.join("chef", "roles")}|,
+    assert_match %r|role_path\s*"#{Pantry.root.join("chef", "roles")}|,
       solo_contents
-    assert_match %|environment_path "#{Pantry.root.join("chef", "environments")}|,
+    assert_match %r|environment_path\s*"#{Pantry.root.join("chef", "environments")}|,
       solo_contents
+    assert_match %r|json_attribs\s*"#{Pantry.root.join("etc", "chef", "node.json")}"|,
+      solo_contents
+  end
+
+  it "writes out the node.json file with run list based on client roles" do
+    client = Pantry::Client.new(roles: %w(app db))
+
+    command = Pantry::Chef::ConfigureChef.new
+    command.client = client
+    command.perform(Pantry::Message.new)
+
+    node_json = File.read(Pantry.root.join("etc", "chef", "node.json"))
+
+    assert_match "role[app]", node_json
+    assert_match "role[db]", node_json
   end
 
   it "writes out the current environment of the Client if one exists" do
     client = Pantry::Client.new(environment: "staging")
 
     command = Pantry::Chef::ConfigureChef.new
-    command.server_or_client = client
+    command.client = client
     command.perform(Pantry::Message.new)
 
     solo_rb = Pantry.root.join("etc/chef/solo.rb")
