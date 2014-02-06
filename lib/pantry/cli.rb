@@ -97,12 +97,17 @@ module Pantry
       # respond first with the list of clients who will be executing the command
       # and responding with the results. See Pantry::Commands::Echo for an example of how
       # to work with this flow.
-      message = @command.prepare_message(filter, options)
-      message.requires_response!
+      begin
+        message = @command.prepare_message(filter, options)
+        message.requires_response!
 
-      send_message(message)
+        send_message(message)
 
-      @command.wait_for_finish
+        @command.wait_for_finish
+      rescue Exception => ex
+        Pantry.ui.say("Error: #{ex.message}")
+        Pantry.logger.debug(ex.backtrace.join("\n"))
+      end
     end
 
     # All messages received by this client are assumed to be responses
