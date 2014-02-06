@@ -3,6 +3,7 @@ require 'celluloid/zmq'
 require 'json'
 require 'logger'
 require 'pathname'
+require 'safe_yaml/load'
 require 'securerandom'
 require 'socket'
 require 'syslog/logger'
@@ -144,6 +145,9 @@ end
 Celluloid.exception_handler do |exception|
   Pantry.logger.error("Exception thrown: #{exception.inspect}")
 end
+
+SafeYAML::OPTIONS[:default_mode]        = :safe
+SafeYAML::OPTIONS[:deserialize_symbols] = false
 
 ####################
 # Command Registry #

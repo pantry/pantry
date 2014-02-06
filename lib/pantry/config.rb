@@ -111,7 +111,7 @@ module Pantry
 
     # Given a YAML config file, read in config values
     def load_file(config_file)
-      configs = YAML.load_file(config_file)
+      configs = SafeYAML.load_file(config_file)
       load_global_configs(configs)
       load_networking_configs(configs["networking"])
       load_client_configs(configs["client"])
