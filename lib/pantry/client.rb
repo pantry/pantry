@@ -95,7 +95,10 @@ module Pantry
 
     def send_results_back_to_requester(message, results)
       response_message = message.build_response
-      response_message << results
+
+      [results].flatten(1).each do |entry|
+        response_message << entry
+      end
 
       @networking.send_message(response_message)
     end
