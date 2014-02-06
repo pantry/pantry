@@ -62,7 +62,7 @@ describe Pantry::Communication::SerializeMessage do
 
       zmq_message = Pantry::Communication::SerializeMessage.to_zeromq(pantry_message)
 
-      body = JSON.parse(zmq_message[2])
+      body = JSON.parse(zmq_message[2][1..-1])
       assert_equal "value", body["key"]
     end
 
@@ -71,13 +71,15 @@ describe Pantry::Communication::SerializeMessage do
 
       zmq_message = Pantry::Communication::SerializeMessage.to_zeromq(pantry_message)
 
-      body = JSON.parse(zmq_message[2])
+      body = JSON.parse(zmq_message[2][1..-1])
       assert_equal ["some", "values", 1, 2, true], body
     end
 
   end
 
   describe ".from_zeromq" do
+
+    let(:is_json) { Pantry::Communication::SerializeMessage::IS_JSON }
 
     it "takes an array and builds a Message from the parts" do
       parts = [ "source", {}.to_json, "body1" ]
@@ -97,7 +99,7 @@ describe Pantry::Communication::SerializeMessage do
     end
 
     it "handles JSON based body entries" do
-      parts = [ "source", {}.to_json, {:key => "value"}.to_json ]
+      parts = [ "source", {}.to_json, is_json + {:key => "value"}.to_json ]
 
       message = Pantry::Communication::SerializeMessage.from_zeromq(parts)
 
@@ -105,7 +107,7 @@ describe Pantry::Communication::SerializeMessage do
     end
 
     it "handles Array based body entries" do
-      parts = [ "source", {}.to_json, [1, 2, 3, "go"].to_json ]
+      parts = [ "source", {}.to_json, is_json + [1, 2, 3, "go"].to_json ]
 
       message = Pantry::Communication::SerializeMessage.from_zeromq(parts)
 

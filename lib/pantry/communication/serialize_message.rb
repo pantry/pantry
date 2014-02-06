@@ -5,6 +5,14 @@ module Pantry
     # communication stack
     class SerializeMessage
 
+      # To prevent accidents like trying to send the raw contents of a
+      # JSON file and end up with a Ruby hash on the other side, we designate
+      # messages as being JSON using a simple one character prefix. This way
+      # we don't have to guess if it's JSON or not and will leave non encoded
+      # strings alone. Don't want to dive into anything more complicated unless
+      # it's really necessary (like msgpack).
+      IS_JSON = '⁂'
+
       # Convert a message into an array of message parts that will
       # be sent through ZeroMQ.
       def self.to_zeromq(message)
@@ -36,7 +44,7 @@ module Pantry
           @message.body.map do |entry|
             case entry
             when Hash, Array
-              entry.to_json
+              "#{IS_JSON}#{entry.to_json}"
             else
               entry.to_s
             end
@@ -60,14 +68,13 @@ module Pantry
         protected
 
         def parse_body_parts(body_parts)
-          body_parts.map do |part|
-            # This may not be the best way but want to guess at a string being
-            # JSON without actually parsing it. I don't think this will be
-            # much of a problem as we have full control over message encoding.
-            if part.start_with?('{', '[')
-              JSON.parse(part, symbolize_names: true) rescue part
+          body_parts.map do |raw_part|
+            part = raw_part.force_encoding("UTF-8")
+
+            if part.start_with?(IS_JSON)
+              JSON.parse(part[1..-1], symbolize_names: true) rescue part
             else
-              part
+              raw_part
             end
           end
         end
