@@ -3,34 +3,20 @@ require 'fileutils'
 
 describe "Uploading cookbooks to the server" do
 
+  mock_ui!
+
   it "finds the current cookbook and uploads it" do
     set_up_environment(ports_start_at: 11000)
 
-    cli = Pantry::CLI.new(
+    Pantry::CLI.new(
       ["chef:cookbook:upload", fixture_path("cookbooks/mini")],
       identity: "cli1"
-    )
-    cli.run
+    ).run
 
-    assert File.exists?(Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz")),
+    assert File.exists?(Pantry.root.join("chef", "cookbooks", "mini", "metadata.rb")),
       "The mini cookbook was not uploaded to the server properly"
-  end
-
-  it "allows forcing a cookbook version up if the version already exists on the server" do
-    set_up_environment(ports_start_at: 11010)
-
-    chef_dir = Pantry.root.join("chef", "cookbooks", "mini")
-    FileUtils.mkdir_p chef_dir
-    system "touch #{File.join(chef_dir, "1.0.0.tgz")}"
-
-    cli = Pantry::CLI.new(
-      ["chef:cookbook:upload", "-f", fixture_path("cookbooks/mini")],
-      identity: "cli1"
-    )
-    cli.run
-
-    assert File.size(Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz")) > 0,
-      "The mini cookbook was not properly forced into place"
+    assert File.exists?(Pantry.root.join("chef", "cookbook-cache", "mini.tgz")),
+      "The uploaded tar ball was not saved to the upload cache"
   end
 
   it "reports any upload errors"

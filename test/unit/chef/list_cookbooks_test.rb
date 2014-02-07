@@ -7,10 +7,9 @@ describe Pantry::Chef::ListCookbooks do
   describe "#perform" do
     it "returns the list of cookbooks and latest version known" do
       cookbooks = [
-        Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz"),
-        Pantry.root.join("chef", "cookbooks", "mini", "2.0.0.tgz"),
-        Pantry.root.join("chef", "cookbooks", "ruby", "1.0.0.tgz"),
-        Pantry.root.join("chef", "cookbooks", "pantry", "1.0.0.tgz")
+        Pantry.root.join("chef", "cookbook-cache", "mini.tgz"),
+        Pantry.root.join("chef", "cookbook-cache", "ruby.tgz"),
+        Pantry.root.join("chef", "cookbook-cache", "pantry.tgz")
       ]
 
       cookbooks.each do|c|
@@ -24,7 +23,7 @@ describe Pantry::Chef::ListCookbooks do
       cookbook_list = command.perform(Pantry::Message.new)
 
       assert_equal [
-        ["mini",   "2.0.0", 0, "deadbeef"],
+        ["mini",   "1.0.0", 0, "deadbeef"],
         ["pantry", "1.0.0", 0, "deadbeef"],
         ["ruby",   "1.0.0", 0, "deadbeef"]
       ], cookbook_list

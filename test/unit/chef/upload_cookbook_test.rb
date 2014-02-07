@@ -67,7 +67,6 @@ describe Pantry::Chef::UploadCookbook do
 
     let(:incoming_message) do
       m = command.to_message
-      m[:cookbook_version]  = "1.0.0"
       m[:cookbook_name]     = "testing"
       m[:cookbook_size]     = 100
       m[:cookbook_checksum] = "123abc"
@@ -88,7 +87,7 @@ describe Pantry::Chef::UploadCookbook do
       command.server_or_client = stub(:receive_file => receiver_info)
       response = command.perform(incoming_message)
 
-      assert File.directory?(Pantry.root.join("chef", "cookbooks", "testing")),
+      assert File.directory?(Pantry.root.join("chef", "cookbooks")),
         "Did not create directory for the testing cookbook"
     end
 
@@ -98,33 +97,6 @@ describe Pantry::Chef::UploadCookbook do
 
       command.server_or_client = server_mock
 
-      response = command.perform(incoming_message)
-
-      assert_equal [true, "receiver", "abc123"], response
-    end
-
-    it "response with an error if a cookbook upload exists with that version" do
-      FileUtils.mkdir_p Pantry.root.join("chef", "cookbooks", "testing")
-      FileUtils.touch Pantry.root.join("chef", "cookbooks", "testing", "1.0.0.tgz")
-
-      server = mock
-      server.expects(:receive_file).never
-
-      command.server_or_client = server
-      response = command.perform(incoming_message)
-
-      assert_equal [false, "Version 1.0.0 of cookbook testing already exists"], response
-    end
-
-    it "allows overwriting an existing upload if forced" do
-      FileUtils.mkdir_p Pantry.root.join("chef", "cookbooks", "testing")
-      FileUtils.touch Pantry.root.join("chef", "cookbooks", "testing", "1.0.0.tgz")
-
-      server = mock(:receive_file => receiver_info)
-
-      incoming_message[:cookbook_force_upload] = true
-
-      command.server_or_client = server
       response = command.perform(incoming_message)
 
       assert_equal [true, "receiver", "abc123"], response

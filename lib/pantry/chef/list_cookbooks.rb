@@ -11,7 +11,7 @@ module Pantry
       end
 
       def perform(message)
-        Dir[Pantry.root.join("chef", "cookbooks", "*")].map do |cookbook_path|
+        Dir[Pantry.root.join("chef", "cookbook-cache", "*")].map do |cookbook_path|
           build_cookbook_info(cookbook_path)
         end
       end
@@ -19,15 +19,12 @@ module Pantry
       protected
 
       def build_cookbook_info(cookbook_path)
-        versions = Dir.entries(cookbook_path).sort {|a, b| b <=> a }
-
-        latest_version = File.join(cookbook_path, versions.first)
-        file_size      = File.size(latest_version)
-        file_digest    = Digest::SHA256.file(latest_version).hexdigest
+        file_size      = File.size(cookbook_path)
+        file_digest    = Digest::SHA256.file(cookbook_path).hexdigest
 
         [
-          File.basename(cookbook_path),
-          File.basename(latest_version, File.extname(latest_version)),
+          File.basename(cookbook_path, ".tgz"),
+          "1.0.0",
           file_size,
           file_digest
         ]

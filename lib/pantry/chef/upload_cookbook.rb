@@ -3,7 +3,11 @@ require 'chef'
 module Pantry
   module Chef
 
-    # Given a cookbook, upload it to the server
+    # Given a cookbook, upload it to the server.
+    # A given cookbook is stored in two locations. The cookbook tarball the Server receives is stored
+    # in Pantry.root/chef/cookbook-cache/[name].tgz to keep it available for sending back down to
+    # Clients who need the cookbook. To facilitate using the Chef library for dependency checks,
+    # the Server also unpacks the cookbook locally to Pantry.root/chef/cookbooks/[name].
     class UploadCookbook < Pantry::Command
 
       command "chef:cookbook:upload COOKBOOK_DIR" do
@@ -64,18 +68,26 @@ module Pantry
         cookbook_size     = message[:cookbook_size]
         cookbook_checksum = message[:cookbook_checksum]
 
-        cookbook_home = Pantry.root.join("chef", "cookbooks", cookbook_name)
+        cookbook_cache = Pantry.root.join("chef", "cookbook-cache")
+        cookbook_home = Pantry.root.join("chef", "cookbooks")
+        FileUtils.mkdir_p(cookbook_cache)
         FileUtils.mkdir_p(cookbook_home)
 
-        version_path = cookbook_home.join("#{cookbook_version}.tgz")
+        save_tar_path = cookbook_cache.join("#{cookbook_name}.tgz")
 
-        if !message[:cookbook_force_upload] && File.exists?(version_path)
+        if !message[:cookbook_force_upload] && File.exists?(save_tar_path)
           [false, "Version #{cookbook_version} of cookbook #{cookbook_name} already exists"]
         else
           uploader_info = server.receive_file(cookbook_size, cookbook_checksum)
           uploader_info.on_complete do
-            # Move tempfile into place
-            FileUtils.mv uploader_info.uploaded_path, version_path
+            # Store the tarball into the cookbook cache
+            FileUtils.mv uploader_info.uploaded_path, save_tar_path
+
+            # Unpack the cookbook itself
+            stdout, stderr = Open3.capture2e(
+              "tar", "-xzC", cookbook_home.to_s, "-f", save_tar_path.to_s
+            )
+            Pantry.logger.debug("[Upload Cookbook] Unpack cookbook #{stdout.inspect}, #{stderr.inspect}")
           end
 
           [true, uploader_info.receiver_identity, uploader_info.uuid]

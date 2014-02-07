@@ -12,9 +12,8 @@ describe Pantry::Chef::SendCookbooks do
       message << ["pantry", "1.0.0", "receiver_ident2", "file_uuid2"]
 
       cookbooks = [
-        Pantry.root.join("chef", "cookbooks", "mini", "1.0.0.tgz"),
-        Pantry.root.join("chef", "cookbooks", "mini", "2.0.0.tgz"),
-        Pantry.root.join("chef", "cookbooks", "pantry", "1.0.0.tgz")
+        Pantry.root.join("chef", "cookbook-cache", "mini.tgz"),
+        Pantry.root.join("chef", "cookbook-cache", "pantry.tgz")
       ]
 
       cookbooks.each do|c|
@@ -24,13 +23,13 @@ describe Pantry::Chef::SendCookbooks do
 
       server = mock
       server.expects(:send_file).with(
-        Pantry.root.join("chef", "cookbooks", "mini", "2.0.0.tgz"),
+        Pantry.root.join("chef", "cookbook-cache", "mini.tgz"),
         "receiver_ident",
         "file_uuid"
       )
 
       server.expects(:send_file).with(
-        Pantry.root.join("chef", "cookbooks", "pantry", "1.0.0.tgz"),
+        Pantry.root.join("chef", "cookbook-cache", "pantry.tgz"),
         "receiver_ident2",
         "file_uuid2"
       )

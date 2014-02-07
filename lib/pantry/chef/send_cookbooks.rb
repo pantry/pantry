@@ -8,7 +8,7 @@ module Pantry
       def perform(message)
         message.body.each do |(name, version, receiver_identity, file_uuid)|
           server.send_file(
-            Pantry.root.join("chef", "cookbooks", name, "#{version}.tgz"),
+            Pantry.root.join("chef", "cookbook-cache", "#{name}.tgz"),
             receiver_identity,
             file_uuid
           )
