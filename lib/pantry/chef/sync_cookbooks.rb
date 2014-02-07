@@ -5,10 +5,6 @@ module Pantry
     # says the Client should have.
     class SyncCookbooks < Pantry::Command
 
-      command "chef:cookbooks:sync" do
-        description "Update Clients with the cookbooks they should run"
-      end
-
       def perform(message)
         cookbooks_to_download = ask_server_for_cookbook_list
         Pantry.logger.debug("[#{client.identity}] Downloading cookbooks #{cookbooks_to_download}")
