@@ -18,7 +18,7 @@ describe Pantry::Chef::SyncCookbooks do
     it "fires off receivers for each cookbook in the list and waits for downloads to finish" do
       client = stub_everything
       message = Pantry::Message.new
-      message << ["cookbook1", "1.0.0", 0, "checksum1"]
+      message << ["cookbook1", 0, "checksum1"]
 
       client.stubs(:send_request).returns(stub(:value => message)).times(2)
 

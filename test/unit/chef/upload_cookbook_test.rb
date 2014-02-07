@@ -17,13 +17,12 @@ describe Pantry::Chef::UploadCookbook do
       File.unlink(@command.cookbook_tarball) if @command && @command.cookbook_tarball
     end
 
-    it "figures out name and version of the requested cookbook" do
+    it "figures out name of the requested cookbook" do
       command = build_command("mini")
       message = command.prepare_message(filter, {})
 
       assert_not_nil message, "Did not return a message"
       assert_equal "mini", message[:cookbook_name]
-      assert_equal "1.0.0", message[:cookbook_version]
     end
 
     it "tars up the cookbook, noting the size and a checksum of the file" do
@@ -49,17 +48,6 @@ describe Pantry::Chef::UploadCookbook do
         command = build_command("nonexist")
         command.prepare_message(filter, {})
       end
-    end
-
-    # This is to be an error check that Chef itself doesn't do, but does completely fail
-    # to run your cookbook if the metadata does not contain a name.
-    it "errors if metadata does not contain name / version"
-
-    it "marks in the Message if we want to force upload the current cookbook version" do
-      command = build_command("mini")
-      message = command.prepare_message(filter, {'force' => true})
-
-      assert message[:cookbook_force_upload], "Did not mark as a force upload"
     end
   end
 

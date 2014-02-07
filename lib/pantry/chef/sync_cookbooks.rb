@@ -20,11 +20,10 @@ module Pantry
       class FileAndReceiverInfo
         include Forwardable
 
-        attr_reader :name, :version
+        attr_reader :name
 
-        def initialize(name, version, receiver_info)
+        def initialize(name, receiver_info)
           @name = name
-          @version = version
           @receiver_info = receiver_info
         end
 
@@ -38,8 +37,8 @@ module Pantry
       end
 
       def build_cookbook_receivers(cookbook_list)
-        cookbook_list.map do |(name, version, size, checksum)|
-          receive_info = FileAndReceiverInfo.new(name, version, client.receive_file(size, checksum))
+        cookbook_list.map do |(name, size, checksum)|
+          receive_info = FileAndReceiverInfo.new(name, client.receive_file(size, checksum))
           receive_info.on_complete(&unpack_received_file(receive_info))
           receive_info
         end
@@ -63,7 +62,6 @@ module Pantry
         receivers.each do |receiver_info|
           download_message << [
             receiver_info.name,
-            receiver_info.version,
             receiver_info.receiver_identity,
             receiver_info.uuid
           ]

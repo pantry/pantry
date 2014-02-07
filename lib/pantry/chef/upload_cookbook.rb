@@ -12,7 +12,6 @@ module Pantry
 
       command "chef:cookbook:upload COOKBOOK_DIR" do
         description "Upload the cookbook at COOKBOOK_DIR to the server."
-        option      "-f", "--force", "Overwrite a previously uploaded version of this cookbook"
       end
 
       attr_reader :cookbook_tarball
@@ -51,11 +50,9 @@ module Pantry
         Pantry.ui.say("Uploading cookbook #{cookbook_name}...")
 
         message = super
-        message[:cookbook_version]  = cookbook.version
         message[:cookbook_name]     = cookbook.metadata.name
         message[:cookbook_size]     = File.size(@cookbook_tarball)
         message[:cookbook_checksum] = Digest::SHA256.file(@cookbook_tarball).hexdigest
-        message[:cookbook_force_upload] = options['force']
         message
       end
 
@@ -64,7 +61,6 @@ module Pantry
       # Fires off an upload receiver and returns the UUID for the client to use
       def perform(message)
         cookbook_name     = message[:cookbook_name]
-        cookbook_version  = message[:cookbook_version]
         cookbook_size     = message[:cookbook_size]
         cookbook_checksum = message[:cookbook_checksum]
 
@@ -75,23 +71,21 @@ module Pantry
 
         save_tar_path = cookbook_cache.join("#{cookbook_name}.tgz")
 
-        if !message[:cookbook_force_upload] && File.exists?(save_tar_path)
-          [false, "Version #{cookbook_version} of cookbook #{cookbook_name} already exists"]
-        else
-          uploader_info = server.receive_file(cookbook_size, cookbook_checksum)
-          uploader_info.on_complete do
-            # Store the tarball into the cookbook cache
-            FileUtils.mv uploader_info.uploaded_path, save_tar_path
+        uploader_info = server.receive_file(cookbook_size, cookbook_checksum)
+        uploader_info.on_complete do
+          # Store the tarball into the cookbook cache
+          FileUtils.mv uploader_info.uploaded_path, save_tar_path
 
-            # Unpack the cookbook itself
-            stdout, stderr = Open3.capture2e(
-              "tar", "-xzC", cookbook_home.to_s, "-f", save_tar_path.to_s
-            )
-            Pantry.logger.debug("[Upload Cookbook] Unpack cookbook #{stdout.inspect}, #{stderr.inspect}")
-          end
-
-          [true, uploader_info.receiver_identity, uploader_info.uuid]
+          # Unpack the cookbook itself
+          stdout, stderr = Open3.capture2e(
+            "tar", "-xzC", cookbook_home.to_s, "-f", save_tar_path.to_s
+          )
+          Pantry.logger.debug("[Upload Cookbook] Unpack cookbook #{stdout.inspect}, #{stderr.inspect}")
         end
+
+        [true, uploader_info.receiver_identity, uploader_info.uuid]
+      rescue => ex
+        [false, ex.message]
       end
 
       # CLI has received a response from the server, handle the response and set up

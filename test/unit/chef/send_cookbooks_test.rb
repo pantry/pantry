@@ -8,8 +8,8 @@ describe Pantry::Chef::SendCookbooks do
 
     it "takes the list of receivers and builds senders, passing in the proper cookbook file" do
       message = Pantry::Message.new
-      message << ["mini", "2.0.0", "receiver_ident", "file_uuid"]
-      message << ["pantry", "1.0.0", "receiver_ident2", "file_uuid2"]
+      message << ["mini",   "receiver_ident",  "file_uuid"]
+      message << ["pantry", "receiver_ident2", "file_uuid2"]
 
       cookbooks = [
         Pantry.root.join("chef", "cookbook-cache", "mini.tgz"),

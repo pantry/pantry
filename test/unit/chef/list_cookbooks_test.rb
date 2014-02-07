@@ -23,9 +23,9 @@ describe Pantry::Chef::ListCookbooks do
       cookbook_list = command.perform(Pantry::Message.new)
 
       assert_equal [
-        ["mini",   "1.0.0", 0, "deadbeef"],
-        ["pantry", "1.0.0", 0, "deadbeef"],
-        ["ruby",   "1.0.0", 0, "deadbeef"]
+        ["mini",   0, "deadbeef"],
+        ["pantry", 0, "deadbeef"],
+        ["ruby",   0, "deadbeef"]
       ], cookbook_list
     end
   end

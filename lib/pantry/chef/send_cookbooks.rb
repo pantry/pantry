@@ -6,7 +6,7 @@ module Pantry
     class SendCookbooks < Pantry::Command
 
       def perform(message)
-        message.body.each do |(name, version, receiver_identity, file_uuid)|
+        message.body.each do |(name, receiver_identity, file_uuid)|
           server.send_file(
             Pantry.root.join("chef", "cookbook-cache", "#{name}.tgz"),
             receiver_identity,
