@@ -44,6 +44,8 @@ module Pantry
           Open3.capture2("tar", "czf", @cookbook_tarball, cookbook_name)
         end
 
+        Pantry.ui.say("Uploading cookbook #{cookbook_name}...")
+
         message = super
         message[:cookbook_version]  = cookbook.version
         message[:cookbook_name]     = cookbook.metadata.name

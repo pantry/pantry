@@ -25,6 +25,7 @@ module Pantry
 
       def prepare_message(filter, options)
         options[:type] ||= File.basename(File.dirname(file_to_upload))
+        Pantry.ui.say("Uploading data bag #{File.basename(file_to_upload)}...")
         super
       end
 

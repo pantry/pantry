@@ -16,6 +16,11 @@ module Pantry
         Pantry.root.join("applications", options[:application], "chef", "roles")
       end
 
+      def prepare_message(*args)
+        Pantry.ui.say("Uploading role #{File.basename(file_to_upload)}...")
+        super
+      end
+
     end
 
   end

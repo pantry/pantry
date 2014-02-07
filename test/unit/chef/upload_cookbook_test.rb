@@ -166,7 +166,7 @@ describe Pantry::Chef::UploadCookbook do
 
       command.receive_response(response_message)
 
-      assert_equal "ERROR: Unable to Upload Reason\n", stdout
+      assert_match /ERROR: Unable to Upload Reason/, stdout
     end
 
   end
