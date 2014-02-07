@@ -2,6 +2,8 @@ require 'unit/test_helper'
 
 describe Pantry::Commands::ListClients do
 
+  mock_ui!
+
   it "asks server for known clients and returns the info as a list" do
     server = Pantry::Server.new
     server.register_client(Pantry::ClientInfo.new(identity: "client1"))
@@ -44,12 +46,10 @@ describe Pantry::Commands::ListClients do
 
     command = Pantry::Commands::ListClients.new
 
-    out, err = capture_io do
-      command.receive_response(response)
-    end
+    command.receive_response(response)
 
-    assert_match /client1/, out, "Did not include client1 in output"
-    assert_match /client2/, out, "Did not include client2 in output"
+    assert_match /client1/, stdout, "Did not include client1 in output"
+    assert_match /client2/, stdout, "Did not include client2 in output"
   end
 
   it "generates a message with the given client filter" do

@@ -4,6 +4,8 @@ describe Pantry::Chef::UploadCookbook do
 
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
+  mock_ui!
+
   def build_command(cookbook_name)
     @command ||=
       Pantry::Chef::UploadCookbook.new(fixture_path("cookbooks/#{cookbook_name}"))
@@ -159,14 +161,12 @@ describe Pantry::Chef::UploadCookbook do
       command.prepare_message(filter, {})
 
       response_message = Pantry::Message.new
-      response_message.body << "false"
-      response_message.body << "Unable to Upload Reason"
+      response_message << "false"
+      response_message << "Unable to Upload Reason"
 
-      out, err = capture_io do
-        command.receive_response(response_message)
-      end
+      command.receive_response(response_message)
 
-      assert_equal "ERROR: Unable to Upload Reason\n", out
+      assert_equal "ERROR: Unable to Upload Reason\n", stdout
     end
 
   end

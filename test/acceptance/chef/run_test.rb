@@ -2,6 +2,8 @@ require 'acceptance/test_helper'
 
 describe "Running Chef on a Client" do
 
+  mock_ui!
+
   it "configures chef, syncs cookbooks from server to the client and runs chef solo" do
     set_up_environment(ports_start_at: 12000)
 
@@ -30,12 +32,10 @@ describe "Running Chef on a Client" do
     ).run
 
     # Run chef to sync the cookbooks to the client
-    out, err = capture_io do
-      Pantry::CLI.new(
-        ["-a", "pantry", "-e", "test", "-r", "app1", "chef:run"],
-        identity: "cli-runner"
-      ).run
-    end
+    Pantry::CLI.new(
+      ["-a", "pantry", "-e", "test", "-r", "app1", "chef:run"],
+      identity: "cli-runner"
+    ).run
 
     # Configure chef
     assert File.exists?(Pantry.root.join("etc", "chef", "solo.rb")),
@@ -63,7 +63,7 @@ describe "Running Chef on a Client" do
     assert File.exists?(Pantry.root.join("chef", "cache", "chef-client-running.pid")),
       "Did not run chef-solo"
 
-    assert_match /Chef Run complete in/, out
+    assert_match /Chef Run complete in/, stdout
   end
 
 end

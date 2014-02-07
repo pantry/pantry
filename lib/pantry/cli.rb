@@ -55,7 +55,7 @@ module Pantry
       end
 
       if options["version"]
-        puts Pantry::VERSION
+        Pantry.ui.say Pantry::VERSION
         terminate
         return false
       end

@@ -1,5 +1,6 @@
 require 'support/minitest'
 require 'support/matchers'
+require 'support/mock_ui'
 require 'celluloid/test'
 require 'mocha/setup'
 require 'fakefs/safe'
@@ -52,7 +53,6 @@ class Minitest::Test
   end
 
   def configure_pantry(ports_start_at: 10101, heartbeat: 300, security: nil)
-    Pantry.reset_ui!
     Pantry.config.server_host  = "127.0.0.1"
     Pantry.config.pub_sub_port = ports_start_at
     Pantry.config.receive_port = ports_start_at + 1

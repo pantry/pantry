@@ -2,7 +2,6 @@ require 'minitest/autorun'
 
 # Global helpers we're adding to Minitest
 
-
 class Minitest::Test
 
   def clean_up_pantry_root

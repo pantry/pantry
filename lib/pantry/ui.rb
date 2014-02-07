@@ -1,7 +1,7 @@
 module Pantry
 
-  def self.ui
-    @@ui ||= Pantry::UI.new
+  def self.ui(input = $stdin, output = $stdout)
+    @@ui ||= Pantry::UI.new(input, output)
   end
 
   def self.reset_ui!
@@ -10,9 +10,9 @@ module Pantry
 
   class UI
 
-    def initialize
+    def initialize(input = $stdin, output = $stdout)
       require 'highline'
-      @highline = HighLine.new
+      @highline = HighLine.new(input, output)
     end
 
     # Send a message to STDOUT

@@ -4,6 +4,8 @@ describe Pantry::CLI do
 
   let(:filter) { Pantry::Communication::ClientFilter.new }
 
+  mock_ui!
+
   def build_cli(command)
     Pantry::CLI.new([command].flatten)
   end
@@ -82,12 +84,10 @@ describe Pantry::CLI do
   end
 
   it "prints out the version of pantry when requested" do
-    out, err = capture_io do
-      cli = build_cli(["-V"])
-      cli.run
-    end
+    cli = build_cli(["-V"])
+    cli.run
 
-    assert_equal Pantry::VERSION, out.strip
+    assert_equal Pantry::VERSION, stdout.strip
   end
 
   it "prints the help if nothing given on the command line" do
@@ -141,7 +141,7 @@ describe Pantry::CLI do
       ))
     end
 
-    out, err = capture_io do
+    capture_io do
       cli = build_cli(["--curve-key-file", "keys.yml"])
       cli.run
     end

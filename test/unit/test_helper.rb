@@ -1,6 +1,7 @@
 require 'support/minitest'
 require 'mocha/setup'
 require 'support/matchers'
+require 'support/mock_ui'
 require 'celluloid/test'
 require 'fakefs/safe'
 
@@ -14,7 +15,6 @@ class Minitest::Test
   def setup
     Celluloid.init
     Pantry.reset_config!
-    Pantry.reset_ui!
     Pantry.config.data_dir = File.expand_path("../../data_dir", __FILE__)
   end
 
