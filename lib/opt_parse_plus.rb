@@ -61,9 +61,9 @@ class OptParsePlus
   end
 
   def description(message)
-    @summary = message
+    @summary = clean_up_white_space(message)
     @parser.separator("")
-    @parser.separator(message)
+    @parser.separator(@summary)
     @parser.separator("")
   end
 
@@ -110,6 +110,10 @@ class OptParsePlus
   end
 
   protected
+
+  def clean_up_white_space(message)
+    message.split("\n").map(&:strip).join("\n")
+  end
 
   def add_default_help
     @parser.on_tail('-h', '--help', 'Show this help message') do

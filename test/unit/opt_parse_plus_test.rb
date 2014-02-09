@@ -198,4 +198,21 @@ describe OptParsePlus do
     assert_match /Show the given message/, help_text
   end
 
+  it "cleans up extra white space in full command descriptions" do
+    parser = OptParsePlus.new
+    parser.add_command("display MESSAGE") do
+      description "Show the given message.
+        Requires a MESSAGE to be passed in.
+        and will Error out otherwise"
+    end
+
+    help_text, error = capture_io do
+      parser.parse!(["display", "--help"])
+    end
+
+    assert_match /^Show the given message/, help_text
+    assert_match /^Requires a MESSAGE/, help_text
+    assert_match /^and will Error/, help_text
+  end
+
 end
