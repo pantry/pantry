@@ -87,6 +87,32 @@ describe OptParsePlus do
     assert_equal "DoThisNow", options['run']['command']
   end
 
+  it "groups commands together, sorting subcommands alphabetically" do
+    parser = OptParsePlus.new
+    parser.add_command("run") do
+      group "Exercise"
+    end
+
+    parser.add_command("bike") do
+      group "Exercise"
+    end
+
+    parser.add_command("sleep") do
+      group "Lazy"
+    end
+
+    output, err = capture_io do
+      parser.parse!(%w(--help))
+    end
+
+    # Group subheadings
+    assert_match /Exercise commands/, output
+    assert_match /Lazy commands/, output
+
+    # Check alphabetical sort
+    assert_match /bike.*run/m, output
+  end
+
   it "adds a global help option" do
     parser = OptParsePlus.new
 
@@ -138,6 +164,21 @@ describe OptParsePlus do
     assert_match /run\s+Run something/, help_text
     assert_match /stop\s+Stop something/, help_text
     assert_match /stock\s+Stock the item/, help_text
+  end
+
+  it "only shows the first line of a command's description in top-level help" do
+    parser = OptParsePlus.new
+    parser.add_command("run") do
+      description "Run something.
+        Run fast.
+        Don't run slow"
+    end
+
+    help_text = parser.help
+
+    assert_match /Run something/, help_text
+    assert_no_match /Run fast/, help_text
+    assert_no_match /Don't run slow/, help_text
   end
 
   it "includes sub-command descriptions and banner strings in help text" do

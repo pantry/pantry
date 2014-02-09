@@ -12,6 +12,7 @@ module Pantry
 
       command "chef:cookbook:upload COOKBOOK_DIR" do
         description "Upload the cookbook at COOKBOOK_DIR to the server."
+        group "Chef"
       end
 
       attr_reader :cookbook_tarball

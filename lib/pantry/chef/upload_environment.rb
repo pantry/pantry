@@ -6,6 +6,7 @@ module Pantry
 
       command "chef:environment:upload ENV_FILE" do
         description "Upload the file at ENV_FILE as a Chef Environment. Requires an Application."
+        group "Chef"
       end
 
       def required_options

@@ -72,8 +72,8 @@ module Pantry
           # Hmm duplicated from OptParsePlus
           base_command_name = command_class.command_name.split(/\s/).first
           commands[base_command_name] = {
-            banner:  command_class.command_name,
-            class: command_class
+            banner: command_class.command_name,
+            class:  command_class
           }
         end
       end

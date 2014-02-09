@@ -6,6 +6,7 @@ module Pantry
 
       command "chef:role:upload ROLE_FILE" do
         description "Upload the file at ROLE_FILE as a Chef Role. Requires an Application"
+        group "Chef"
       end
 
       def required_options

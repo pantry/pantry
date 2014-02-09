@@ -8,5 +8,6 @@ module Minitest::Assertions
   alias assert_not       refute
   alias assert_false     refute
   alias assert_not_equal refute_equal
+  alias assert_no_match  refute_match
 
 end

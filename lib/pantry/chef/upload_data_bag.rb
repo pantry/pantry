@@ -13,6 +13,8 @@ module Pantry
         option "-t", "--type DATA_BAG_TYPE",
           "Specify the type of data bag being uploaded.
            Defaults to the name of the parent directory of the data bag file."
+
+        group "Chef"
       end
 
       def required_options

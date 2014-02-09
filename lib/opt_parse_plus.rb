@@ -21,6 +21,7 @@ class OptParsePlus
     @parser = OptionParser.new
     @options = OptionsFound.new
     @commands = {}
+    @summary = ""
 
     add_default_help
   end
@@ -49,6 +50,14 @@ class OptParsePlus
 
   def banner(message)
     @parser.banner = message
+  end
+
+  def group(group_name = nil)
+    if group_name
+      @group = group_name
+    else
+      @group
+    end
   end
 
   def description(message)
@@ -82,14 +91,17 @@ class OptParsePlus
   end
 
   def help
-    help_parts = []
+    help_parts   = []
     help_parts << @parser.to_s
 
     if @commands.any?
       help_parts << ["Known Commands", ""]
-      @commands.each do |command_name, parser|
-        help_parts << "#{command_name} \t #{parser.summary}"
+      command_list = group_and_sort_command_help
+
+      command_list.each do |cmd_line|
+        help_parts << cmd_line
       end
+
       help_parts << ""
     end
 
@@ -113,6 +125,56 @@ class OptParsePlus
   def parse_argument_name(arguments)
     full_name_arg = arguments.select {|a| a =~ /\A--/ }.first
     full_name_arg.split(/\s/).first.gsub("--", "")
+  end
+
+  def group_and_sort_command_help
+    grouped_commands = Hash.new {|hash, key| hash[key] = []}
+
+    @commands.each do |command_name, parser|
+      grouped_commands[parser.group] << [command_name, parser]
+    end
+
+    command_list = []
+    sorted_group_names = grouped_commands.keys.sort {|a, b| a.to_s <=> b.to_s }
+    sorted_group_names.each do |group_name|
+      command_list << build_help_for_command_group(group_name, grouped_commands[group_name])
+    end
+
+    command_list.flatten(1)
+  end
+
+  def build_help_for_command_group(group_name, group_commands)
+    command_list = []
+
+    if group_name
+      command_list << nil
+      command_list << "#{group_name} commands"
+      command_list << nil
+    end
+
+    command_list + generate_short_help_for_commands(group_commands)
+  end
+
+  def generate_short_help_for_commands(group_commands)
+    longest_command_length = 0
+    group_commands.each do |(command_name, _)|
+      longest_command_length = command_name.length if command_name.length > longest_command_length
+    end
+    # Give ourselves a small buffer between command and summary
+    longest_command_length += 3
+
+    sorted_group_commands = group_commands.sort {|a, b| a[0] <=> b[0]}
+    sorted_group_commands.map do |(command_name, parser)|
+      sprintf(
+        "%-#{longest_command_length}s %s",
+        command_name,
+        first_line_of_summary(parser)
+      )
+    end
+  end
+
+  def first_line_of_summary(parser)
+    parser.summary.split("\n").first
   end
 
 end

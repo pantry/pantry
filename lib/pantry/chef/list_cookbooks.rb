@@ -8,6 +8,7 @@ module Pantry
 
       command "chef:cookbooks:list" do
         description "List all known cookbooks on the server."
+        group "Chef"
       end
 
       def perform(message)

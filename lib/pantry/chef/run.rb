@@ -5,6 +5,7 @@ module Pantry
 
       command "chef:run" do
         description "Run Chef on Clients"
+        group "Chef"
       end
 
       performs [
