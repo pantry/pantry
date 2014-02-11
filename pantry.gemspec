@@ -30,5 +30,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "safe_yaml"
 
   # Chef stuff
-  s.add_runtime_dependency "chef", "~> 11.8.0"
+  s.add_runtime_dependency "chef", "~> 11.10.0"
 end
