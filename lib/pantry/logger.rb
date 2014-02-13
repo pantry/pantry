@@ -29,7 +29,7 @@ module Pantry
 
     # Turn off all logging entirely
     def disable!
-      Celluloid.logger = nil
+      Celluloid.logger = NullLogger.new
     end
 
     # Forward all methods on to the internal Celluloid Logger.
@@ -56,6 +56,22 @@ module Pantry
       end
     end
 
+  end
+
+  # Because Celluloid tries to log things on shut-down that throw
+  # tons of exceptions if the logger is nil
+  class NullLogger
+    def debug(*args)
+    end
+
+    def info(*args)
+    end
+
+    def warn(*args)
+    end
+
+    def error(*args)
+    end
   end
 
 end
