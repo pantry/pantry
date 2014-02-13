@@ -12,6 +12,8 @@ module Pantry
 
     def initialize(input = $stdin, output = $stdout)
       require 'highline'
+      @output = output
+      @input  = input
       @highline = HighLine.new(input, output)
     end
 
@@ -33,6 +35,29 @@ module Pantry
       @highline.agree(message) do |q|
         q.default = "yes"
       end
+    end
+
+    # Start a new progress meter with the given number of ticks
+    def progress_start(tick_count)
+      require 'ruby-progressbar'
+      @progress = ProgressBar.create(
+        total: tick_count, output: @output,
+        format: "Progress: %P%% |%B| %c/%C %e"
+      )
+    end
+
+    # Increment the running progress meter the given number of ticks
+    def progress_step(tick_count)
+      if @progress.progress + tick_count > @progress.total
+        tick_count = @progress.total - @progress.progress
+      end
+
+      @progress.progress += tick_count
+    end
+
+    # Complete and close down the current progress meter
+    def progress_finish
+      @progress.finish
     end
 
   end

@@ -33,16 +33,21 @@ module Pantry
 
           @file_size = @file.size
           @total_bytes_sent = 0
+
+          Pantry.ui.progress_start(@file_size)
         end
 
         def read(offset, bytes_to_read)
           @total_bytes_sent += bytes_to_read
+          Pantry.ui.progress_step(bytes_to_read)
 
           @file.seek(offset)
           @file.read(bytes_to_read)
         end
 
         def finished!
+          Pantry.ui.progress_finish
+
           @file.close
           super
         end

@@ -2,6 +2,8 @@ require 'unit/test_helper'
 
 describe Pantry::Communication::FileService::SendFile do
 
+  mock_ui!
+
   class FakeSendService
     attr_accessor :sent
     def initialize

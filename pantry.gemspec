@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "celluloid-zmq", "~> 0.15.0"
   s.add_runtime_dependency "highline"
   s.add_runtime_dependency "json"
+  s.add_runtime_dependency "ruby-progressbar"
   s.add_runtime_dependency "safe_yaml"
 
   # Chef stuff
