@@ -4,7 +4,7 @@ module Pantry
 
     # The top-level set of CLI options and flags Pantry respects
     BASE_OPTIONS = proc {
-      banner "Usage: #{$0} [options] [command [command options]]"
+      banner "Usage: #{File.basename($0)} [options] [command [command options]]"
       option "-h", "--host HOSTNAME", String, "Hostname of the Server to connect to"
       option "--curve-key-file FILE", String, "Name of the file in .pantry holding Curve keys.",
         "Specifying this option will turn on Curve encryption."
