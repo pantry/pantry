@@ -37,9 +37,18 @@ module Pantry
 
         class Server
 
+          attr_reader :authentication
+
           def initialize
             @key_store = CurveKeyStore.new("server_keys")
+            @authentication = Authentication.new(@key_store)
+            @authentication.open
+
             Pantry.logger.info("Configuring Server to use Curve encryption")
+          end
+
+          def link_to(parent)
+            parent.link(@authentication)
           end
 
           def configure_socket(socket)

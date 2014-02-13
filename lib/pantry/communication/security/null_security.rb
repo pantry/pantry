@@ -13,6 +13,10 @@ module Pantry
           new
         end
 
+        def link_to(parent)
+          # no-op
+        end
+
         def configure_socket(socket)
           # no-op
         end

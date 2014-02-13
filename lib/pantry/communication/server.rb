@@ -17,6 +17,7 @@ module Pantry
       # ready for client communication.
       def run
         @security = Communication::Security.new_server
+        @security.link_to(self)
 
         @publish_socket = Communication::PublishSocket.new_link(
           Pantry.config.server_host,

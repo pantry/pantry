@@ -4,11 +4,21 @@ describe "ZMQ4 CURVE security" do
 
   break unless Pantry::Communication::Security.curve_supported?
 
-  let(:key_dir) {
-    Pantry.root.join("security", "curve").tap do |dir|
-      FileUtils.mkdir_p dir
+  def assert_message_timeout(client)
+    message = ServerEchoCommand.new("Hello Server").to_message
+    response_future = client.send_request(message)
+
+    assert_raises(Celluloid::TimeoutError) do
+      response_future.value(1).body
     end
-  }
+  end
+
+  def assert_successful_message(client)
+    message = ServerEchoCommand.new("Hello Server").to_message
+    response_future = client.send_request(message)
+
+    assert_equal ["Hello Server"], response_future.value(2).body
+  end
 
   it "configures CURVE security for encrypted server/client communication" do
     set_up_encrypted(15000)
@@ -20,10 +30,7 @@ describe "ZMQ4 CURVE security" do
     client = Pantry::Client.new identity: "encrypted-client"
     client.run
 
-    message = ServerEchoCommand.new("Hello Server").to_message
-    response_future = client.send_request(message)
-
-    assert_equal ["Hello Server"], response_future.value(2).body
+    assert_successful_message(client)
   end
 
   it "rejects clients who connect with the wrong server key" do
@@ -36,12 +43,20 @@ describe "ZMQ4 CURVE security" do
     client = Pantry::Client.new identity: "encrypted-client"
     client.run
 
-    message = ServerEchoCommand.new("Hello Server").to_message
-    response_future = client.send_request(message)
+    assert_message_timeout(client)
+  end
 
-    assert_raises(Celluloid::TimeoutError) do
-      response_future.value(1).body
-    end
+  it "rejects a client whos public key is not known by the server" do
+    set_up_encrypted(15020, known_clients: [])
+
+    server = Pantry::Server.new
+    server.identity = "Encrypted Server"
+    server.run
+
+    client = Pantry::Client.new identity: "encrypted-client"
+    client.run
+
+    assert_message_timeout(client)
   end
 
 end

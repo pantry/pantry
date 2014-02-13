@@ -6,13 +6,14 @@ describe Pantry::Communication::Security::CurveKeyStore do
 
   let(:key_store) { Pantry::Communication::Security::CurveKeyStore.new("my_keys") }
 
-  def write_test_keys
+  def write_test_keys(known_client_keys = nil)
     security_dir = Pantry.root.join("security", "curve")
     FileUtils.mkdir_p security_dir
     File.open(security_dir.join("my_keys.yml"), "w+") do |f|
       f.write(YAML.dump({
         "private_key" => "private key", "public_key" => "public key",
-        "server_public_key" => "server key"
+        "server_public_key" => "server key",
+        "client_keys" => known_client_keys || ["client1", "client2"]
       }))
     end
   end
@@ -48,6 +49,15 @@ describe Pantry::Communication::Security::CurveKeyStore do
   it "can read back the server public key" do
     write_test_keys
     assert_equal "server key", key_store.server_public_key
+  end
+
+  it "encodes binary client public key for checking against known list" do
+    client_pub, priv = ZMQ::Util.curve_keypair
+    write_test_keys([client_pub])
+
+    decoded = FFI::MemoryPointer.from_string(' ' * 32)
+    binary_pub = LibZMQ.zmq_z85_decode(decoded, client_pub)
+    assert key_store.known_client?(binary_pub), "Should have matched binary with z85 encoded"
   end
 
 end

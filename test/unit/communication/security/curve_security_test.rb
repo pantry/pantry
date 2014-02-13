@@ -39,8 +39,6 @@ describe Pantry::Communication::Security::CurveSecurity do
       server.configure_socket(socket)
     end
 
-    it "writes out the client's public key if new unknown client now connecting"
-
   end
 
 end

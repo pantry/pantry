@@ -18,7 +18,19 @@ module Pantry
           check_or_generate_my_keys
         end
 
+        # Check if the given client public key is known by this server or
+        # not. Used solely by Servers
+        def known_client?(client_public_key)
+          @known_clients.include?(z85_encode(client_public_key))
+        end
+
         protected
+
+        # TODO Move this logic into ffi-rzmq proper
+        def z85_encode(binary_key)
+          encoded = FFI::MemoryPointer.from_string(' ' * 41)
+          LibZMQ::zmq_z85_encode(encoded, binary_key, 32)
+        end
 
         def ensure_directory_structure
           FileUtils.mkdir_p(@base_key_dir)
@@ -38,13 +50,19 @@ module Pantry
           @public_key = keys["public_key"]
           @private_key = keys["private_key"]
           @server_public_key = keys["server_public_key"]
+          @known_clients = keys["client_keys"]
         end
 
         def generate_new_key_pair
           @public_key, @private_key = ZMQ::Util.curve_keypair
+          @known_clients = []
 
           File.open(@my_keys_file, "w+") do |f|
-            f.write YAML.dump({"private_key" => @private_key, "public_key" => @public_key})
+            f.write YAML.dump({
+              "private_key" => @private_key,
+              "public_key" => @public_key,
+              "client_keys" => @known_clients
+            })
           end
         end
       end

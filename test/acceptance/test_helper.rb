@@ -76,10 +76,16 @@ class Minitest::Test
     server_public, server_private = ZMQ::Util.curve_keypair
     client_public, client_private = ZMQ::Util.curve_keypair
 
+    known_clients = options[:known_clients] || [client_public]
+
+    key_dir = Pantry.root.join("security", "curve")
+    FileUtils.mkdir_p(key_dir)
+
     File.open(key_dir.join("server_keys.yml"), "w+") do |f|
       f.write(YAML.dump({
         "private_key" => server_private,
         "public_key" => options[:server_public_key] || server_public,
+        "client_keys" => known_clients
       }))
     end
 
@@ -98,6 +104,8 @@ class Minitest::Test
     @server.shutdown  if @server
 
     clean_up_pantry_root
+
+    Celluloid.shutdown rescue nil
   end
 
 end
