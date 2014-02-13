@@ -50,7 +50,7 @@ module Pantry
           @public_key = keys["public_key"]
           @private_key = keys["private_key"]
           @server_public_key = keys["server_public_key"]
-          @known_clients = keys["client_keys"]
+          @known_clients = keys["client_keys"] || []
         end
 
         def generate_new_key_pair
