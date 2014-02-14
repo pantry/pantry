@@ -7,9 +7,7 @@ module Pantry
     class SendSocket < WritingSocket
 
       def build_socket
-        socket = Celluloid::ZMQ::DealerSocket.new
-        socket.linger = 0
-        socket
+        Celluloid::ZMQ::DealerSocket.new
       end
 
       def open_socket(socket)

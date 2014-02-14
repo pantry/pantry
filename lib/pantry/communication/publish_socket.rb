@@ -8,9 +8,7 @@ module Pantry
     class PublishSocket < WritingSocket
 
       def build_socket
-        socket = Celluloid::ZMQ::PubSocket.new
-        socket.linger = 0
-        socket
+        Celluloid::ZMQ::PubSocket.new
       end
 
       def open_socket(socket)

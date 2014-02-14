@@ -14,7 +14,7 @@ module Pantry
         @socket = Celluloid::ZMQ::RouterSocket.new
         @socket.set(::ZMQ::ROUTER_MANDATORY, 1)
         @socket.identity = @identity = SecureRandom.uuid
-        @socket.linger = 0
+        Communication.configure_socket(@socket)
 
         @security = security
         @security.configure_socket(@socket)

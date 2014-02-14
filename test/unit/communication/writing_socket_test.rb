@@ -17,7 +17,10 @@ describe Pantry::Communication::WritingSocket do
 
   it "serializes a message and sends it down the pipe" do
     zmq_socket = Class.new do
-      attr_accessor :written
+      attr_accessor :written, :linger
+
+      def set(*options)
+      end
 
       def write(message_body)
         @written = message_body

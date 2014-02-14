@@ -17,6 +17,7 @@ module Pantry
 
       def open
         @socket = build_socket
+        Communication.configure_socket(@socket)
         @security.configure_socket(@socket)
 
         open_socket(@socket)

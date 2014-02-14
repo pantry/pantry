@@ -17,9 +17,7 @@ module Pantry
       end
 
       def build_socket
-        socket = Celluloid::ZMQ::SubSocket.new
-        socket.linger = 0
-        socket
+        Celluloid::ZMQ::SubSocket.new
       end
 
       def open_socket(socket)
