@@ -51,14 +51,7 @@ module Pantry
             Pantry.logger.debug("[AUTH] Client authentication rejected: #{response_text}")
           end
 
-          @socket.write([
-            request[0],    # Version
-            request[1],    # Sequence / Request id
-            response_code,
-            response_text,
-            "",            # username
-            ""             # metadata
-          ])
+          write_response(request, response_code, response_text)
         end
 
         def read_next_request
@@ -90,6 +83,16 @@ module Pantry
           end
         end
 
+        def write_response(request, response_code, response_text)
+          @socket.write([
+            request[0],    # Version
+            request[1],    # Sequence / Request id
+            response_code,
+            response_text,
+            "",            # username
+            ""             # metadata
+          ])
+        end
       end
 
     end
