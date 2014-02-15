@@ -56,6 +56,10 @@ module Pantry
             socket.set(::ZMQ::CURVE_SECRETKEY, @key_store.private_key)
           end
 
+          def create_client
+            @key_store.create_client
+          end
+
         end
 
       end

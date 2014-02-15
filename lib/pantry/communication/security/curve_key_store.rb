@@ -24,6 +24,22 @@ module Pantry
           @known_clients.include?(z85_encode(client_public_key))
         end
 
+        # Generate and store a new Client pub/priv key pair
+        # Only the Public key is stored locally for authentication purposes.
+        # Returns a hash of all relevant keys for the Client to connect
+        # and Auth.
+        def create_client
+          client_public, client_private = ZMQ::Util.curve_keypair
+          @known_clients << client_public
+          save_keys
+
+          {
+            server_public_key: @public_key,
+            public_key: client_public,
+            private_key: client_private
+          }
+        end
+
         protected
 
         # TODO Move this logic into ffi-rzmq proper
@@ -56,7 +72,10 @@ module Pantry
         def generate_new_key_pair
           @public_key, @private_key = ZMQ::Util.curve_keypair
           @known_clients = []
+          save_keys
+        end
 
+        def save_keys
           File.open(@my_keys_file, "w+") do |f|
             f.write YAML.dump({
               "private_key" => @private_key,

@@ -39,6 +39,13 @@ module Pantry
       @client_registry.check_in(client)
     end
 
+    # Generate new authentication credentials for a client.
+    # Returns a Hash containing the credentials required for the client to
+    # connect and authenticate with this Server
+    def create_client
+      @networking.create_client
+    end
+
     # Return ClientInfo on which Client sent the given Message
     def client_who_sent(message)
       @client_registry.find(message.from)

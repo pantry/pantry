@@ -5,6 +5,7 @@ describe Pantry::Communication::Security::CurveKeyStore do
   break unless Pantry::Communication::Security.curve_supported?
 
   let(:key_store) { Pantry::Communication::Security::CurveKeyStore.new("my_keys") }
+  let(:curve_dir) { Pantry.root.join("security", "curve") }
 
   def write_test_keys(known_client_keys = nil)
     security_dir = Pantry.root.join("security", "curve")
@@ -21,14 +22,12 @@ describe Pantry::Communication::Security::CurveKeyStore do
   it "sets up directory structure in Pantry.root for storing credentials" do
     key_store
 
-    curve_dir = Pantry.root.join("security", "curve")
     assert File.directory?(curve_dir), "Storage stucture not set up"
   end
 
   it "generates a new set of server public/private keys if none exist" do
     key_store
 
-    curve_dir = Pantry.root.join("security", "curve")
     assert File.exists?(curve_dir.join("my_keys.yml")), "Did not generate my keys"
 
     keys = YAML.load_file(curve_dir.join("my_keys.yml"))
@@ -58,6 +57,25 @@ describe Pantry::Communication::Security::CurveKeyStore do
     decoded = FFI::MemoryPointer.from_string(' ' * 32)
     binary_pub = LibZMQ.zmq_z85_decode(decoded, client_pub)
     assert key_store.known_client?(binary_pub), "Should have matched binary with z85 encoded"
+  end
+
+  it "generates a new set of client keys, storing the new public and returning the lot" do
+    write_test_keys
+
+    new_client_keys = key_store.create_client
+
+    assert_equal "public key", new_client_keys[:server_public_key]
+    assert_not_nil new_client_keys[:public_key],  "Didn't generate a client public key"
+    assert_not_nil new_client_keys[:private_key], "Didn't generate a client private key"
+  end
+
+  it "stores the newly generated client public key in the key store" do
+    write_test_keys([])
+
+    new_client_keys = key_store.create_client
+
+    all_keys = YAML.load_file(curve_dir.join("my_keys.yml"))
+    assert_equal [new_client_keys[:public_key]], all_keys["client_keys"]
   end
 
 end

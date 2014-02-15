@@ -21,6 +21,10 @@ module Pantry
           # no-op
         end
 
+        def create_client
+          {}
+        end
+
       end
 
     end

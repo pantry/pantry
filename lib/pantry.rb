@@ -33,6 +33,7 @@ require 'pantry/commands/register_client'
 require 'pantry/commands/upload_file'
 require 'pantry/commands/sync_directory'
 require 'pantry/commands/download_directory'
+require 'pantry/commands/create_client'
 
 require 'pantry/communication'
 require 'pantry/communication/serialize_message'
@@ -165,6 +166,7 @@ Pantry.add_server_command(Pantry::Commands::UpdateApplication)
 Pantry.add_server_command(Pantry::Commands::ListClients)
 Pantry.add_server_command(Pantry::Commands::RegisterClient)
 Pantry.add_server_command(Pantry::Commands::DownloadDirectory)
+Pantry.add_server_command(Pantry::Commands::CreateClient)
 
 # Chef Handling Commands and Code #
 require 'pantry/chef'

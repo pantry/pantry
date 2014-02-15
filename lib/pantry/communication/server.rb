@@ -42,6 +42,12 @@ module Pantry
         @file_service.start_server
       end
 
+      # Ask Security to generate a new set of credentials as necessary
+      # for a new Client to connect to this Server
+      def create_client
+        @security.create_client
+      end
+
       # Send a request to all clients, expecting a result. Returns a Future
       # which can be queried later for the client response.
       def send_request(message)
