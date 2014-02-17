@@ -1,5 +1,3 @@
-require 'chef'
-
 module Pantry
   module Chef
 
@@ -30,6 +28,8 @@ module Pantry
       # * Package all this information into the message to send to the server
       #
       def prepare_message(filter, options)
+        require 'chef/cookbook_loader'
+
         cookbook_name = File.basename(@cookbook_path)
         cookbooks_dir = File.dirname(@cookbook_path)
 
