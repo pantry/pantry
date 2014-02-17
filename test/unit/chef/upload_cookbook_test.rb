@@ -2,8 +2,6 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::UploadCookbook do
 
-  let(:filter) { Pantry::Communication::ClientFilter.new }
-
   mock_ui!
 
   def build_command(cookbook_name)
@@ -19,7 +17,7 @@ describe Pantry::Chef::UploadCookbook do
 
     it "figures out name of the requested cookbook" do
       command = build_command("mini")
-      message = command.prepare_message(filter, {})
+      message = command.prepare_message({})
 
       assert_not_nil message, "Did not return a message"
       assert_equal "mini", message[:cookbook_name]
@@ -27,7 +25,7 @@ describe Pantry::Chef::UploadCookbook do
 
     it "tars up the cookbook, noting the size and a checksum of the file" do
       command = build_command("mini")
-      message = command.prepare_message(filter, {})
+      message = command.prepare_message({})
 
       assert message[:cookbook_size] > 0, "Did not calculate a size of the tarball"
       assert_not_nil message[:cookbook_checksum], "Did not calculate a checksum"
@@ -39,14 +37,14 @@ describe Pantry::Chef::UploadCookbook do
     it "errors out if no metadata file" do
       assert_raises Pantry::Chef::MissingMetadata do
         command = build_command("bad")
-        command.prepare_message(filter, {})
+        command.prepare_message({})
       end
     end
 
     it "errors if it can't find the cookbook" do
       assert_raises Pantry::Chef::UnknownCookbook do
         command = build_command("nonexist")
-        command.prepare_message(filter, {})
+        command.prepare_message({})
       end
     end
   end
@@ -104,7 +102,7 @@ describe Pantry::Chef::UploadCookbook do
       end.returns(mock(:wait_for_finish))
 
       command.server_or_client = client
-      command.prepare_message(filter, {})
+      command.prepare_message({})
 
       response_message = Pantry::Message.new
       response_message.body << "true"
@@ -118,7 +116,7 @@ describe Pantry::Chef::UploadCookbook do
       client.expects(:send_file).never
 
       command.server_or_client = client
-      command.prepare_message(filter, {})
+      command.prepare_message({})
 
       response_message = Pantry::Message.new
       response_message << "false"

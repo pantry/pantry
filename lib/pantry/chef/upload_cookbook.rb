@@ -27,7 +27,7 @@ module Pantry
       # * Figure out size and a checksum
       # * Package all this information into the message to send to the server
       #
-      def prepare_message(filter, options)
+      def prepare_message(options)
         require 'chef/cookbook_loader'
 
         cookbook_name = File.basename(@cookbook_path)

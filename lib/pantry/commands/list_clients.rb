@@ -9,9 +9,13 @@ module Pantry
 
       attr_accessor :client_filter
 
-      def prepare_message(filter, arguments = [])
-        @client_filter = filter
-        to_message
+      def prepare_message(options)
+        @client_filter = Pantry::Communication::ClientFilter.new(
+          application: options[:application],
+          environment: options[:environment],
+          roles: options[:roles]
+        )
+        super
       end
 
       # Return information about all connected Clients that match the given filter

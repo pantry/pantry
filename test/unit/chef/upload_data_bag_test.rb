@@ -15,9 +15,8 @@ describe Pantry::Chef::UploadDataBag do
     FileUtils.touch("data_bags/settings/test.json")
 
     command = Pantry::Chef::UploadDataBag.new("data_bags/settings/test.json")
-    filter = Pantry::Communication::ClientFilter.new
 
-    message = command.prepare_message(filter, {application: "pantry"})
+    message = command.prepare_message({application: "pantry"})
 
     assert_equal({application: "pantry", type: "settings"}, message.body[0])
   end

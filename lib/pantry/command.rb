@@ -155,10 +155,8 @@ module Pantry
     # The message returned here is then passed through the network to the appropriate
     # recipients (Clients, Server, or both) and used to trigger #perform on said
     # recipient.
-    def prepare_message(filter, options)
-      message = to_message
-      message.to = filter.stream
-      message
+    def prepare_message(options)
+      to_message
     end
 
     # Run whatever this command needs to do.

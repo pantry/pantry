@@ -53,12 +53,14 @@ describe Pantry::Commands::ListClients do
   end
 
   it "generates a message with the given client filter" do
-    filter = Pantry::Communication::ClientFilter.new(application: "pantry")
     command = Pantry::Commands::ListClients.new
-    message = command.prepare_message(filter)
+    message = command.prepare_message({
+      application: "pantry"
+    })
 
     assert_equal "ListClients", message.type
-    assert_equal filter.to_hash, message.body[0]
+    assert_equal({application: "pantry", environment: nil, roles: [], identity: nil},
+                 message.body[0])
   end
 
 end

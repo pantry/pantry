@@ -25,7 +25,7 @@ module Pantry
         Pantry.root.join("applications", options[:application], "chef", "data_bags", options[:type])
       end
 
-      def prepare_message(filter, options)
+      def prepare_message(options)
         options[:type] ||= File.basename(File.dirname(file_to_upload))
         Pantry.ui.say("Uploading data bag #{File.basename(file_to_upload)}...")
         super

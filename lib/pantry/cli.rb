@@ -98,7 +98,8 @@ module Pantry
       # and responding with the results. See Pantry::Commands::Echo for an example of how
       # to work with this flow.
       begin
-        message = @command.prepare_message(filter, options)
+        message = @command.prepare_message(options)
+        message.to = filter.stream
         message.requires_response!
 
         send_message(message)

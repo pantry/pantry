@@ -2,19 +2,18 @@ require 'unit/test_helper'
 
 describe Pantry::Commands::EditApplication do
   let(:command) { Pantry::Commands::EditApplication.new }
-  let(:filter) { Pantry::Communication::ClientFilter.new }
 
   fake_fs!
 
   describe "#prepare_message" do
     it "requires an application" do
       assert_raises(Pantry::MissingOption) do
-        command.prepare_message(filter, {})
+        command.prepare_message({})
       end
     end
 
     it "puts the application requested in the message" do
-      message = command.prepare_message(filter, {application: "pantry"})
+      message = command.prepare_message({application: "pantry"})
       assert_equal "pantry", message.body[0]
     end
   end
@@ -59,7 +58,7 @@ describe Pantry::Commands::EditApplication do
         assert_equal new_config_body, message.body[1]
       end
 
-      command.prepare_message(filter, {application: "pantry"})
+      command.prepare_message({application: "pantry"})
       command.receive_response(response)
 
       assert command.finished?, "Command was not finished"
@@ -75,7 +74,7 @@ describe Pantry::Commands::EditApplication do
 
       command.expects(:send_request!).never
 
-      command.prepare_message(filter, {application: "pantry"})
+      command.prepare_message({application: "pantry"})
       command.receive_response(response)
     end
   end

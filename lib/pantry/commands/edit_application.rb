@@ -13,7 +13,7 @@ module Pantry
           Requires an Application."
       end
 
-      def prepare_message(filter, options)
+      def prepare_message(options)
         @application = options[:application]
         raise Pantry::MissingOption, 'Missing required option "application"' unless @application
 

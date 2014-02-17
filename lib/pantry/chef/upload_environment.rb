@@ -17,7 +17,7 @@ module Pantry
         Pantry.root.join("applications", options[:application], "chef", "environments")
       end
 
-      def prepare_message(*args)
+      def prepare_message(options)
         Pantry.ui.say("Uploading environment #{File.basename(file_to_upload)}...")
         super
       end

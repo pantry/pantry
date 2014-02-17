@@ -29,7 +29,7 @@ module Pantry
         []
       end
 
-      def prepare_message(filter, options)
+      def prepare_message(options)
         required_options.each do |required|
           unless options[required]
             raise Pantry::MissingOption, "Required option #{required} is missing"

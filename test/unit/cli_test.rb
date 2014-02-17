@@ -42,7 +42,7 @@ describe Pantry::CLI do
     cli = build_cli(["-a", "pantry", "-e", "test", "echo", "Hello World"])
     Pantry::Command.any_instance.stubs(:wait_for_finish)
 
-    Pantry::Commands::Echo.any_instance.expects(:prepare_message).with do |filter, options|
+    Pantry::Commands::Echo.any_instance.expects(:prepare_message).with do |options|
       assert_equal "pantry", options["application"]
       assert_equal "test", options["environment"]
     end.returns(stub_everything)

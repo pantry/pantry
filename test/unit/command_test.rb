@@ -19,12 +19,10 @@ describe Pantry::Command do
 
   it "can prepare itself as a Message to be sent down the pipe" do
     command = Pantry::Command.new
-    filter = Pantry::Communication::ClientFilter.new
-    message = command.prepare_message(filter, {})
+    message = command.prepare_message({})
 
     assert message.is_a?(Pantry::Message),
       "prepare_message returned the wrong value"
-    assert_equal filter.stream, message.to
   end
 
   it "by default is finished on receipt of a message" do
