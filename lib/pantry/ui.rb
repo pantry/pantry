@@ -1,5 +1,7 @@
 module Pantry
 
+  # Global access to Pantry's UI handler. This object offers up
+  # a set of methods used to interact with the User via the CLI.
   def self.ui(input = $stdin, output = $stdout)
     @@ui ||= Pantry::UI.new(input, output)
   end

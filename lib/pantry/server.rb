@@ -1,17 +1,14 @@
 module Pantry
 
-  # The Pantry Server
+  # The Pantry Server.
   class Server
     include Celluloid
     finalizer :shutdown
 
-    # This server's Identity. This is currently just the server's hostname.
     attr_accessor :identity
 
-    # Registry of clients this Server knows about
     attr_reader :client_registry
 
-    # Initialize the Pantry Server
     def initialize(network_stack_class = Communication::Server)
       @commands = CommandHandler.new(self, Pantry.server_commands)
       @identity = current_hostname
@@ -33,7 +30,7 @@ module Pantry
       Pantry.logger.info("[#{@identity}] Server Shutting Down")
     end
 
-    # Mark a client as checked-in
+    # Mark an authenticated client as checked-in
     def register_client(client)
       Pantry.logger.info("[#{@identity}] Received client registration :: #{client.identity}")
       @client_registry.check_in(client)
@@ -51,7 +48,8 @@ module Pantry
       @client_registry.find(message.from)
     end
 
-    # Broadcast a message to all clients, optionally filtering for certain clients.
+    # Broadcast a +message+ to all clients who match the given +filter+.
+    # By default all clients will be notified.
     def publish_message(message, filter = Communication::ClientFilter.new)
       Pantry.logger.debug("[#{@identity}] Publishing #{message.inspect} to #{filter.stream.inspect}")
       message.to = filter.stream
@@ -60,7 +58,7 @@ module Pantry
 
     # Callback from the network when a message is received unsolicited from a client.
     # If the message received is unhandleable by this Server, the message is forwarded
-    # on down to the clients who match the message's to line.
+    # on down to the clients who match the message's +to+.
     def receive_message(message)
       Pantry.logger.debug("[#{@identity}] Received message #{message.inspect}")
       if @commands.can_handle?(message)
@@ -79,9 +77,9 @@ module Pantry
       end
     end
 
-    # Send a request to the Client(s) with the given identity.
-    # Returns a Future object, use #value to get the response from the Client
-    # when it's available.
+    # Send a Pantry::Message but mark it as requiring a response.
+    # This will set up and return a Celluloid::Future that will contain the
+    # response once it is available.
     def send_request(client, message)
       message.requires_response!
       message.to = client.identity
@@ -91,10 +89,18 @@ module Pantry
       @networking.send_request(message)
     end
 
+    # Start a FileService::SendFile worker to upload the contents of the
+    # file at +file_path+ to the equivalent ReceiveFile at +receiver_identity+.
+    # Using this method requires asking the receiving end (Server or Client) to receive
+    # a file first, which will return the +receiver_identity+ and +file_uuid+ to use here.
     def send_file(file_path, receiver_identity, file_uuid)
       @networking.send_file(file_path, receiver_identity, file_uuid)
     end
 
+    # Set up a FileService::ReceiveFile worker to begin receiving a file with
+    # the given size and checksum. This returns an informational object with
+    # the new receiver's identity and the file UUID so a SendFile worker knows who
+    # to send the file contents to.
     def receive_file(file_size, file_checksum)
       @networking.receive_file(file_size, file_checksum)
     end

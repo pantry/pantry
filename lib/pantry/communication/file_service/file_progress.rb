@@ -59,7 +59,9 @@ module Pantry
       end
 
       # Informational object to keep track of the progress of receiving
-      # a file from a sender.
+      # a file from a sender. Can be configured with a completion block that
+      # will be executed once the file has been fully received and checksum
+      # verified.
       class ReceivingFile < FileProgressInfo
         attr_reader :uuid, :file_size, :checksum, :uploaded_path
 

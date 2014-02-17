@@ -1,6 +1,24 @@
 module Pantry
   module Communication
 
+    # FileService manages the sending and receiving of files that are too big
+    # to cleanly send as a plain ZeroMQ message.
+    # Every Client and Server has its own FileService handler which can manage
+    # both sending and receiving files from each other.
+    #
+    # Setting up a file transfer processes backwards from what may be expected.
+    # As the Receiver actually requests chunks from the Sender, a protocol that's
+    # heavily influenced by http://zguide.zeromq.org/page:all#Transferring-Files,
+    # a Receiver must be initiated first on the receiving end, which will then pass
+    # back the appropriate information (receiver_identity and file upload UUID) a
+    # Sender needs to start up and run.
+    #
+    # From this the two parts complete the process automatically. A Receiver writes the
+    # data it receives in a tempfile, and must be configured with a completion block
+    # to move the uploaded file to its final location.
+    #
+    # To ensure this object has as little special-casing code as possible, the communication
+    # takes place in a ZeroMQ ROUTER <-> ROUTER topology.
     class FileService
       include Celluloid::ZMQ
       finalizer :shutdown

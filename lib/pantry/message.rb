@@ -1,13 +1,13 @@
 module Pantry
 
-  # Message is the container for communication between the client and server.
+  # A Message is the container for all network communication between Clients and Servers.
   # Messages know what stream they've been sent down, have a type to differentiate them
   # from each other, and an arbitrarily large body.
   #
   # Every message has three sections, the stream, metadata, and body. The stream defines
-  # where the message needs to go. The metadata defines information about the message, it's
-  # type, if it needs a response, everything that doesn't go in the body. The body is the
-  # request message itself.
+  # where the message needs to go. The metadata defines information about the message, its
+  # type, if it needs a response, and anything else that doesn't go in the body.
+  # The body is the request message itself and can be one or many parts.
   class Message
 
     # Unique identifier for this Message. Automatically generated

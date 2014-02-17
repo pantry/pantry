@@ -1,5 +1,6 @@
 module Pantry
 
+  # Access Pantry's logger.
   def self.logger
     @@logger ||= Pantry::Logger.new
   end

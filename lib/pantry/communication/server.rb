@@ -1,8 +1,9 @@
 module Pantry
   module Communication
 
-    # The communication server embodies everything the Pantry Server
-    # needs to properly communicate with Clients.
+    # The communication layer of a Pantry::Server
+    # This class manages all of the ZeroMQ sockets and underlying
+    # communication systems, handling the sending and receiving of messages.
     class Server
       include Celluloid
 

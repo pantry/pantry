@@ -1,6 +1,9 @@
 module Pantry
   module Communication
 
+    # The communication layer of a Pantry::Client
+    # This class manages all of the ZeroMQ sockets and underlying
+    # communication systems, handling the sending and receiving of messages.
     class Client
       include Celluloid
 
@@ -9,6 +12,8 @@ module Pantry
         @response_wait_list = Communication::WaitList.new
       end
 
+      # Start up the networking layer, opening up sockets and getting
+      # ready for communication.
       def run
         @security = Communication::Security.new_client
 
@@ -36,7 +41,7 @@ module Pantry
         @file_service.start_client
       end
 
-      # Receive a message from the server
+      # Callback from the SubscribeSocket when a message is received.
       def handle_message(message)
         if @response_wait_list.waiting_for?(message)
           @response_wait_list.received(message)

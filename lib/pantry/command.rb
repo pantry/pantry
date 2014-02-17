@@ -1,28 +1,128 @@
 module Pantry
 
-  # Base class of all Commands offering up some sane defaults for working
-  # with Commands and their associated Messages.
-  # All commands must implement #perform, which should return the values that
-  # should be sent back to the requester.
+  # Commands are where the task-specific functionality is implemented. Commands are the
+  # core of how Pantry works. There are two main types of commands: Server and Client, with
+  # Command Line (CLI) handling fitting in with these as necessary. The overarching design of the
+  # Command system is designed such that all knowledge required to understand a Command is contained
+  # inside of said Command. Commands are free to run other Commands but a well built Command
+  # is a single object that reads in the order of the execution throughout the entire request:
   #
-  # Command objects are responsible for the entire communication flow from the CLI
-  # to the Server / Clients and back. This is managed through three methods:
+  #   1. Command Line input processing and initial request (when applicable)
+  #   2. Client / Server processing of the command and return value(s)
+  #   3. Receipt of results, formatting and info display back to the user (when applicable)
   #
-  #   prepare_message  :: Builds the Message to send and can be used for any preparation
-  #                       required before sending a Message
+  # All commands must implement #perform. The important work of the Command is triggered through
+  # this method. #perform is given the Message that triggered the command, and the values returned
+  # from #perform will be packaged up and returned back to the requester when needed.
   #
-  #   perform          :: The actual action of the given Command on the Recipient.
-  #                       Any values returned from this function are packaged up and
-  #                       sent back to the sender.
+  # The absolute simplest command one can write returns a static value:
   #
-  #   receive_response :: All received responses due to the Command in question are sent
-  #                       back into the command object on the CLI through this method.
+  #   class TheSimplestCommand < Pantry::Command
+  #     def perform(message)
+  #       42
+  #     end
+  #   end
   #
-  # Note: In normal CLI execution, #prepare_message and #receive_response are called
-  # on the same object, but #prepare is called by another Actor elsewhere in the network.
-  # Thus, if information needs to be made available to all three, #prepare_message can set
-  # instance variables that #receive_response can read, but #perform must pull all information
-  # out of the Message.
+  # Commands are also responsible for creating the Pantry::Message that will be given to
+  # #perform on the intended Client or Server recipient. By default an empty Message is created
+  # with the Message#type set to the name of the Command's class. This can be customized using the
+  # Command.message_type class method. There cannot be two Commands registered of the exact same name
+  # or undefined behaviour will result.
+  #
+  # Customizing the Message for a given Command is handled with Command#to_message. Use
+  # this method to add content to the Message before it is sent along the network:
+  #
+  #   class SimpleEcho < Pantry::Command
+  #     def initialize(to_echo = nil)
+  #       @to_echo = to_echo
+  #     end
+  #
+  #     def perform(message)
+  #       message.body[0]
+  #     end
+  #
+  #     def to_message
+  #       super.tap do |msg|
+  #         msg << @to_echo
+  #       end
+  #     end
+  #   end
+  #
+  # One important oddity to note about Command#initialize. Commands are constructed in two
+  # situations: when the user triggers a command via the CLI, extra arguments not handled by
+  # options are passed into the constructor via splat (covered below), and secondly when the
+  # intended Client or Server receives a Message, the relevant Command object is constructed
+  # with no parameters. As such, if a Command takes parameters in its initializer for the CLI,
+  # then it must also support receiving no parameters.
+  #
+  # Commands can be further configured to be executable from the `pantry` CLI, including
+  # description and Command-specific options, all of which will show up in `pantry`'s help output.
+  # Lets add to the SimpleEcho example above to showcase how to configure the CLI options.
+  #
+  #   class SimpleEcho < Pantry::Command
+  #     command "echo MESSAGE" do
+  #       description "Echo the given MESSAGE back"
+  #       option "-t", "--times TIMES", "Duplicate the message response by TIMES. Must be positive"
+  #     end
+  #
+  #     def initialize(to_echo = nil)
+  #       @to_echo = to_echo
+  #     end
+  #
+  #     def prepare_message(options)
+  #       raise "Option 'times' must be a positive non-zero number" if options[:times] <= 0
+  #
+  #       super.tap do |msg|
+  #         msg << @to_echo
+  #         msg << options[:times] || 1
+  #       end
+  #     end
+  #
+  #     def perform(message)
+  #       message.body[0] * message.body[1]
+  #     end
+  #
+  #     def receive_response(response)
+  #       Pantry.ui.say(message.body[0])
+  #       super
+  #     end
+  #   end
+  #
+  # There are a few new pieces here. We'll go over them one at a time. The first is configuring
+  # the command line options themselves.
+  #
+  # The Command.command() class method is a very thin wrapper around Ruby's OptionParser library.
+  # See OptParsePlus for details on how this adds command handling to OptionParser but in general
+  # the syntax as defined for OptionParser is what you'll use in this block. Description strings
+  # are post-processed to remove excessive whitespace so feel free to make that a multi-line, clean
+  # block of text. The first line will be the summary and the rest will only show up on the command's
+  # own help text (all commands are given "-h", "--help").
+  #
+  # Next, #to_message has been replaced with #prepare_message. This method takes the options parsed
+  # from the command line and includes the Pantry global options as well (application, environment, roles).
+  # Use this method to verify proper options, and to take care of any pre-flight steps before the Message
+  # goes out. This also allows very fine-grained control over what Message is sent and what it contains.
+  # This method must return the Message that will be sent over the network or raise an error that will
+  # be displayed to the user and exit.
+  #
+  # The final aspect is #receive_response. By default a Command will assume that it's now finished as soon
+  # as a single response comes back. To act on that response, override this method. It will be given the
+  # response Message. This method must either call `super` or `finished` to trigger the Command as complete
+  # or the `pantry` tool will hang and never complete.
+  #
+  # Receiving responses properly requires an understanding of how Pantry handles requests out to multiple
+  # clients. Due to the fully async nature of Pantry, the CLI cannot know ahead of time how many Clients
+  # a given request will be sent to. Thus, when executing a client command, the Pantry Server will first
+  # return a message back to the CLI containing the identities of all Clients who received the message and
+  # will respond. Then when each Client responds, those responses are forwarded through the Server back to
+  # CLI. Thus, the SimpleEcho example above still isn't quite right, as the CLI needs to expect a minimum
+  # of two response messages.
+  #
+  # Pantry comes with a complete Echo implementation that combines all of the above. See Pantry::Commands::Echo.
+  #
+  # Finally, all commands must be registered with Pantry before they will be available for execution.
+  # Use Pantry.add_client_command or Pantry.add_server_command to register the Command class
+  # in the Pantry system.
   class Command
 
     class << self
@@ -38,6 +138,9 @@ module Pantry
       attr_reader :command_config
     end
 
+    # Initialize this Command
+    # Due to the multiple ways a Command is instantiated (via the CLI and from the Network stack)
+    # any Command initializer must support being called with no parameters if it expects some.
     def initialize(*args)
     end
 

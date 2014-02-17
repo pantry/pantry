@@ -4,6 +4,7 @@ module Pantry
   # Given a mapping of available commands, maps the incoming message to the appropriate
   # command handler and returns the response. Returns nil if no command found.
   class CommandHandler
+
     def initialize(server_or_client, commands_to_register = [])
       @handlers = {}
       @server_or_client = server_or_client

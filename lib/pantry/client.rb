@@ -1,6 +1,7 @@
 module Pantry
 
-  # The pantry Client. The Client runs on any server that needs provisioning,
+  # The Pantry Client.
+  # The Client runs on any server that needs provisioning,
   # and communicates to the Server through various channels. Clients can
   # be further configured to manage an application, for a given environment,
   # and across any number of roles.
@@ -59,10 +60,15 @@ module Pantry
       end
     end
 
+    # Send a Pantry::Message directly to its intended recipient.
+    # For a Client this is almost always the Server.
     def send_message(message)
       @networking.send_message(message)
     end
 
+    # Send a Pantry::Message but mark it as requiring a response.
+    # This will set up and return a Celluloid::Future that will contain the
+    # response once it is available.
     def send_request(message)
       message.requires_response!
 
@@ -71,10 +77,12 @@ module Pantry
       @networking.send_request(message)
     end
 
+    # See Pantry::Server#receive_file
     def receive_file(file_size, file_checksum)
       @networking.receive_file(file_size, file_checksum)
     end
 
+    # See Pantry::Server#send_file
     def send_file(file_path, receiver_identity, file_uuid)
       @networking.send_file(file_path, receiver_identity, file_uuid)
     end
