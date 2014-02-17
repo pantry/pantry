@@ -6,7 +6,7 @@ module Pantry
     # when sending cookbooks down to a Client.
     class ListCookbooks < Pantry::Command
 
-      command "chef:cookbooks:list" do
+      command "chef:cookbook:list" do
         description "List all known cookbooks on the server."
         group "Chef"
       end
