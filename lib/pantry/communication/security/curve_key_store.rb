@@ -106,7 +106,7 @@ module Pantry
               keys["server_public_key"] = @server_public_key
             end
 
-            if @known_clients.any?
+            if @known_clients.length > 0
               keys["client_keys"] = @known_clients
             end
 
