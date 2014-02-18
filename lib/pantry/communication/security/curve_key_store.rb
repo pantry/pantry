@@ -5,14 +5,19 @@ module Pantry
       # CurveKeyStore manages the storage, reading, and writing of all
       # Curve-related key-pairs.
       #
+      # Clients keep track of the public key of the server they talk to
+      # Servers keep track of the list of public keys of Clients who are
+      # allowed to connect.
+      #
       # All keys are stored under Pantry.root/security/curve
       class CurveKeyStore
 
         attr_reader :public_key, :private_key, :server_public_key
 
         def initialize(my_key_pair_name)
-          @base_key_dir = Pantry.root.join("security", "curve")
-          @my_keys_file = @base_key_dir.join("#{my_key_pair_name}.yml")
+          @base_key_dir  = Pantry.root.join("security", "curve")
+          @my_keys_file  = @base_key_dir.join("#{my_key_pair_name}.yml")
+          @known_clients = []
 
           ensure_directory_structure
           check_or_generate_my_keys
@@ -65,9 +70,9 @@ module Pantry
         def check_or_generate_my_keys
           if File.exists?(@my_keys_file)
             load_current_key_pair
-          else
-            generate_new_key_pair
           end
+
+          generate_missing_keys
         end
 
         def load_current_key_pair
@@ -78,10 +83,11 @@ module Pantry
           @known_clients = keys["client_keys"] || []
         end
 
-        def generate_new_key_pair
-          @public_key, @private_key = ZMQ::Util.curve_keypair
-          @known_clients = []
-          save_keys
+        def generate_missing_keys
+          if @public_key.nil? && @private_key.nil?
+            @public_key, @private_key = ZMQ::Util.curve_keypair
+            save_keys
+          end
         end
 
         def store_known_client(client_public_key)
@@ -91,11 +97,20 @@ module Pantry
 
         def save_keys
           File.open(@my_keys_file, "w+") do |f|
-            f.write YAML.dump({
+            keys = {
               "private_key" => @private_key,
-              "public_key" => @public_key,
-              "client_keys" => @known_clients
-            })
+              "public_key" => @public_key
+            }
+
+            if @server_public_key
+              keys["server_public_key"] = @server_public_key
+            end
+
+            if @known_clients.any?
+              keys["client_keys"] = @known_clients
+            end
+
+            f.write YAML.dump(keys)
           end
         end
       end

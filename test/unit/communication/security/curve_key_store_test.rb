@@ -9,14 +9,17 @@ describe Pantry::Communication::Security::CurveKeyStore do
 
   def write_test_keys(known_client_keys = nil)
     security_dir = Pantry.root.join("security", "curve")
+    keys_file = security_dir.join("my_keys.yml")
     FileUtils.mkdir_p security_dir
-    File.open(security_dir.join("my_keys.yml"), "w+") do |f|
+    File.open(keys_file, "w+") do |f|
       f.write(YAML.dump({
         "private_key" => "private key", "public_key" => "public key",
         "server_public_key" => "server key",
         "client_keys" => known_client_keys || ["client1", "client2"]
       }))
     end
+
+    keys_file
   end
 
   it "sets up directory structure in Pantry.root for storing credentials" do
@@ -25,7 +28,7 @@ describe Pantry::Communication::Security::CurveKeyStore do
     assert File.directory?(curve_dir), "Storage stucture not set up"
   end
 
-  it "generates a new set of server public/private keys if none exist" do
+  it "generates a new set of public/private keys if none exist" do
     key_store
 
     assert File.exists?(curve_dir.join("my_keys.yml")), "Did not generate my keys"
@@ -33,6 +36,20 @@ describe Pantry::Communication::Security::CurveKeyStore do
     keys = YAML.load_file(curve_dir.join("my_keys.yml"))
     assert_not_nil keys["private_key"], "Did not generate a private key"
     assert_not_nil keys["public_key"],  "Did not generate a public key"
+  end
+
+  it "generates a new set of public/private keys even if a server public key is set" do
+    keys_file = write_test_keys([])
+    File.open(keys_file, "w+") do |f|
+      f.write(YAML.dump({ "server_public_key" => "server key" }))
+    end
+
+    key_store
+
+    full_keys = YAML.load_file(keys_file)
+    assert_equal "server key", full_keys["server_public_key"], "Chomped the pre-set server public key"
+    assert_not_nil full_keys["private_key"], "Did not write out a new private key"
+    assert_not_nil full_keys["public_key"],  "Did not write out a new public key"
   end
 
   it "can read back the public key" do
