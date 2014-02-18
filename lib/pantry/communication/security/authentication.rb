@@ -67,8 +67,6 @@ module Pantry
           client_key = request[6]
 
           if mechanism != "CURVE"
-            response_code = "400"
-            response_text = "Invalid Mechanism"
             ["400", "Invalid Mechanism"]
           else
             authenticate_client(client_key)
