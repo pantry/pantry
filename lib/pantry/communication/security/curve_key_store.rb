@@ -19,9 +19,19 @@ module Pantry
         end
 
         # Check if the given client public key is known by this server or
-        # not. Used solely by Servers
+        # not. To facilitate the initial setup process of a new Pantry Server,
+        # this will allow and store the first client to connect to this server
+        # and will write out that client's public key as valid.
+        #
+        # Used solely by the Server
         def known_client?(client_public_key)
-          @known_clients.include?(z85_encode(client_public_key))
+          encoded_key = z85_encode(client_public_key)
+          if @known_clients.empty?
+            store_known_client(encoded_key)
+            true
+          else
+            @known_clients.include?(encoded_key)
+          end
         end
 
         # Generate and store a new Client pub/priv key pair
@@ -30,8 +40,7 @@ module Pantry
         # and Auth.
         def create_client
           client_public, client_private = ZMQ::Util.curve_keypair
-          @known_clients << client_public
-          save_keys
+          store_known_client(client_public)
 
           {
             server_public_key: @public_key,
@@ -72,6 +81,11 @@ module Pantry
         def generate_new_key_pair
           @public_key, @private_key = ZMQ::Util.curve_keypair
           @known_clients = []
+          save_keys
+        end
+
+        def store_known_client(client_public_key)
+          @known_clients << client_public_key
           save_keys
         end
 

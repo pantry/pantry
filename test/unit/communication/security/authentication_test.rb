@@ -94,6 +94,4 @@ describe Pantry::Communication::Security::Authentication do
     assert_not_authorized(zmq_socket.message, "Invalid Mechanism")
   end
 
-  it "allows a client in if there are no known Clients yet"
-
 end

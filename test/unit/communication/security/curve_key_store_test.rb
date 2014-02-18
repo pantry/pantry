@@ -59,6 +59,18 @@ describe Pantry::Communication::Security::CurveKeyStore do
     assert key_store.known_client?(binary_pub), "Should have matched binary with z85 encoded"
   end
 
+  it "stores the z85 encoded of the first client to auth to the server (no known clients)" do
+    write_test_keys([])
+    client_pub, _ = ZMQ::Util.curve_keypair
+
+    decoded = FFI::MemoryPointer.from_string(' ' * 32)
+    binary_pub = LibZMQ.zmq_z85_decode(decoded, client_pub)
+    assert key_store.known_client?(binary_pub), "Should have allowed the first Client"
+
+    all_keys = YAML.load_file(curve_dir.join("my_keys.yml"))
+    assert_equal [client_pub], all_keys["client_keys"]
+  end
+
   it "generates a new set of client keys, storing the new public and returning the lot" do
     write_test_keys
 

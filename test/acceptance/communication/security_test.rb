@@ -48,7 +48,7 @@ describe "ZMQ4 CURVE security" do
     end
 
     it "rejects a client whos public key is not known by the server" do
-      set_up_encrypted(15020, known_clients: [])
+      set_up_encrypted(15020, known_clients: ["some other client here1234567890"])
 
       server = Pantry::Server.new
       server.identity = "Encrypted Server"
@@ -59,6 +59,7 @@ describe "ZMQ4 CURVE security" do
 
       assert_message_timeout(client)
     end
+
   end
 
   describe "requesting new client keys" do
