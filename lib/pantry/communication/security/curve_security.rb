@@ -44,7 +44,8 @@ module Pantry
             @authentication = Authentication.new(@key_store)
             @authentication.open
 
-            Pantry.logger.info("Configuring Server to use Curve encryption")
+            # We log the server's public key here to make it accessible for initial setup.
+            Pantry.logger.info("Configuring Server to use Curve encryption :: #{@key_store.public_key}")
           end
 
           def link_to(parent)
