@@ -47,11 +47,7 @@ module Pantry
 
       if curve_key_file = options["curve-key-file"]
         Pantry.config.security = "curve"
-        FileUtils.mkdir_p(Pantry.root.join("security", "curve"))
-        FileUtils.cp(
-          Pantry.root.join(curve_key_file),
-          Pantry.root.join("security", "curve", "client_keys.yml")
-        )
+        copy_keys_file_into_pantry_root(curve_key_file)
       end
 
       if options["version"]
@@ -105,6 +101,8 @@ module Pantry
         send_message(message)
 
         @command.wait_for_finish
+
+        copy_full_keys_back_to_curve_key_file
       rescue Exception => ex
         Pantry.ui.say("Error: #{ex.message}")
         Pantry.logger.debug(ex.backtrace.join("\n"))
@@ -117,6 +115,38 @@ module Pantry
       if @command
         @command.receive_response(message)
       end
+    end
+
+    protected
+
+    #
+    # For the sake of being a Client, the file mentioned in --curve-key-file is
+    # copied into security/curve/client_keys.yml so that we don't have to do anything
+    # special to turn on Curve encryption for the Client. We do this for every run to ensure
+    # that if the keys or options change, the user isn't confused when the client is unable to
+    # connect or auth.
+    #
+    # To facilitate the first-time-connect situation, where a new Pantry Server has been spun up
+    # and the only known key is the server's public key, this will also copy the keys file back
+    # up to the file named in --curve-key-file because it will fill that file with a set of
+    # generated public and private keys.
+    #
+
+    def copy_keys_file_into_pantry_root(curve_key_file)
+      @curve_key_file = curve_key_file
+      FileUtils.mkdir_p(Pantry.root.join("security", "curve"))
+      FileUtils.cp(
+        Pantry.root.join(@curve_key_file),
+        Pantry.root.join("security", "curve", "client_keys.yml")
+      )
+    end
+
+    def copy_full_keys_back_to_curve_key_file
+      return unless @curve_key_file
+      FileUtils.cp(
+        Pantry.root.join("security", "curve", "client_keys.yml"),
+        Pantry.root.join(@curve_key_file)
+      )
     end
 
   end

@@ -152,7 +152,6 @@ describe Pantry::CLI do
       Pantry.root.join("keys.yml"),
       Pantry.root.join("security", "curve", "client_keys.yml")
     ), "Did not copy the keys file into a client-ready position"
-
   end
 
   it "errors if the curve-key-file is not found"
