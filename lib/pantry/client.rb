@@ -33,6 +33,7 @@ module Pantry
     # server, sends a registration message so the Server knows who
     # just connected, and then waits for information to come.
     def run
+      Pantry.set_proc_title("pantry client #{Pantry::VERSION} :: #{identity}")
       @networking.run
       send_registration_message
       Pantry.logger.info("[#{identity}] Client registered and waiting for commands")

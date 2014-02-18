@@ -93,6 +93,11 @@ module Pantry
     Pathname.new(config.data_dir)
   end
 
+  # Update the process's proc title with the given string
+  def set_proc_title(title)
+    $0 = title
+  end
+
   # Register a command object class to be handled only by Clients
   def add_client_command(command_class)
     ensure_proper_command_class(command_class)

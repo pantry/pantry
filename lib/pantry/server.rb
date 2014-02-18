@@ -21,6 +21,7 @@ module Pantry
 
     # Start up the networking stack and start the server
     def run
+      Pantry.set_proc_title("pantry server #{Pantry::VERSION}")
       @networking.run
       Pantry.logger.info("[#{@identity}] Server running")
     end
