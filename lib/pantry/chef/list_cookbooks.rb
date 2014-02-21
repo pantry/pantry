@@ -21,6 +21,11 @@ module Pantry
         end
       end
 
+      def receive_response(message)
+        Pantry.ui.list(message.body.map(&:first).sort)
+        super
+      end
+
     end
 
   end

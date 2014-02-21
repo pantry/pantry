@@ -2,9 +2,9 @@ require 'unit/test_helper'
 
 describe Pantry::Chef::ListCookbooks do
 
-  fake_fs!
-
   describe "#perform" do
+    fake_fs!
+
     it "returns the list of cookbooks and latest version known" do
       cookbooks = [
         Pantry.root.join("chef", "cookbook-cache", "mini.tgz"),
@@ -27,6 +27,22 @@ describe Pantry::Chef::ListCookbooks do
         ["pantry", 0, "deadbeef"],
         ["ruby",   0, "deadbeef"]
       ], cookbook_list
+    end
+  end
+
+  describe "#receive_response" do
+    mock_ui!
+
+    it "displays the list alphabetical order" do
+      message = Pantry::Message.new
+      message << ["pantry", 0, "deadbeef"]
+      message << ["ruby", 0, "deadbeef"]
+      message << ["mini", 0, "deadbeef"]
+
+      command = Pantry::Chef::ListCookbooks.new
+      command.receive_response(message)
+
+      assert_equal "mini\npantry\nruby\n", stdout
     end
   end
 
