@@ -26,9 +26,11 @@ module Pantry
 
     # Print out a list, attempting to make it look somewhat reasonable
     def list(array)
-      array.each do |entry|
-        say([entry].flatten.join(" -- "))
-      end
+      say(array.join("\n"))
+    end
+
+    def color(string, color)
+      HighLine.color(string, color)
     end
 
     # Show the user a message and ask them to continue by hitting Enter,
