@@ -19,7 +19,7 @@ describe Pantry::CLI do
     Pantry::Command.any_instance.stubs(:wait_for_finish)
 
     cli.expects(:send_message).with do |message|
-      assert_equal "ListClients", message.type
+      assert_equal "Status", message.type
     end
 
     cli.run

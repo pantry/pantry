@@ -28,7 +28,7 @@ require 'pantry/command_handler'
 require 'pantry/commands/echo'
 require 'pantry/commands/edit_application'
 require 'pantry/commands/update_application'
-require 'pantry/commands/list_clients'
+require 'pantry/commands/status'
 require 'pantry/commands/register_client'
 require 'pantry/commands/upload_file'
 require 'pantry/commands/sync_directory'
@@ -168,7 +168,7 @@ Pantry.add_client_command(Pantry::Commands::Echo)
 
 Pantry.add_server_command(Pantry::Commands::EditApplication)
 Pantry.add_server_command(Pantry::Commands::UpdateApplication)
-Pantry.add_server_command(Pantry::Commands::ListClients)
+Pantry.add_server_command(Pantry::Commands::Status)
 Pantry.add_server_command(Pantry::Commands::RegisterClient)
 Pantry.add_server_command(Pantry::Commands::DownloadDirectory)
 Pantry.add_server_command(Pantry::Commands::CreateClient)

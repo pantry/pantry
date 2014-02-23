@@ -1,7 +1,7 @@
 module Pantry
   module Commands
 
-    class ListClients < Command
+    class Status < Command
 
       command "status" do
         description "List all Clients that match the options"

@@ -1,6 +1,6 @@
 require 'unit/test_helper'
 
-describe Pantry::Commands::ListClients do
+describe Pantry::Commands::Status do
 
   mock_ui!
 
@@ -10,9 +10,9 @@ describe Pantry::Commands::ListClients do
     server.register_client(Pantry::ClientInfo.new(identity: "client2"))
     server.register_client(Pantry::ClientInfo.new(identity: "client3"))
 
-    message = Pantry::Message.new("ListClients")
+    message = Pantry::Message.new("Status")
 
-    command = Pantry::Commands::ListClients.new
+    command = Pantry::Commands::Status.new
     command.server_or_client = server
 
     response = command.perform(message)
@@ -26,10 +26,10 @@ describe Pantry::Commands::ListClients do
     server.register_client(Pantry::ClientInfo.new(identity: "client2", application: "pantry", environment: "testing"))
     server.register_client(Pantry::ClientInfo.new(identity: "client3"))
 
-    message = Pantry::Message.new("ListClients")
+    message = Pantry::Message.new("Status")
     message << Pantry::Communication::ClientFilter.new(application: "pantry").to_hash
 
-    command = Pantry::Commands::ListClients.new
+    command = Pantry::Commands::Status.new
     command.server_or_client = server
 
     response = command.perform(message)
@@ -44,7 +44,7 @@ describe Pantry::Commands::ListClients do
     response << {:identity => "client1", :last_checked_in => client1_check_in }
     response << {:identity => "client2", :last_checked_in => client2_check_in }
 
-    command = Pantry::Commands::ListClients.new
+    command = Pantry::Commands::Status.new
 
     command.receive_response(response)
 
@@ -53,12 +53,12 @@ describe Pantry::Commands::ListClients do
   end
 
   it "generates a message with the given client filter" do
-    command = Pantry::Commands::ListClients.new
+    command = Pantry::Commands::Status.new
     message = command.prepare_message({
       application: "pantry"
     })
 
-    assert_equal "ListClients", message.type
+    assert_equal "Status", message.type
     assert_equal({application: "pantry", environment: nil, roles: [], identity: nil},
                  message.body[0])
   end
