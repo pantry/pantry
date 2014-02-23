@@ -13,3 +13,7 @@ rvm:
 cache:
   - bundler
   - apt
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
