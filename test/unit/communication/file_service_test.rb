@@ -39,7 +39,7 @@ describe Pantry::Communication::FileService do
     info = file_service.receive_file(100, "checksum")
 
     assert_not_nil info
-    assert_equal file_service.identity, info.receiver_identity
+    assert_equal file_service.identity, info.receiver_uuid
   end
 
   it "sends a message to a specific identity" do

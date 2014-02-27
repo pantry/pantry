@@ -63,8 +63,8 @@ describe Pantry::Chef::UploadCookbook do
 
     let(:receiver_info) {
       stub(
-        :uuid => "abc123",
-        :receiver_identity => "receiver",
+        :file_uuid => "abc123",
+        :receiver_uuid => "receiver",
         :on_complete => nil
       )
     }

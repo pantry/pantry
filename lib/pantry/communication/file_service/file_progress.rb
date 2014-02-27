@@ -2,12 +2,21 @@ module Pantry
   module Communication
     class FileService
 
-      class FileProgressInfo
+      # Informational object for keeping track of file upload progress and
+      # important information.
+      class UploadInfo
+
+        # Identity of the Receiver we're sending a file to
+        attr_accessor :receiver_uuid
+
+        # The file session identity from the Receiver
+        attr_accessor :file_uuid
 
         def initialize
           @finish_future = Celluloid::Future.new
         end
 
+        # Block and wait for the file upload to finish
         def wait_for_finish(timeout = nil)
           @finish_future.value(timeout)
         end
@@ -18,18 +27,17 @@ module Pantry
 
       end
 
-      # Informational object to keep track of the progress of sending a file
-      # up to a receiver.
-      class SendingFile < FileProgressInfo
-        attr_reader :path, :receiver_identity, :uuid, :file
+      # Sending-side version of UploadInfo
+      class SendingFile < UploadInfo
+        attr_reader :path, :file
 
-        def initialize(file_path, receiver_identity, file_uuid)
+        def initialize(file_path, receiver_uuid, file_uuid)
           super()
           @path = file_path
-          @uuid = file_uuid
+          @file_uuid = file_uuid
           @file = File.open(@path, "r")
 
-          @receiver_identity = receiver_identity
+          @receiver_uuid = receiver_uuid
 
           @file_size = @file.size
           @total_bytes_sent = 0
@@ -58,25 +66,27 @@ module Pantry
 
       end
 
-      # Informational object to keep track of the progress of receiving
-      # a file from a sender. Can be configured with a completion block that
-      # will be executed once the file has been fully received and checksum
-      # verified.
-      class ReceivingFile < FileProgressInfo
-        attr_reader :uuid, :file_size, :checksum, :uploaded_path
+      # Receiving-side version of UploadInfo
+      # Can be configured with a completion block that will be executed once the
+      # file has been fully received and checksum verified.
+      class ReceivingFile < UploadInfo
 
-        attr_accessor :receiver_identity, :sender_identity
+        # Location of the tempfile containing the contents of the uploaded file
+        attr_reader :uploaded_path
+
+        attr_reader :file_size, :checksum, :uploaded_path
+        attr_accessor :sender_uuid
 
         def initialize(file_size, checksum, chunk_size, pipeline_size)
           super()
-          @uuid      = SecureRandom.uuid
+          @file_uuid = SecureRandom.uuid
           @file_size = file_size
           @checksum  = checksum
 
           @chunk_size    = chunk_size
           @pipeline_size = pipeline_size
 
-          @uploaded_file = Tempfile.new(uuid)
+          @uploaded_file = Tempfile.new(file_uuid)
           @uploaded_path = @uploaded_file.path
 
           @next_requested_file_offset = 0

@@ -14,8 +14,8 @@ module Pantry
         @sending = {}
       end
 
-      def send_file(file_path, receiver_identity, file_uuid)
-        sender_info = FileService::SendingFile.new(file_path, receiver_identity, file_uuid)
+      def send_file(file_path, receiver_uuid, file_uuid)
+        sender_info = FileService::SendingFile.new(file_path, receiver_uuid, file_uuid)
 
         @sending[file_uuid] = sender_info
         send_message(sender_info, "START")
@@ -57,7 +57,7 @@ module Pantry
 
       def send_message(sender_info, body, metadata = {})
         message    = Pantry::Message.new
-        message.to = sender_info.uuid
+        message.to = sender_info.file_uuid
 
         [body].flatten.each {|part| message << part }
 
@@ -65,7 +65,7 @@ module Pantry
           message[key] = value
         end
 
-        @service.send_message(sender_info.receiver_identity, message)
+        @service.send_message(sender_info.receiver_uuid, message)
       end
 
     end

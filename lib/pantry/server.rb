@@ -91,11 +91,11 @@ module Pantry
     end
 
     # Start a FileService::SendFile worker to upload the contents of the
-    # file at +file_path+ to the equivalent ReceiveFile at +receiver_identity+.
+    # file at +file_path+ to the equivalent ReceiveFile at +receiver_uuid+.
     # Using this method requires asking the receiving end (Server or Client) to receive
-    # a file first, which will return the +receiver_identity+ and +file_uuid+ to use here.
-    def send_file(file_path, receiver_identity, file_uuid)
-      @networking.send_file(file_path, receiver_identity, file_uuid)
+    # a file first, which will return the +receiver_uuid+ and +file_uuid+ to use here.
+    def send_file(file_path, receiver_uuid, file_uuid)
+      @networking.send_file(file_path, receiver_uuid, file_uuid)
     end
 
     # Set up a FileService::ReceiveFile worker to begin receiving a file with

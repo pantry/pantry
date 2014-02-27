@@ -84,8 +84,8 @@ module Pantry
     end
 
     # See Pantry::Server#send_file
-    def send_file(file_path, receiver_identity, file_uuid)
-      @networking.send_file(file_path, receiver_identity, file_uuid)
+    def send_file(file_path, receiver_uuid, file_uuid)
+      @networking.send_file(file_path, receiver_uuid, file_uuid)
     end
 
     protected

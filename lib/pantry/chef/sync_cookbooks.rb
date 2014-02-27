@@ -62,8 +62,8 @@ module Pantry
         receivers.each do |receiver_info|
           download_message << [
             receiver_info.name,
-            receiver_info.receiver_identity,
-            receiver_info.uuid
+            receiver_info.receiver_uuid,
+            receiver_info.file_uuid
           ]
         end
 

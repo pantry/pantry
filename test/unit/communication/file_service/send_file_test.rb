@@ -29,18 +29,18 @@ describe Pantry::Communication::FileService::SendFile do
 
   describe "#send_file" do
     it "opens the file and sends the receiver the START command" do
-      sender.send_file(file_path, "receiver_ident", "uuid")
+      sender.send_file(file_path, "receiver_ident", "file_uuid")
 
       assert_equal 1, service.sent.length
 
       start_message = service.sent[0]
       assert_equal "receiver_ident", start_message[:identity]
-      assert_equal "uuid", start_message[:message].to
+      assert_equal "file_uuid", start_message[:message].to
       assert_equal "START", start_message[:message].body[0]
     end
 
     it "returns a sending info object for callers to use" do
-      info = sender.send_file(file_path, "receiver_ident", "uuid")
+      info = sender.send_file(file_path, "receiver_ident", "file_uuid")
 
       assert_not_nil info
       assert_equal file_path, info.path
@@ -48,16 +48,16 @@ describe Pantry::Communication::FileService::SendFile do
   end
 
   it "reads the requested chunk of file and sends it along to the receiver" do
-    sender.send_file(file_path, "receiver", "uuid")
+    sender.send_file(file_path, "receiver", "file_uuid")
     service.sent = []
 
-    sender.receive_message("receiver", fetch("uuid", 0, 5))
+    sender.receive_message("receiver", fetch("file_uuid", 0, 5))
 
     assert_equal 1, service.sent.length
 
     chunk_data = service.sent[0][:message]
 
-    assert_equal "uuid", chunk_data.to
+    assert_equal "file_uuid", chunk_data.to
     assert_equal "CHUNK", chunk_data.body[0]
     assert_equal "Hello", chunk_data.body[1]
     assert_equal 0, chunk_data[:chunk_offset]

@@ -24,13 +24,13 @@ module Pantry
         FileService::ReceivingFile.new(
           file_size, checksum, chunk_size, pipeline_size
         ).tap do |info|
-          @receiving[info.uuid] = info
+          @receiving[info.file_uuid] = info
         end
       end
 
       def receive_message(from_identity, message)
         if current_file = @receiving[message.to]
-          current_file.sender_identity = from_identity
+          current_file.sender_uuid = from_identity
         else
           return
         end
@@ -49,7 +49,7 @@ module Pantry
 
       def fill_the_pipeline(current_file, message)
         current_file.chunks_to_fetch do |offset, size|
-          Pantry.logger.debug("[Receive File] Fetching #{offset} x #{size} for #{current_file.uuid}")
+          Pantry.logger.debug("[Receive File] Fetching #{offset} x #{size} for #{current_file.file_uuid}")
           send_message(current_file, "FETCH", offset, size)
         end
       end
@@ -70,25 +70,25 @@ module Pantry
 
       def finalize_file(current_file)
         if current_file.valid?
-          Pantry.logger.debug("[Receive File] File #{current_file.uuid} finished")
+          Pantry.logger.debug("[Receive File] File #{current_file.file_uuid} finished")
           send_message(current_file, "FINISH")
         else
-          Pantry.logger.debug("[Receive File] File #{current_file.uuid} did not upload successfully")
+          Pantry.logger.debug("[Receive File] File #{current_file.file_uuid} did not upload successfully")
           current_file.remove
           send_message(current_file, "ERROR", "Checksum did not match the uploaded file")
         end
 
         current_file.finished!
-        @receiving.delete(current_file.uuid)
+        @receiving.delete(current_file.file_uuid)
       end
 
       def send_message(current_file, *body)
         message    = Pantry::Message.new
-        message.to = current_file.uuid
+        message.to = current_file.file_uuid
 
         body.each {|part| message << part }
 
-        @service.send_message(current_file.sender_identity, message)
+        @service.send_message(current_file.sender_uuid, message)
       end
 
     end

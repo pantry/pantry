@@ -10,7 +10,7 @@ module Pantry
     # As the Receiver actually requests chunks from the Sender, a protocol that's
     # heavily influenced by http://zguide.zeromq.org/page:all#Transferring-Files,
     # a Receiver must be initiated first on the receiving end, which will then pass
-    # back the appropriate information (receiver_identity and file upload UUID) a
+    # back the appropriate information (receiver_uuid and file upload UUID) a
     # Sender needs to start up and run.
     #
     # From this the two parts complete the process automatically. A Receiver writes the
@@ -65,20 +65,20 @@ module Pantry
       end
 
       # Inform the service that it will soon be receiving a file of the given
-      # size and checksum. Returns a FileProgressInfo struct with the information for
+      # size and checksum. Returns a UploadInfo struct with the information for
       # the Sender.
       def receive_file(size, checksum)
         Pantry.logger.debug("[FileService] Receiving file of size #{size} and checksum #{checksum}")
         @receiver.receive_file(size, checksum).tap do |info|
-          info.receiver_identity = @socket.identity
+          info.receiver_uuid = @socket.identity
         end
       end
 
       # Inform the service that we want to start sending a file up to the receiver
       # who's listening on the given UUID.
-      def send_file(file_path, receiver_identity, file_uuid)
-        Pantry.logger.debug("[FileService] Sending file #{file_path} to #{receiver_identity}")
-        @sender.send_file(file_path, receiver_identity, file_uuid)
+      def send_file(file_path, receiver_uuid, file_uuid)
+        Pantry.logger.debug("[FileService] Sending file #{file_path} to #{receiver_uuid}")
+        @sender.send_file(file_path, receiver_uuid, file_uuid)
       end
 
       def send_message(identity, message)

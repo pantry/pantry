@@ -84,7 +84,7 @@ module Pantry
           Pantry.logger.debug("[Upload Cookbook] Unpack cookbook #{stdout.inspect}, #{stderr.inspect}")
         end
 
-        [true, uploader_info.receiver_identity, uploader_info.uuid]
+        [true, uploader_info.receiver_uuid, uploader_info.file_uuid]
       rescue => ex
         [false, ex.message]
       end
