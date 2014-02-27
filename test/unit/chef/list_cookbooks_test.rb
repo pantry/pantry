@@ -17,7 +17,7 @@ describe Pantry::Chef::ListCookbooks do
         FileUtils.touch(c)
       end
 
-      Digest::SHA256.stubs(:file).returns(stub(:hexdigest => "deadbeef"))
+      Pantry.stubs(:file_checksum).returns("deadbeef")
 
       command = Pantry::Chef::ListCookbooks.new
       cookbook_list = command.perform(Pantry::Message.new)

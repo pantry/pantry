@@ -98,6 +98,11 @@ module Pantry
     $0 = title
   end
 
+  # Calculate the checksum of a file at the given path
+  def file_checksum(file_path)
+    Digest::SHA256.file(file_path).hexdigest
+  end
+
   # Register a command object class to be handled only by Clients
   def add_client_command(command_class)
     ensure_proper_command_class(command_class)

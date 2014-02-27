@@ -149,7 +149,7 @@ module Pantry
 
         def valid?
           return @is_valid if defined?(@is_valid)
-          uploaded_checksum = Digest::SHA256.file(@uploaded_file.path).hexdigest
+          uploaded_checksum = Pantry.file_checksum(@uploaded_file.path)
           @is_valid = (uploaded_checksum == @checksum)
         end
 

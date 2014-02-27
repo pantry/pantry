@@ -16,7 +16,7 @@ module Pantry
           [
             File.basename(cookbook_path, ".tgz"),
             File.size(cookbook_path),
-            Digest::SHA256.file(cookbook_path).hexdigest
+            Pantry.file_checksum(cookbook_path)
           ]
         end
       end
