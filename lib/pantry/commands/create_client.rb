@@ -15,7 +15,8 @@ module Pantry
 
       def receive_response(message)
         keys = message.body[0]
-        Pantry.ui.say("New Client Credentials:")
+        Pantry.ui.say("New Client Credentials")
+        Pantry.ui.say("Store this in the Client's Pantry.root/security/curve/client_keys.yml")
         Pantry.ui.say(YAML.dump({
           "server_public_key" => keys[:server_public_key],
           "public_key" => keys[:public_key],
