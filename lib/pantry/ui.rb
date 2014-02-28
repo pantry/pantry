@@ -26,7 +26,7 @@ module Pantry
 
     # Print out a list, attempting to make it look somewhat reasonable
     def list(array)
-      say(array.join("\n"))
+      say(array.join("\n") + "\n")
     end
 
     def color(string, color)
