@@ -1,9 +1,9 @@
 ---
-# Configure where to send Pantry log files.
+# Configure where to send Pantry logs.
 # Can be one of three values:
 #
 # - stdout / nil -- Send to STDOUT
-# - syslog       -- Send to the local syslog daemon. Program name is "pantry"
+# - syslog       -- Send to the local syslog daemon.
 # - [file path]  -- Write logs to the given file
 log_to: /var/log/pantry-client.log
 
@@ -25,6 +25,7 @@ log_to: /var/log/pantry-client.log
 # syslog_program_name: pantry
 
 # Location on the file system where all persistent files are stored.
+# This directory is available in code as Pantry.root
 # Must be read and writable by the user running pantry-client
 data_dir: /var/lib/pantry
 
