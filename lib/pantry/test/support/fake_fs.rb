@@ -1,5 +1,5 @@
 gem 'fakefs'
-require 'fakefs'
+require 'fakefs/safe'
 
 # Hook up FakeFS into Minitest
 class MiniTest::Test
