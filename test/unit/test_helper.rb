@@ -1,51 +1,25 @@
-require 'support/minitest'
-require 'mocha/setup'
-require 'support/matchers'
-require 'support/mock_ui'
-require 'celluloid/test'
-require 'fakefs/safe'
+require 'pantry/test/unit'
+gem 'mocha'
+require 'mocha/mini_test'
 
-require 'pantry'
-
+# Swap these lines to turn on the logger in tests
 Pantry.logger.disable!
 #Pantry.config.log_level = :debug
 
 class Minitest::Test
-
   def setup
-    Celluloid.init
-    Pantry.reset_config!
     Pantry.config.data_dir = File.expand_path("../../data_dir", __FILE__)
-  end
-
-  def teardown
     clean_up_pantry_root
   end
 
-  def self.fake_fs!
-    before do
-      FakeFS.activate!
-    end
-
-    after do
-      FakeFS.deactivate!
-      FakeFS::FileSystem.clear
+  # Ensure Pantry.root is always clean for each test.
+  def clean_up_pantry_root
+    Dir["#{Pantry.root}/**/*"].each do |file|
+      FileUtils.rm_rf file
     end
   end
 
-end
-
-# Minitest uses Tempfiles for figuring out more complicated diffs
-# This causes FakeFS to explode, so make sure this is run without FakeFS
-# enabled.
-module Minitest
-  module Assertions
-    alias :actual_diff :diff
-
-    def diff exp, act
-      FakeFS.without do
-        actual_diff exp, act
-      end
-    end
+  def fixture_path(file_path)
+    File.join(File.dirname(__FILE__), "..", "fixtures", file_path)
   end
 end
