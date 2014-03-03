@@ -8,6 +8,7 @@ require 'safe_yaml/load'
 require 'securerandom'
 require 'socket'
 require 'syslog/logger'
+require 'tempfile'
 require 'open3'
 require 'yaml'
 
@@ -194,6 +195,3 @@ Pantry.add_server_command(Pantry::Commands::DownloadDirectory)
 Pantry.add_server_command(Pantry::Commands::CreateClient)
 
 Pantry.load_plugins
-
-# Chef Handling Commands and Code #
-require 'pantry/chef'
