@@ -8,10 +8,12 @@ Gem::Specification.new do |s|
   s.authors  = ["Collective Idea", "Jason Roelofs"]
   s.email    = ["code@collectiveidea.com", "jasongroelofs@gmail.com"]
   s.license  = "MIT"
-  s.homepage = ""
+  s.homepage = "http://pantryops.org"
 
-  s.summary     = ""
-  s.description = ""
+  s.summary     = "Modern DevOps Automation"
+  s.description = <<-EOS
+    Pantry is a framework that provides answers to common questions encoutered when setting up a DevOps, server configuration, or server provisioning pipeline.
+  EOS
 
   s.required_ruby_version = ">= 2.0.0"
 
@@ -22,14 +24,17 @@ Gem::Specification.new do |s|
 
   s.executables  = %w(pantry-client pantry-server pantry)
 
-  s.add_runtime_dependency "ffi-rzmq",      "~> 2.0.0"
-  s.add_runtime_dependency "celluloid",     "~> 0.15.0"
-  s.add_runtime_dependency "celluloid-zmq", "~> 0.15.0"
-  s.add_runtime_dependency "highline"
-  s.add_runtime_dependency "json"
-  s.add_runtime_dependency "ruby-progressbar"
-  s.add_runtime_dependency "safe_yaml"
+  s.requirements << "zeromq 3.x or 4.x"
+  s.requirements << "libsodium for Curve security"
+
+  s.add_runtime_dependency "ffi-rzmq",         "~> 2.0",  ">= 2.0.0"
+  s.add_runtime_dependency "celluloid",        "~> 0.15", ">= 0.15.0"
+  s.add_runtime_dependency "celluloid-zmq",    "~> 0.15", ">= 0.15.0"
+  s.add_runtime_dependency "highline",         "~> 1.6",  ">= 1.6.21"
+  s.add_runtime_dependency "json",             "~> 1.8",  ">= 1.8.1"
+  s.add_runtime_dependency "ruby-progressbar", "~> 1.4",  ">= 1.4.2"
+  s.add_runtime_dependency "safe_yaml",        "~> 1.0",  ">= 1.0.1"
 
   # Chef stuff
-  s.add_runtime_dependency "chef", "~> 11.10.0"
+  s.add_runtime_dependency "chef", "~> 11.10", ">= 11.10.0"
 end
