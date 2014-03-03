@@ -3,6 +3,7 @@ require 'celluloid/zmq'
 require 'json'
 require 'logger'
 require 'pathname'
+require 'rubygems'
 require 'safe_yaml/load'
 require 'securerandom'
 require 'socket'
@@ -151,6 +152,20 @@ module Pantry
     end
   end
 
+  # Find all installed Pantry plugin gems.
+  # Plugins are defined as gems who contain a file named "pantry/init.rb".
+  def load_plugins
+    Gem.find_latest_files("pantry/init.rb").each do |path|
+      begin
+        gem_path = path.gsub("#{Gem.dir}/gems/", '')
+        Pantry.logger.debug("Installing plugin from #{gem_path}")
+        require path
+      rescue Exception => ex
+        Pantry.logger.warn("Unable to load plugin at #{gem_path}, #{ex.message}")
+      end
+    end
+  end
+
   extend self
 end
 
@@ -177,6 +192,8 @@ Pantry.add_server_command(Pantry::Commands::Status)
 Pantry.add_server_command(Pantry::Commands::RegisterClient)
 Pantry.add_server_command(Pantry::Commands::DownloadDirectory)
 Pantry.add_server_command(Pantry::Commands::CreateClient)
+
+Pantry.load_plugins
 
 # Chef Handling Commands and Code #
 require 'pantry/chef'
