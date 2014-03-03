@@ -3,14 +3,14 @@ Pantry: Modern DevOps Automation
 
 [![Code Climate](https://codeclimate.com/github/pantry/pantry.png)](https://codeclimate.com/github/pantry/pantry)
 
-Pantry takes the tedium out of setting up a DevOps stack by providing framework that
+Pantry takes the tedium out of setting up a DevOps stack by providing framework for storing, sharing, and running server provisioning and configuration. Whether your stack is Chef or Puppet, Docker or Packer, or any mix of tools, Pantry doesn't care!
 
 ## Installation
 
 Install Pantry via Rubygems on all servers and local machines:
 
     gem install pantry
-    
+
 ## Requirements
 
 Pantry depends on [Celluloid](http://celluloid.io) and [ZeroMQ](http://zeromq.org/). Pantry is built for Ruby 2.0 and later and requires Rubygems 2.1 and later.
@@ -31,6 +31,10 @@ For more information, see [Getting Started](http://pantry.github.io/getting_star
 
 The Documentation for Pantry is available at http://pantryops.org and the RDoc is served up at [rdoc.info/pantry](http://rubydoc.info/github/pantry/pantry/master/frames).
 
+## Available Plugins
+
+* [Pantry Chef](https://github.com/pantry/pantry-chef) -- Configure Pantry Clients with Chef
+
 ## Project Details
 
 * Built and Maintained by [Collective Idea](http://collectiveidea.com)
@@ -44,6 +48,6 @@ The Documentation for Pantry is available at http://pantryops.org and the RDoc i
 * All Pull Requests must contain tests
 * Pull Request tests must pass before being accepted
 
-## Licence
+## License
 
 Pantry is distributed under the MIT License. See LICENSE for more details.
