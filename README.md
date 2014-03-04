@@ -1,7 +1,7 @@
 Pantry: Modern DevOps Automation
 ================================
 
-[![Code Climate](https://codeclimate.com/github/pantry/pantry.png)](https://codeclimate.com/github/pantry/pantry)
+[![Build Status](https://travis-ci.org/pantry/pantry.png)](https://travis-ci.org/pantry/pantry) [![Code Climate](https://codeclimate.com/github/pantry/pantry.png)](https://codeclimate.com/github/pantry/pantry)
 
 Pantry takes the tedium out of setting up a DevOps stack by providing framework for storing, sharing, and running server provisioning and configuration. Whether your stack is Chef or Puppet, Docker or Packer, or any mix of tools, Pantry doesn't care!
 
