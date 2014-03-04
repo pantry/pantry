@@ -25,7 +25,7 @@ Starting a Client: `pantry-client -c /path/to/client.yml`
 
 Running the CLI: `pantry --help`
 
-For more information, see [Getting Started](http://pantry.github.io/getting_started.html).
+For more information, see [Getting Started](http://pantryops.org/getting_started.html).
 
 ## Documentation
 
