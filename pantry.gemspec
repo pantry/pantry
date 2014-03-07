@@ -34,4 +34,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "json",             "~> 1.8",  ">= 1.8.1"
   s.add_runtime_dependency "ruby-progressbar", "~> 1.4",  ">= 1.4.2"
   s.add_runtime_dependency "safe_yaml",        "~> 1.0",  ">= 1.0.1"
+
+  s.add_development_dependency "mocha"
+  s.add_development_dependency "fakefs"
 end

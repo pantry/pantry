@@ -12,6 +12,4 @@ end
 
 group :test do
   gem "minitest"
-  gem "mocha"
-  gem "fakefs", :require => false
 end
