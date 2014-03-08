@@ -75,6 +75,19 @@ describe Pantry::Message do
     assert_equal message.uuid, response.uuid
   end
 
+  it "clones custom metadata in a response message" do
+    message = Pantry::Message.new("type")
+    message[:custom_data] = "one"
+
+    response = message.build_response
+
+    assert_equal "one", response[:custom_data]
+
+    response[:custom_data] = "two"
+    assert_equal "one", message[:custom_data]
+    assert_equal "two", response[:custom_data]
+  end
+
   it "can be flagged as being forwarded" do
     message = Pantry::Message.new("type")
     assert_false message.forwarded?

@@ -26,6 +26,8 @@ module Pantry
     # The full, raw body of the message.
     attr_accessor :body
 
+    attr_accessor :custom_metadata
+
     attr_writer :requires_response
 
     def initialize(message_type = nil)
@@ -94,6 +96,7 @@ module Pantry
       response.to   = self.from
       response.from = self.to
       response.requires_response = false
+      response.custom_metadata   = self.custom_metadata.clone
       response
     end
 
