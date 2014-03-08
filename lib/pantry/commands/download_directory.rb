@@ -13,6 +13,12 @@ module Pantry
         @directory = directory
       end
 
+      def to_message
+        super.tap do |message|
+          message << @directory.to_s
+        end
+      end
+
       def perform(message)
         directory = Pantry.root.join(message.body[0])
 
@@ -21,12 +27,6 @@ module Pantry
           [Pathname.new(file).relative_path_from(directory).to_s,
            File.read(file)]
         end.compact
-      end
-
-      def to_message
-        super.tap do |message|
-          message << @directory.to_s
-        end
       end
 
     end

@@ -58,6 +58,10 @@ module Pantry
         true
       end
 
+      def receive_server_response(response)
+        # Say nothing. Finishing is enough
+      end
+
     end
 
   end

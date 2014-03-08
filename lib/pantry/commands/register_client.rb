@@ -7,6 +7,16 @@ module Pantry
         @client_info = client_info
       end
 
+      def to_message
+        message = super
+        message << {
+          application: @client_info.application,
+          environment: @client_info.environment,
+          roles:       @client_info.roles
+        }
+        message
+      end
+
       # Take note that a Client has connected and registered itself
       # with this Server.
       def perform(message)
@@ -20,16 +30,6 @@ module Pantry
         )
 
         self.server.register_client(@client_info)
-      end
-
-      def to_message
-        message = super
-        message << {
-          application: @client_info.application,
-          environment: @client_info.environment,
-          roles:       @client_info.roles
-        }
-        message
       end
 
     end

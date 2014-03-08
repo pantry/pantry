@@ -11,6 +11,13 @@ module Pantry
         @config_body      = config_body
       end
 
+      def to_message
+        super.tap do |msg|
+          msg << @application_name
+          msg << @config_body
+        end
+      end
+
       def perform(message)
         application_name = message.body[0]
         config_body      = message.body[1]
@@ -30,13 +37,6 @@ module Pantry
         end
 
         true
-      end
-
-      def to_message
-        super.tap do |msg|
-          msg << @application_name
-          msg << @config_body
-        end
       end
 
     end
