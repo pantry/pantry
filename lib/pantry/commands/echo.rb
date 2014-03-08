@@ -15,27 +15,18 @@ module Pantry
         @expected_clients  = []
       end
 
-      def perform(message)
-        message.body[0]
-      end
-
-      def receive_response(message)
-        if message.from_server?
-          @expected_clients = message.body
-        else
-          @received << message
-          Pantry.ui.say("#{message.from} echo's #{message.body[0].inspect}")
-        end
-
-        if !@expected_clients.empty? && @received.length >= @expected_clients.length
-          super
-        end
-      end
-
       def to_message
         message = super
         message << @string_to_echo
         message
+      end
+
+      def perform(message)
+        message.body[0]
+      end
+
+      def receive_client_response(response)
+        Pantry.ui.say("#{response.from} echo's #{response.body[0].inspect}")
       end
 
     end

@@ -41,7 +41,7 @@ module Pantry
         end
       end
 
-      def receive_response(message)
+      def receive_server_response(message)
         current_config = message.body[0]
         new_config     = @editor.edit(current_config, :yaml)
 
@@ -52,8 +52,6 @@ module Pantry
             ).to_message
           )
         end
-
-        super
       end
 
     end

@@ -18,6 +18,12 @@ module Pantry
         super
       end
 
+      def to_message
+        message = super
+        message << @client_filter.to_hash
+        message
+      end
+
       # Return information about all connected Clients that match the given filter
       def perform(message)
         @client_filter = Pantry::Communication::ClientFilter.new(**(message.body[0] || {}))
@@ -32,7 +38,7 @@ module Pantry
         end
       end
 
-      def receive_response(message)
+      def receive_server_response(message)
         output =
           clients = message.body.map do |client|
             [
@@ -46,13 +52,6 @@ module Pantry
           end
 
         Pantry.ui.list(output)
-        super
-      end
-
-      def to_message
-        message = super
-        message << @client_filter.to_hash
-        message
       end
 
       protected
