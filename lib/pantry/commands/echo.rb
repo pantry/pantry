@@ -10,9 +10,6 @@ module Pantry
 
       def initialize(string_to_echo = "")
         @string_to_echo = string_to_echo
-
-        @received = []
-        @expected_clients  = []
       end
 
       def to_message
