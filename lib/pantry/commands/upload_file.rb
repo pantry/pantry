@@ -2,9 +2,9 @@ module Pantry
   module Commands
 
     # Base class for any command that needs to upload a single file where
-    # that file is small enough for it's contents to be passed around in plain messages.
+    # that file is small enough for its contents to be passed around in plain messages.
     # For larger files that shouldn't be pulled entirely into memory, please use
-    # #send_file / #receive_file instead.
+    # #send_file and #receive_file instead.
     #
     # This class is not used directly. Subclass to define the CLI command pattern
     # and the directory where the uploaded file will end up.
