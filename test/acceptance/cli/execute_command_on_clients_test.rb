@@ -12,6 +12,7 @@ describe "CLI requests information from individual clients" do
       identity: "cli1"
     ).run
 
+    assert_match %r|Expecting response from 2 clients|, stdout
     assert_match %r|#{@client1.identity} echo's "This is Neat"|, stdout
     assert_match %r|#{@client2.identity} echo's "This is Neat"|, stdout
   end
@@ -24,7 +25,8 @@ describe "CLI requests information from individual clients" do
       identity: "cli1"
     ).run
 
-    assert_equal "#{@client1.identity} echo's \"This is Neat\"\n", stdout
+    assert_match %r|Expecting response from 1 client|, stdout
+    assert_match %r|#{@client1.identity} echo's \"This is Neat\"|, stdout
   end
 
 end

@@ -169,6 +169,8 @@ module Pantry
 
         if response[:client_response_list]
           @expected_clients = response.body
+          count = @expected_clients.length
+          Pantry.ui.say("Expecting response from #{count} client#{count == 1 ? "" : "s"}...")
         elsif from_client?
           @received_from_clients << response
         end
