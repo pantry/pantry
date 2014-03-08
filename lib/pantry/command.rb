@@ -168,9 +168,35 @@ module Pantry
 
     # When a message comes back from the server as a response to or because of
     # this command's #perform, the command object on the CLI will receive that
-    # message here. By default we just mark ourselves finished.
-    def receive_response(message)
-      finished
+    # message here. This method will dispatch to either #receive_server_response
+    # or #receive_client_response depending on the type of Command run.
+    # In most cases, Commands should override the server/client specific receivers.
+    # Only override this method to fully customize Message response handling.
+    def receive_response(response)
+      @response_tracker ||= TrackResponses.new
+      @response_tracker.new_response(response)
+
+      if @response_tracker.from_server?
+        receive_server_response(response)
+        finished
+      elsif @response_tracker.from_client?
+        receive_client_response(response)
+        finished if @response_tracker.all_response_received?
+      end
+    end
+
+    # Handle a response from a Server Command. Override this for specific handling
+    # of Server Command responses.
+    def receive_server_response(response)
+      Pantry.ui.say("Server response:")
+      Pantry.ui.say(response.body.inspect)
+    end
+
+    # Handle a response from a Client Command. This will be called for each Client
+    # executing and responding to the requested Command.
+    def receive_client_response(response)
+      Pantry.ui.say("Response from #{response.from}:")
+      Pantry.ui.say(response.body.inspect)
     end
 
     # Send a request out, returning the Future which will eventually
@@ -241,6 +267,42 @@ module Pantry
     end
     alias server server_or_client
     alias client server_or_client
+
+    protected
+
+    # Internal state tracking of server and client responses.
+    # When a Client Command is triggered, the Server first responses with a message
+    # containing the list of Clients who will execute the Command and respond.
+    # Then we need to keep track of all the Clients who have responded so we know
+    # when the command has fully finished across all Clients.
+    class TrackResponses
+      def initialize
+        @expected_clients      = []
+        @received_from_clients = []
+      end
+
+      def new_response(response)
+        @latest_response = response
+
+        if response[:client_response_list]
+          @expected_clients = response.body
+        elsif from_client?
+          @received_from_clients << response
+        end
+      end
+
+      def from_server?
+        @latest_response.from_server? && !@latest_response[:client_response_list]
+      end
+
+      def from_client?
+        !@latest_response.from_server?
+      end
+
+      def all_response_received?
+        !@expected_clients.empty? && @expected_clients.length == @received_from_clients.length
+      end
+    end
 
   end
 

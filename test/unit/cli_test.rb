@@ -163,7 +163,10 @@ describe Pantry::CLI do
     command = Pantry::Command.new
     cli.async.request(filter, command, {})
 
-    cli.receive_message(Pantry::Message.new)
+    message = Pantry::Message.new
+    message.from = Pantry::SERVER_IDENTITY
+
+    cli.receive_message(message)
     assert command.finished?, "Command was not marked as finished"
   end
 

@@ -73,7 +73,7 @@ module Pantry
         matched_clients = @client_registry.all_matching(message.to).map(&:identity)
 
         Pantry.logger.debug("[#{@identity}] Forwarding message on. Expect response from #{matched_clients.inspect}")
-        send_results_back_to_requester(message, matched_clients)
+        send_results_back_to_requester(message, matched_clients, true)
         forward_message(message)
       end
     end
@@ -112,9 +112,10 @@ module Pantry
       Socket.gethostname
     end
 
-    def send_results_back_to_requester(message, results)
+    def send_results_back_to_requester(message, results, client_response_list = false)
       response_message = message.build_response
       response_message.from = Pantry::SERVER_IDENTITY
+      response_message[:client_response_list] = client_response_list
 
       [results].flatten(1).each do |entry|
         response_message << entry

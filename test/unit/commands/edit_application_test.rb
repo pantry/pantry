@@ -48,6 +48,7 @@ describe Pantry::Commands::EditApplication do
       new_config_body = {name: "pantry", config: false}.to_yaml
 
       response = Pantry::Message.new
+      response.from = Pantry::SERVER_IDENTITY
       response << orig_config_body
 
       Pantry::FileEditor.any_instance.expects(:edit).
@@ -68,6 +69,7 @@ describe Pantry::Commands::EditApplication do
       config_body = {name: "pantry"}.to_yaml
 
       response = Pantry::Message.new
+      response.from = Pantry::SERVER_IDENTITY
       response << config_body
 
       Pantry::FileEditor.any_instance.expects(:edit).returns(config_body)

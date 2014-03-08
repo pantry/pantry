@@ -25,13 +25,95 @@ describe Pantry::Command do
       "prepare_message returned the wrong value"
   end
 
-  it "by default is finished on receipt of a message" do
-    command = Pantry::Command.new
-    command.receive_response(Pantry::Message.new)
-    # Will raise if blocked on the future
-    command.wait_for_finish(1)
+  describe "Response Handling" do
+    describe "#receive_server_response" do
+      class ServerCommand < Pantry::Command
+        attr_reader :server_response
+        def receive_server_response(response)
+          @server_response = response
+        end
+      end
 
-    assert command.finished?, "Command not marked as finished"
+      before do
+        @message = Pantry::Message.new
+        @message.from = Pantry::SERVER_IDENTITY
+
+        @command = ServerCommand.new
+        @command.receive_response(@message)
+      end
+
+      it "is triggered by a non-client-list server message" do
+        assert_equal @message, @command.server_response,
+          "Did not triger the server response handler"
+      end
+
+      it "marks the command as finished" do
+        assert @command.finished?
+      end
+    end
+
+    describe "#receive_client_response" do
+      let(:server_message) do
+        Pantry::Message.new.tap do |sm|
+          sm.from = Pantry::SERVER_IDENTITY
+          sm[:client_response_list] = true
+          sm << "client1"
+          sm << "client2"
+        end
+      end
+
+      class ClientCommand < Pantry::Command
+        attr_reader :client_responses
+        def receive_client_response(response)
+          @client_responses ||= []
+          @client_responses << response
+        end
+      end
+
+      it "does not forward Server client_list message" do
+        command = ClientCommand.new
+        command.receive_response(server_message)
+
+        assert_nil command.client_responses,
+          "Should not have forwarded server client list message"
+      end
+
+      it "is triggered by Client responses" do
+        client_message = Pantry::Message.new
+        client_message.from = "client1"
+
+        command = ClientCommand.new
+        command.receive_response(client_message)
+
+        assert_equal [client_message], command.client_responses,
+          "Did not forward the client message to the handler"
+      end
+
+      it "does not mark the command as finished" do
+        client_message = Pantry::Message.new
+        client_message.from = "client1"
+
+        command = ClientCommand.new
+        command.receive_response(client_message)
+
+        assert !command.finished?, "Command was improperly marked as finished"
+      end
+
+      it "marks the command as finished if all Clients have responded" do
+        c1 = Pantry::Message.new
+        c1.from = "client1"
+        c2 = Pantry::Message.new
+        c2.from = "client2"
+
+        command = ClientCommand.new
+        command.receive_response(server_message)
+        command.receive_response(c1)
+        command.receive_response(c2)
+
+        assert_equal [c1, c2], command.client_responses
+        assert command.finished?, "Command was not marked as finished after all responses"
+      end
+    end
   end
 
   module Pantry

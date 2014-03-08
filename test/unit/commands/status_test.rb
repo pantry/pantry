@@ -55,6 +55,7 @@ describe Pantry::Commands::Status do
   describe "#receive_message" do
     let(:response) do
       Pantry::Message.new.tap do |m|
+        m.from = Pantry::SERVER_IDENTITY
         m << {:identity => "client1", :last_checked_in => (Time.now - 60*60).to_s }
         m << {:identity => "client2", :last_checked_in => (Time.now - 60*5).to_s }
       end
