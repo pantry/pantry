@@ -7,7 +7,7 @@ Pantry.logger.disable!
 class Minitest::Test
 
   def setup
-    Pantry.config.data_dir = File.expand_path("../../data_dir", __FILE__)
+    Pantry.config.root_dir = File.expand_path("../../root_dir", __FILE__)
     clean_up_pantry_root
   end
 

@@ -23,9 +23,9 @@ module Pantry
     end
 
     def prepare_local_pantry_root
-      if Pantry.config.data_dir.nil?
+      if Pantry.config.root_dir.nil?
         # TODO Find a .pantry up the chain vs building one
-        Pantry.config.data_dir = File.join(Dir.pwd, ".pantry")
+        Pantry.config.root_dir = File.join(Dir.pwd, ".pantry")
         FileUtils.mkdir_p(Pantry.root)
       end
     end

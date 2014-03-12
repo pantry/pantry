@@ -2,7 +2,7 @@ Gemfile.lock
 *.gem
 
 test/test.log
-test/acceptance/data_dir/*
+test/acceptance/root_dir/*
 proto
 .pantry
 

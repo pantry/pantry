@@ -11,9 +11,9 @@ describe Pantry do
   end
 
   describe ".root" do
-    it "wraps the data_dir in a Pathname" do
+    it "wraps the root_dir in a Pathname" do
       config = Pantry::Config.new
-      config.data_dir = "/path/start"
+      config.root_dir = "/path/start"
 
       assert_equal Pathname.new("/path/start"), Pantry.root(config)
     end

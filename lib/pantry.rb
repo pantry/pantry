@@ -90,9 +90,9 @@ module Pantry
   class DuplicateCommandError < Exception; end
 
   # The root of all stored Pantry data for this Server/Client
-  # Uses Pantry.config.data_dir
+  # Uses Pantry.config.root_dir
   def root(config = Pantry.config)
-    Pathname.new(config.data_dir)
+    Pathname.new(config.root_dir)
   end
 
   # Update the process's proc title with the given string

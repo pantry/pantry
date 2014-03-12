@@ -34,7 +34,7 @@ module Pantry
 
     # Location on the file system Pantry will store any persistent data
     # Default: /var/lib/pantry
-    attr_accessor :data_dir
+    attr_accessor :root_dir
 
     ##
     # Communication Configuration
@@ -135,7 +135,7 @@ module Pantry
         @syslog_program_name = configs["syslog_program_name"]
       end
 
-      @data_dir = configs["data_dir"]
+      @root_dir = configs["root_dir"]
     end
 
     def load_networking_configs(configs)

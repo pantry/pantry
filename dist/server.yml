@@ -27,7 +27,7 @@ log_to: /var/log/pantry-server.log
 # Location on the file system where all persistent files are stored.
 # This directory is available in code as Pantry.root
 # Must be read and writable by the user running pantry-server
-data_dir: /var/lib/pantry
+root_dir: /var/lib/pantry
 
 networking:
   # IP address or Domain the Pantry Server binds to
